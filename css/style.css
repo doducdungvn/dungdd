@@ -1,0 +1,482 @@
+/* js/style.css */
+
+/* --- BẢNG MÀU MODERN TEAL --- */
+:root {
+    --primary-color: #1abc9c; /* Teal */
+    --primary-dark: #16a085; /* Darker Teal */
+    --secondary-color: #bdc3c7; /* Silver */
+    --secondary-dark: #95a5a6; /* Darker Silver */
+    --header-bg: #34495e; /* Wet Asphalt */
+    --header-text: #ecf0f1; /* Clouds */
+    --body-bg: #ecf0f1; /* Clouds */
+    --container-bg: #ffffff; /* White */
+    --text-color: #2c3e50; /* Midnight Blue */
+    --text-light: #7f8c8d; /* Asbestos */
+    --border-color: #dfe6e9; /* Light Grey */
+    --success-color: #2ecc71; /* Emerald */
+    --danger-color: #e74c3c; /* Alizarin */
+    --warning-color: #f39c12; /* Orange */
+    --info-color: #3498db; /* Peter River */
+    --logo-color: #e67e22; /* Carrot - Màu đỏ ánh vàng */
+
+    --light-red-bg: #fdecea; /* Very Light Red */
+    --success-light-bg: #eafaf1;
+    --info-light-bg: #eaf2f8;
+    --neutral-light-bg: #f8f9f9;
+    
+    --modal-overlay-bg: rgba(44, 62, 80, 0.7); 
+}
+
+/* --- CÀI ĐẶT CHUNG --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 15px;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    font-size: 16px;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Thêm transition */
+}
+.page { 
+    max-width: 600px; 
+    margin: 20px auto; 
+    padding: 15px; 
+    background-color: var(--container-bg); 
+    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+    transition: background-color 0.3s ease; /* Thêm transition */
+}
+h2, h3 { text-align: center; color: var(--header-bg); margin-bottom: 0.8em; transition: color 0.3s ease; }
+h2 { font-size: 26px; font-weight: 600; }
+h3 { font-size: 20px; font-weight: 500; } 
+h4 { margin-top: 0; text-align: center; color: var(--text-color); font-weight: 500; transition: color 0.3s ease; }
+.report-date { text-align:center; font-weight: normal; margin-top: -12px; margin-bottom: 16px; color: var(--text-light); line-height: 1.5; } /* THAY ĐỔI: Thêm line-height */
+
+/* --- CSS CHO LOGO ZENG™ ANIMATED (PHIÊN BẢN MỚI) --- */
+.simple-animated-logo {
+    text-align: center; margin-bottom: 15px; margin-top: 10px;
+    font-size: 32px; font-weight: 700; 
+    color: var(--logo-color); /* Màu khởi đầu */
+    overflow: hidden; 
+    /* Thêm transition cho việc đổi màu mượt mà */
+    transition: color 0.5s ease-in-out;
+}
+.main-page-logo {
+    font-size: 24px; margin-top: 5px; margin-bottom: 10px;
+}
+
+.simple-animated-logo span {
+    opacity: 0; /* Ẩn các ký tự ban đầu */
+    display: inline-block; 
+    transform: translateY(15px); /* Bắt đầu ở dưới */
+    /* Dùng transition thay vì animation */
+    transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Xóa các @keyframes và animation-delay */
+
+.simple-animated-logo .tm {
+    font-size: 0.5em; vertical-align: super; margin-left: 2px;
+    font-weight: normal; color: var(--text-light); /* Màu TM riêng */
+}
+/* --- KẾT THÚC CSS LOGO --- */
+
+
+.controls-panel { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+    margin-bottom: 20px; 
+    padding: 20px; 
+    border: 1px solid var(--border-color); 
+    border-radius: 8px; 
+    background: var(--container-bg); 
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Thêm transition */
+}
+label { font-weight: 500; color: var(--text-color); transition: color 0.3s ease; }
+input[type="text"], input[type="file"], input[type="number"], select, button, textarea { 
+    padding: 12px 15px; 
+    border-radius: 6px; 
+    border: 1px solid var(--border-color); 
+    width: 100%; 
+    box-sizing: border-box; 
+    font-size: 16px; 
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.3s ease, color 0.3s ease; /* Thêm transition */
+    background-color: var(--container-bg); /* Thêm */
+    color: var(--text-color); /* Thêm */
+}
+input:focus, textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(26, 188, 156, 0.2); outline: none; }
+
+/* === THÊM MỚI: Style cho textarea bị vô hiệu hóa === */
+textarea:disabled {
+    background-color: var(--neutral-light-bg);
+    color: var(--text-light);
+    cursor: not-allowed;
+}
+
+input[type="file"] { background-color: #fdfdfe; cursor: pointer; }
+input[type="file"]:hover { border-color: var(--secondary-dark); }
+input[type="file"].loaded { background-color: var(--success-light-bg); border-color: var(--success-color); }
+button { cursor: pointer; background: var(--primary-color); color: white; border: none; transition: background-color 0.2s, transform 0.1s; font-weight: 500; padding: 12px 20px; text-align: center; }
+button:hover { background-color: var(--primary-dark); filter: brightness(110%); }
+button:active { transform: scale(0.98); filter: brightness(90%); }
+button.secondary { background-color: var(--secondary-color); color: var(--text-color); }
+button.secondary:hover { background-color: var(--secondary-dark); filter: brightness(105%);}
+button.success { background-color: var(--success-color); }
+button.success:hover { background-color: #27ae60; } 
+button.danger { background-color: var(--danger-color); }
+button.danger:hover { background-color: #c0392b; } 
+button.warning { background-color: var(--warning-color); }
+button.warning:hover { background-color: #e67e22; } 
+
+/* CẬP NHẬT THANH NAV CHÍNH */
+.main-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.summary-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; } /* THAY ĐỔI: margin-bottom -> margin-top */
+
+.main-nav button { background-color: var(--secondary-color); color: var(--text-color); }
+.main-nav button:hover { background-color: var(--secondary-dark); }
+.main-nav button.active { background-color: var(--primary-color); color: white; }
+.main-nav button.active:hover { background-color: var(--primary-dark); }
+/* Nút nạp lại nổi bật */
+.main-nav button.warning { font-weight: 600; }
+
+table { 
+    border-collapse: collapse; 
+    width: 100%; 
+    margin: 1px auto; 
+    background: var(--container-bg); 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+    border-radius: 6px; 
+    overflow: hidden; 
+    transition: background-color 0.3s ease; /* Thêm transition */
+}
+th, td { 
+    border: 1px solid var(--border-color); 
+    padding: 10px 12px; 
+    text-align: center; 
+    vertical-align: middle; 
+    transition: border-color 0.3s ease, background-color 0.3s ease; /* Thêm transition */
+}
+th { background: var(--header-bg); color: var(--header-text); font-size: 16px; font-weight: 500; }
+tr.group-start-row td { border-top: 2px solid var(--secondary-dark) !important; }
+.report-table { table-layout: fixed; }
+.report-table th { width: 33.33%; }
+.report-table tbody td { font-weight: 500; font-size: 20px; }
+.header { font-weight: 500; background: var(--neutral-light-bg); }
+.so-so { font-size: 32px; font-weight: 600; color: var(--warning-color); vertical-align: middle; }
+#tongCongRow { background-color: #FFC107; color: var(--text-color); font-weight: 600 !important;} /* THAY ĐỔI: Đổi màu nền sang vàng cam */
+#mainBonusRow { background-color: var(--success-color); color: #ffffff; } /* THAY ĐỔI: Nền xanh lá, chữ trắng */
+#mainBonusRow td { font-weight: 600; }
+.added-ticket-row { background-color: var(--container-bg); } /* THAY ĐỔI: Đổi nền thành var(--container-bg) */
+
+/* === THAY ĐỔI: Chỉnh dòng bán vé đậm và giống các dòng khác === */
+.added-ticket-row td:first-child { 
+    font-weight: 500; 
+} 
+
+.bang-chu-cell { text-align: left !important; font-style: italic; padding-left: 15px !important; font-size: 10px; font-weight: normal; color: var(--text-light); }
+
+/* THAY ĐỔI: Đổi màu nền dòng "Bằng chữ" sang container-bg */
+#bangChuRow, #bangChuRow td {
+    background: var(--container-bg) !important;
+}
+
+.ticket-type-selector { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.ticket-type-selector label { display: flex; align-items: center; gap: 5px; font-weight: normal; cursor: pointer; }
+.copyright { text-align: center; margin-top: 25px; font-size: 14px; color: var(--text-light); }
+#actionButtonContainer, #actionChoices { display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+#actionChoices { grid-column: 1 / -1; margin-top: 15px; }
+.dynamic-input { width: 100%; border: none; font-weight: 600; text-align: center; background: transparent; font-size: 17px; padding: 5px; resize: none; overflow-y: hidden; color: var(--text-color); } /* Thêm color */
+.dynamic-input::placeholder { color: var(--secondary-dark); font-weight: normal; }
+textarea.dynamic-input { text-align: right; } 
+#summaryTableContainer { margin-top: 10px; overflow-x: auto; }
+#summaryTableContainer table { width: auto; } /* CHO PHÉP BẢNG RỘNG HƠN */
+#summaryTableContainer table th { position: sticky; top: 0; z-index: 1; }
+/* NGĂN XUỐNG DÒNG TRONG BẢNG TỔNG KẾT */
+#summaryTableContainer th, 
+#summaryTableContainer td {
+    white-space: nowrap;
+}
+#summaryTableContainer tfoot tr { font-weight: 600; } /* THAY ĐỔI: Xóa màu nền/chữ chung */
+/* THAY ĐỔI: Thêm quy tắc mới cho ô tfoot */
+#summaryTableContainer tfoot tr td {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+}
+/* === THÊM MỚI: Làm đậm số sổ đại lý (cột 2) === */
+#summaryTableContainer tbody td:nth-child(2) {
+    font-weight: 500;
+}
+.negative-value { color: var(--danger-color); }
+
+/* --- CSS MỚI: Cỡ chữ Tổng Tiền (Bảng Tổng Kết) --- */
+#summaryTableContainer tfoot .final-amount-positive,
+#summaryTableContainer tfoot .final-amount-negative {
+    font-weight: 700; /* Đậm hơn các tổng khác (600) */
+}
+
+/* === THAY ĐỔI: Chỉnh nền dòng "Phải nộp" (đỏ) và "Lấy về" (xanh) === */
+.final-amount-positive { 
+    background-color: var(--danger-color) !important; /* Nền đỏ */
+    color: #ffffff !important; /* Chữ trắng */
+}
+.final-amount-negative { 
+    background-color: var(--success-color) !important; /* Nền xanh */
+    color: var(--danger-color) !important; /* THAY ĐỔI: Chữ đỏ */
+}
+tr.final-amount-positive td, tr.final-amount-negative td { font-size: 30px !important; font-weight: 600; color: inherit !important; padding: 15px 12px !important; }
+
+.inline-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.inline-form > input { flex: 1 1 100%; } /* THAY ĐỔI: Input luôn chiếm 100% */
+.inline-form > button { flex: 0 1 auto; white-space: nowrap; padding: 12px 15px; } 
+.home-actions, .form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* === THÊM MỚI: Grid cho các nút của Báo cáo chi tiết === */
+.report-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px; /* Thêm khoảng cách với input bên trên */
+}
+
+/* === THÊM MỚI: Grid cho bộ lọc trên PC === */
+.filter-grid-container {
+    display: grid;
+    grid-template-columns: 1fr; /* 1-col default (mobile) */
+    gap: 15px;
+}
+.filter-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Khoảng cách giữa label, input, button */
+}
+/* === KẾT THÚC THÊM MỚI === */
+
+.manual-grid { display: grid; grid-template-columns: auto 1fr; gap: 15px; align-items: center; }
+.manual-grid label { text-align: right; font-size: 15px; }
+.modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: var(--modal-overlay-bg); padding-top: 60px; animation: fadeIn 0.3s ease-out; }
+.modal-content { 
+    background-color: var(--container-bg); 
+    margin: auto; 
+    padding: 25px; 
+    border: 1px solid var(--border-color); 
+    width: 90%; 
+    max-width: 500px; 
+    border-radius: 8px; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+    position: relative; 
+    animation: slideIn 0.3s ease-out; 
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Thêm transition */
+}
+.modal-close-btn { color: var(--text-light); position: absolute; top: 10px; right: 15px; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 1; }
+.modal-close-btn:hover, .modal-close-btn:focus { color: var(--danger-color); text-decoration: none; }
+@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+@keyframes slideIn { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+#notification-area { position: fixed; top: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+.notification { padding: 12px 20px; border-radius: 6px; color: white; font-size: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); opacity: 0; transform: translateX(100%); transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+.notification.show { opacity: 1; transform: translateX(0); }
+.notification.success { background-color: var(--success-color); }
+.notification.error { background-color: var(--danger-color); }
+.notification.info { background-color: var(--info-color); }
+#loading-indicator { display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background-color: var(--header-bg); color: var(--header-text); padding: 8px 15px; border-radius: 4px; font-size: 14px; z-index: 2100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); animation: fadeIn 0.3s; }
+.context-note { font-size: 14px; color: var(--text-light); text-align: center; margin-top: -10px; margin-bottom: 15px; font-style: italic; }
+
+/* CSS cho modal nạp lại file */
+#reloadModal .controls-panel {
+    padding-top: 10px;
+    box-shadow: none;
+    border: none;
+}
+
+/* === THAY ĐỔI: CSS cho nút cuộn === */
+#scrollToTopBtn, #scrollToBottomBtn {
+    display: none; /* Ẩn ban đầu */
+    position: fixed;
+    right: 20px;
+    z-index: 1001;
+    border: none;
+    outline: none;
+    background-color: var(--header-bg);
+    color: white;
+    cursor: pointer;
+    padding: 0; /* Xóa padding */
+    border-radius: 50%; /* Làm tròn */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, background-color 0.3s ease; /* Thêm transition */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    
+    width: 40px; 
+    height: 40px;
+    font-size: 16px;
+    line-height: 40px; /* Căn giữa icon */
+    text-align: center;
+}
+
+#scrollToTopBtn {
+    bottom: 20px;
+}
+
+#scrollToBottomBtn {
+    top: 20px; /* THÊM MỚI: Vị trí nút cuộn xuống */
+}
+
+#scrollToTopBtn.show, #scrollToBottomBtn.show {
+    display: block;
+    opacity: 0.8;
+}
+
+#scrollToTopBtn:hover, #scrollToBottomBtn:hover {
+    opacity: 1;
+    background-color: var(--primary-dark);
+}
+/* === KẾT THÚC THAY ĐỔI === */
+
+/* === THÊM MỚI: CSS cho Tiêu đề Báo cáo === */
+#summaryTitle {
+    font-size: 18px; /* Nhỏ hơn h3 (20px) */
+}
+.region-name {
+    display: inline-block; /* Ngăn ngắt dòng giữa chừng */
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+/* === KẾT THÚC THÊM MỚI === */
+
+
+/* === THÊM MỚI: Media Query cho bố cục PC của bộ lọc === */
+@media (min-width: 768px) {
+    .filter-grid-container {
+        grid-template-columns: 1fr 1fr; /* 2-col trên PC */
+    }
+    .filter-column {
+        height: 100%; /* Đảm bảo các cột có chiều cao bằng nhau */
+    }
+    .filter-column textarea {
+        flex-grow: 1; /* Giúp textarea lấp đầy không gian */
+    }
+    .filter-column .inline-form {
+        margin-top: auto; /* Đẩy mục chọn xuống dưới cùng của cột 2 */
+    }
+}
+
+
+@media (max-width: 768px) {
+    body { margin: 0; padding: 10px; font-size: 4vw; -webkit-text-size-adjust: 100%; }
+    .page { padding: 10px; margin: 10px auto; }
+    h2 { font-size: 6vw; } h3 { font-size: 5vw; } label { font-size: 4vw; }
+    .simple-animated-logo { font-size: 8vw; } 
+    .main-page-logo { font-size: 6vw; margin-bottom: 15px; } /* Logo nhỏ hơn trên mobile */
+    input, button, textarea { padding: 10px 12px; font-size: 4vw; }
+    th, td { padding: 8px; font-size: 4vw; word-break: break-word; }
+    .so-so { font-size: 6vw; word-break: break-all; }
+    tr.final-amount-positive td, tr.final-amount-negative td { font-size: 6.8vw !important; padding: 11px 7px !important; }
+    
+    /* === THAY ĐỔI: Chỉnh cỡ chữ "Phải nộp" trên di động === */
+    tr.final-amount-positive td#ketQuaLabel {
+        font-size: 6vw !important;
+        white-space: nowrap;
+    }
+    
+    /* === THÊM MỚI: CSS Tiêu đề cho Mobile === */
+    #summaryTitle {
+        font-size: 4.5vw; /* Nhỏ hơn h3 (5vw) */
+    }
+    /* === KẾT THÚC THÊM MỚI === */
+
+    .bang-chu-cell { font-size: 3vw !important; }
+    .copyright { font-size: 3vw; }
+    
+    .dynamic-input { font-size: 4.2vw !important; }
+    .manual-grid { grid-template-columns: 1fr; }
+    .manual-grid label { text-align: left; }
+    .modal-content { width: 95%; padding: 20px; }
+    .modal-close-btn { top: 8px; right: 12px; font-size: 24px; }
+    #notification-area { top: 10px; right: 10px; }
+    .notification { font-size: 3.8vw; padding: 10px 15px;}
+
+/* --- CHỈNH KÍCH CỠ BẢNG TỔNG KẾT (ĐIỆN THOẠI) --- */
+#summaryTableContainer th,
+#summaryTableContainer td {
+    font-size: 2vw; /* Giảm cỡ chữ (mặc định 3.8vw) */
+    padding: 3px;     /* Giảm đệm (mặc định 8px) */
+}
+
+  
+    /* --- CSS MỚI: Cỡ chữ Tổng Tiền (Mobile) --- */
+    #summaryTableContainer tfoot .final-amount-positive,
+    #summaryTableContainer tfoot .final-amount-negative {
+        font-size: 2vw; /* <--- THAY ĐỔI: Bằng với các tổng khác */
+        font-weight: 700; /* Đậm hơn các tổng khác (600) */
+        padding: 3px;     /* Giảm đệm (giống các ô khác) */
+    }
+}
+@media (min-width: 769px) { #mainPage { max-width: 1200px; } }
+@media print { body * { visibility: hidden; } #summaryTableContainer, #summaryTableContainer * { visibility: visible; } #summaryTableContainer { position: absolute; left: 0; top: 0; width: 100%; overflow: visible; } table { font-size: 10pt; } th, td { padding: 4px; } button, a, #notification-area, .modal-overlay, #loading-indicator { display: none !important; } }
+
+
+/* === THÊM MỚI: CSS CHO NÚT DARK MODE === */
+.dark-mode-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 2001; /* Trên cả loading và notification */
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    border: 1px solid var(--border-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 38px; /* Căn giữa icon */
+    text-align: center;
+    padding: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+}
+@media (max-width: 768px) {
+    .dark-mode-toggle {
+        top: 10px;
+        left: 10px;
+    }
+}
+/* === KẾT THÚC THÊM MỚI === */
+
+
+/* === THÊM MỚI: CÁC BIẾN MÀU CHO DARK MODE === */
+body.dark-mode {
+    --primary-color: #1abc9c;
+    --primary-dark: #16a085;
+    --secondary-color: #7f8c8d; /* Asbestos */
+    --secondary-dark: #95a5a6; /* Silver (sáng hơn 1 chút) */
+    --header-bg: #2c3e50; /* Midnight Blue (làm màu header) */
+    --header-text: #ecf0f1; /* Clouds */
+    --body-bg: #1e272e; /* Dark Slate Grey (nền chính) */
+    --container-bg: #34495e; /* Wet Asphalt (nền container) */
+    --text-color: #ecf0f1; /* Clouds (chữ chính) */
+    --text-light: #95a5a6; /* Silver (chữ phụ) */
+    --border-color: #4a627a; /* Màu viền tối */
+    
+    --logo-color: #e67e22; /* Giữ nguyên màu logo */
+
+    --light-red-bg: #572e2a; /* Màu nền đỏ đậm */
+    --success-light-bg: #2a573e;
+    --info-light-bg: #2a4a57;
+    --neutral-light-bg: #4a627a; /* Nền trung tính tối */
+    
+    --modal-overlay-bg: rgba(20, 30, 40, 0.8);
+}
+body.dark-mode input[type="file"] {
+    background-color: var(--container-bg);
+}
+body.dark-mode input[type="file"].loaded {
+    background-color: var(--success-light-bg);
+}
+body.dark-mode #tongCongRow {
+    color: var(--header-text); /* Chữ sáng trên nền vàng */
+}
+/* === KẾT THÚC THÊM MỚI === */

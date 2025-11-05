@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo thu tiền - 8.ZENG™</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
+
+  <div id="notification-area"></div>
+  
+  <div id="loading-indicator">Đang xử lý...</div>
+
+  <div id="homePage" class="page">
+    <div class="simple-animated-logo">
+        <span class="logo-char-1">Z</span>
+        <span class="logo-char-2">E</span>
+        <span class="logo-char-3">N</span>
+        <span class="logo-char-4">G</span>
+        <span class="logo-char-5 tm">™</span>
+      <span class="logo-char-6 8">8</span>
+    </div>
+    <h2>Báo cáo Thu Tiền</h2>
+    <div class="controls-panel">
+        <label for="excelFile1">Chọn file Biểu 31 (Lô tô):</label>
+        <input type="file" id="excelFile1" accept=".xls,.xlsx">
+        
+        <label for="excelFile2">Chọn file Biểu 35 (XSKT - Tùy chọn):</label>
+        <input type="file" id="excelFile2" accept=".xls,.xlsx">
+        
+        <div class="home-actions">
+            <button id="btnShowManualReport" class="warning">Thêm Báo cáo</button>
+            <button id="btnLoadData" class="success">Nạp dữ liệu</button>
+        </div>
+    </div>
+    <div class="copyright">
+        © 2025 ZENG FINANCE
+    </div>
+  </div>
+  
+  <div id="mainPage" class="page" style="display: none;">
+    <div class="simple-animated-logo main-page-logo">
+        <span class="logo-char-1">Z</span>
+        <span class="logo-char-2">E</span>
+        <span class="logo-char-3">N</span>
+        <span class="logo-char-4">G</span>
+        <span class="logo-char-5 tm">™</span>
+    </div>
+
+    <div class="main-nav">
+        <button id="navSummary" class="active">Báo cáo Tổng hợp</button>
+        <button id="navReport">Báo cáo Chi tiết</button> <button id="navSell">Bán thêm vé</button>
+        <button id="navReload" class="warning">Nạp lại Excel</button>
+    </div>
+
+    <div id="summarySection" class="main-section">
+        
+        <div class="controls-panel" style="margin-bottom: 15px; padding: 15px;">
+            <div class="filter-grid-container">
+                <div class="filter-column">
+                    <label for="regionDefinitionsInput">Định nghĩa vùng (Mỗi vùng 1 dòng):</label>
+                    <textarea id="regionDefinitionsInput" rows="4" placeholder="Ví dụ:&#10;huyện Ý Yên: 550_599+650_699+6999&#10;huyện Vụ Bản: 200_299+350_450"></textarea>
+                    <button id="btnSaveRegions" class="success">Lưu Định nghĩa</button>
+                </div>
+                
+                <div class="filter-column">
+                    <label for="regionSelect">Chọn Đơn vị:</label>
+                    <div class="inline-form" style="flex-wrap: nowrap;"> 
+                        <select id="regionSelect" style="flex-grow: 1;">
+                            <option value="all">--- Tất cả ---</option>
+                            </select>
+                        <button id="btnClearSummaryFilter" class="secondary" style="flex-grow: 0; margin-left: 10px;">Xoá lọc</button>
+                    </div>
+
+                    <label for="filterMinAmount" style="margin-top: 10px;">Lọc Doanh số (K) - Từ:</label>
+                    <input type="number" id="filterMinAmount" placeholder="Nhập số (K), ví dụ: 100" style="padding: 10px 12px; font-size: 15px;">
+                    
+                    <label for="filterMaxAmount">Lọc Doanh số (K) - Đến:</label>
+                    <input type="number" id="filterMaxAmount" placeholder="Nhập số (K), ví dụ: 500" style="padding: 10px 12px; font-size: 15px;">
+                    
+                    <button id="btnClearAmountFilter" class="secondary" style="margin-top: 5px;">Xoá lọc tiền</button>
+                    </div>
+            </div>
+        </div>
+        <h3 id="summaryTitle">Bảng Báo Cáo Tổng Hợp:</h3>
+        <h4 id="summaryDate" class="report-date"></h4>
+        
+        <div id="summaryTableContainer"></div>
+        <div class="summary-actions">
+            <button id="btnCopySummary" class="success">Copy Ảnh</button>
+            <button id="btnSaveSummary" class="secondary">Tải ảnh</button>
+        </div>
+    </div>
+
+    <div id="reportSection" class="main-section" style="display: none;">
+        <h3>Tạo Báo Cáo Chi Tiết</h3>
+        <div class="controls-panel">
+            <label for="soSoInput">Nhập số sổ (ví dụ: 550):</label>
+            <div class="inline-form">
+                <input type="text" id="soSoInput" inputmode="numeric" placeholder="Nhập số sổ...">
+            </div>
+            <div class="report-actions-grid">
+                <button id="btnCreateReport">Tạo báo cáo</button>
+                <button id="btnShowManualReport_inline" class="warning">Thêm Báo cáo</button>
+            </div>
+        </div>
+        
+        <div id="reportContainer"></div>
+        <div id="actionButtonContainer">
+            <button id="btnCopyReport">Copy Ảnh</button>
+            <button id="toggleChoicesBtn" class="secondary">Thêm tiền Thưởng/Nợ</button>
+            <div id="actionChoices"></div>
+        </div>
+    </div>
+
+    <div id="sellSection" class="main-section" style="display: none;">
+        <h3>Bán thêm Vé (Thêm vào Báo cáo chi tiết)</h3>
+        <p class="context-note">Vé sẽ được thêm vào báo cáo chi tiết đang được hiển thị.</p>
+        <div id="sellTicketControls" class="controls-panel">
+            <div>
+                <label>Loại hình:</label>
+                <div class="ticket-type-selector">
+                    <label><input type="radio" name="sellTicketType" value="xo-so" checked> Xổ số</label>
+                    <label><input type="radio" name="sellTicketType" value="ve-boc"> Vé bóc</label>
+                    <label><input type="radio" name="sellTicketType" value="custom-name"> Tự nhập tên</label>
+                </div>
+                <input type="text" id="customTicketName" placeholder="Nhập tên loại hình..." style="display:none; margin-top: 5px;">
+            </div>
+            <div>
+                <label>Giá bán:</label>
+                <div class="ticket-type-selector">
+                    <label><input type="radio" name="sellPrice" value="10000" checked> 10.000</label>
+                    <label><input type="radio" name="sellPrice" value="20000"> 20.000</label>
+                    <label><input type="radio" name="sellPrice" value="5000"> 5.000</label>
+                    <label><input type="radio" name="sellPrice" value="custom-price"> Tự nhập giá</label>
+                </div>
+                <input type="text" id="customTicketPrice" inputmode="numeric" placeholder="Nhập giá bán..." style="display:none; margin-top: 5px;">
+            </div>
+            <div>
+                <label>Hoa hồng:</label>
+                <div class="ticket-type-selector">
+                    <label><input type="radio" name="commissionRate" value="0.10" checked> 10%</label>
+                    <label><input type="radio" name="commissionRate" value="0.12"> 12%</label>
+                    <label><input type="radio" name="commissionRate" value="custom-commission"> Tự nhập %</label>
+                </div>
+                <input type="number" id="customCommissionPercent" placeholder="Nhập % hoa hồng (ví dụ: 15)" style="display:none; margin-top: 5px;" min="0">
+            </div>
+            <div>
+                <label for="sellQuantityInput">Số lượng:</label>
+                <input type="number" id="sellQuantityInput" placeholder="Nhập số lượng vé..." min="0">
+            </div>
+            <button id="btnAddTicket" class="success">Thêm vé vào báo cáo</button>
+        </div>
+    </div>
+  </div>
+
+   <div id="manualInputModal" class="modal-overlay">
+     <div class="modal-content">
+       <span id="closeModalBtn" class="modal-close-btn">&times;</span>
+       <div id="manualReportFormContent" class="controls-panel"> 
+           <h4 style="margin-top:0; text-align:center;">Thêm Báo Cáo Thủ Công</h4>
+           
+           <div class="manual-grid">
+               <label for="manualAgentName">Tên Đại Lý:</label>
+               <input type="text" id="manualAgentName" placeholder="Tự nhập...">
+               <label for="manualDateRange">Thời gian:</label>
+               <input type="text" id="manualDateRange" placeholder="Tự nhập...">
+               <label for="manualLotoDB">Lô tô Đặc biệt:</label>
+               <input type="text" id="manualLotoDB" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
+               <label for="manualLoCap">Lô cặp:</label>
+               <input type="text" id="manualLoCap" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
+               <label for="manualC227">2/27:</label>
+               <input type="text" id="manualC227" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
+               <label for="manualC323">3/23:</label>
+               <input type="text" id="manualC323" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
+               <label for="manualThuong">Thưởng:</label>
+               <input type="text" id="manualThuong" inputmode="numeric" class="manual-currency" placeholder="Nhập tiền thưởng...">
+           </div>
+           <div class="form-actions" style="margin-top: 15px;">
+               <button id="btnClearManualReport" class="secondary">Xoá</button>
+               <button id="btnCreateManualReport" class="success">Thêm</button>
+           </div>
+       </div>
+     </div>
+   </div>
+
+   <div id="imagePreviewModal" class="modal-overlay">
+     <div class="modal-content">
+       <span id="closePreviewModalBtn" class="modal-close-btn">&times;</span>
+       <h4 style="margin-top:0; text-align:center;">Sao chép Ảnh Báo cáo</h4>
+       <p style="text-align: center; color: var(--text-light); margin-top: -10px;">
+           Nhấn chuột phải vào ảnh dưới đây và chọn "Sao chép hình ảnh":
+       </p>
+       <img id="imagePreviewHolder" src="" alt="Bản xem trước báo cáo" style="width: 100%; border: 1px solid var(--border-color); border-radius: 4px; user-select: auto; -webkit-user-select: auto;">
+     </div>
+   </div>
+
+    <div id="reloadModal" class="modal-overlay">
+      <div class="modal-content">
+        <span id="closeReloadModalBtn" class="modal-close-btn">&times;</span>
+        <div id="reloadFormContent" class="controls-panel" style="border: none; box-shadow: none; padding: 10px 0;"> 
+            <h4 style="margin-top:0; text-align:center;">Nạp lại File Excel</h4>
+            
+            <label for="reloadFile1">Chọn file Biểu 31 (Lô tô):</label>
+            <input type="file" id="reloadFile1" accept=".xls,.xlsx">
+            
+            <label for="reloadFile2">Chọn file Biểu 35 (XSKT - Tùy chọn):</label>
+            <input type="file" id="reloadFile2" accept=".xls,.xlsx">
+            
+            <button id="btnReloadSubmit" class="success" style="margin-top: 15px;">Nạp</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="passwordModal" class="modal-overlay">
+      <div class="modal-content">
+        <span id="closePasswordModalBtn" class="modal-close-btn">&times;</span>
+        <div class="controls-panel" style="border: none; box-shadow: none; padding: 10px 0;"> 
+            <h4 style="margin-top:0; text-align:center;">Yêu cầu Mật khẩu</h4>
+            <label for="passwordInput">Vui lòng nhập mật khẩu để chỉnh sửa:</label>
+            <input type="password" id="passwordInput" style="font-size: 18px;">
+            <div class="form-actions" style="margin-top: 15px;">
+                <button id="cancelPasswordBtn" class="secondary">Huỷ</button>
+                <button id="btnSubmitPassword" class="success">Xác nhận</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+  <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&#9650;</button>
+  <button id="scrollToBottomBtn" title="Cuộn xuống dưới">&#9660;</button>
+  
+  <script src="js/main.js" type="module"></script>
+</body>
+</html>
