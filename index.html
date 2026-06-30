@@ -1,241 +1,491 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Báo cáo thu tiền - 8.ZENG™</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
-  <link rel="stylesheet" href="css/style.css">
+  <title>☆ Lucky Wheel ☆</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3b82f6',
+            secondary: '#6366f1',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            dark: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+            },
+          },
+          animation: {
+            'bounce-slow': 'bounce 3s infinite',
+            'pulse-slow': 'pulse 3s infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .text-shadow {
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      }
+      .matching-number {
+        @apply text-danger font-bold;
+        color: #ef4444 !important;
+      }
+    }
+  </style>
 </head>
-<body>
 
-  <button id="darkModeToggle" class="dark-mode-toggle">🌙</button>
+<body class="bg-gray-50 dark:bg-dark-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen">
+  <div class="container max-w-7xl mx-auto px-4 py-6">
+    <button id="darkModeToggle" class="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-dark-800 shadow-lg hover:scale-110 transition-transform">
+      <span class="dark:hidden">🌙</span>
+      <span class="hidden dark:inline">☀️</span>
+    </button>
 
-  <div id="notification-area"></div>
-  
-  <div id="loading-indicator">Đang xử lý...</div>
+    <h1 class="text-3xl font-bold text-center mb-6 text-primary dark:text-secondary text-shadow">☆ Lucky Wheel ☆</h1>
 
-  <div id="homePage" class="page">
-    <div class="simple-animated-logo">
-        <span class="logo-char-1">Z</span>
-        <span class="logo-char-2">E</span>
-        <span class="logo-char-3">N</span>
-        <span class="logo-char-4">G</span>
-        <span class="logo-char-5 tm">™</span>
-      <span class="logo-char-6 8">8</span>
-    </div>
-    <h2>Báo cáo Thu Tiền</h2>
-    <div class="controls-panel">
-        <label for="excelFile1">Chọn file Biểu 31 (Lô tô):</label>
-        <input type="file" id="excelFile1" accept=".xls,.xlsx">
-        
-        <label for="excelFile2">Chọn file Biểu 35 (XSKT - Tùy chọn):</label>
-        <input type="file" id="excelFile2" accept=".xls,.xlsx">
-        
-        <div class="home-actions">
-            <button id="btnShowManualReport" class="warning">Thêm Báo cáo</button>
-            <button id="btnLoadData" class="success">Nạp dữ liệu</button>
+    <div class="flex flex-col lg:flex-row gap-6">
+      <div class="flex-1 space-y-4">
+        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg">
+          <label class="block text-sm font-medium mb-1">Nhập số liệu (Hỗn hợp):</label>
+          <textarea 
+            id="combinedBetInput" 
+            class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-primary dark:focus:ring-secondary focus:border-transparent bg-white dark:bg-dark-700 font-mono text-sm leading-relaxed" 
+            style="height: 330px"
+            placeholder="Ví dụ nhập:&#10;Đề 12.34.56x50&#10;Lô 01-02-03x10&#10;Xiên 12-34-56x100&#10;3C 123.456x20&#10;3CL 789.912x5"
+          ></textarea>
+          <p class="text-[11px] text-gray-500 mt-1.5">
+            💡 Hỗ trợ: Đề (de, d), Lô (lo, l), Xiên (x, x2, x3, x4, xien), 3 Càng (3c, 3cang), 3 Càng Lô (3cl, 3clo). Phân cách bằng dấu cách, phẩy, chấm, gạch ngang; dùng 'x', '+' hoặc '*' trước tiền/điểm cược.
+          </p>
         </div>
-    </div>
-    <div class="copyright">
-        © 2025 ZENG FINANCE
-    </div>
-  </div>
-  
-  <div id="mainPage" class="page" style="display: none;">
-    <div class="simple-animated-logo main-page-logo">
-        <span class="logo-char-1">Z</span>
-        <span class="logo-char-2">E</span>
-        <span class="logo-char-3">N</span>
-        <span class="logo-char-4">G</span>
-        <span class="logo-char-5 tm">™</span>
-    </div>
 
-    <div class="main-nav">
-        <button id="navSummary" class="active">Báo cáo Tổng hợp</button>
-        <button id="navReport">Báo cáo Chi tiết</button> <button id="navSell">Bán thêm vé</button>
-        <button id="navReload" class="warning">Nạp lại Excel</button>
-    </div>
-
-    <div id="summarySection" class="main-section">
-        
-        <div class="controls-panel" style="margin-bottom: 15px; padding: 15px;">
-            <div class="filter-grid-container">
-                <div class="filter-column">
-                    <label for="regionDefinitionsInput">Định nghĩa vùng (Mỗi vùng 1 dòng):</label>
-                    <textarea id="regionDefinitionsInput" rows="4" placeholder="Ví dụ:&#10;huyện Ý Yên: 550_599+650_699+6999&#10;huyện Vụ Bản: 200_299+350_450"></textarea>
-                    <button id="btnSaveRegions" class="success">Lưu Định nghĩa</button>
-                </div>
-                
-                <div class="filter-column">
-                    <label for="regionSelect">Chọn Đơn vị:</label>
-                    <div class="inline-form" style="flex-wrap: nowrap;"> 
-                        <select id="regionSelect" style="flex-grow: 1;">
-                            <option value="all">--- Tất cả ---</option>
-                            </select>
-                        <button id="btnClearSummaryFilter" class="secondary" style="flex-grow: 0; margin-left: 10px;">Xoá lọc</button>
-                    </div>
-
-                    <label for="filterMinAmount" style="margin-top: 10px;">Lọc Doanh số (K) - Từ:</label>
-                    <input type="number" id="filterMinAmount" placeholder="Nhập số (K), ví dụ: 100" style="padding: 10px 12px; font-size: 15px;">
-                    
-                    <label for="filterMaxAmount">Lọc Doanh số (K) - Đến:</label>
-                    <input type="number" id="filterMaxAmount" placeholder="Nhập số (K), ví dụ: 500" style="padding: 10px 12px; font-size: 15px;">
-                    
-                    <button id="btnClearAmountFilter" class="secondary" style="margin-top: 5px;">Xoá lọc tiền</button>
-                    </div>
-            </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="calculateButton" class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
+            Tính tổng
+          </button>
+          <button id="copyButton" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
+            Sao chép Chuyển
+          </button>
+          <button id="copyInputListButton" class="bg-warning hover:bg-warning/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
+            Sao chép Input
+          </button>
         </div>
-        <h3 id="summaryTitle">Bảng Báo Cáo Tổng Hợp:</h3>
-        <h4 id="summaryDate" class="report-date"></h4>
-        
-        <div id="summaryTableContainer"></div>
-        <div class="summary-actions">
-            <button id="btnCopySummary" class="success">Copy Ảnh</button>
-            <button id="btnSaveSummary" class="secondary">Tải ảnh</button>
+
+        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 space-y-2 transition-all hover:shadow-lg">
+          <div class="flex flex-wrap items-center gap-2">
+            <label class="text-sm font-medium">Giữ lại:</label>
+            <input type="text" id="retainNumber" value="0" 
+                   class="w-20 border border-gray-300 dark:border-gray-600 rounded-md p-1 text-center bg-white dark:bg-dark-700 focus:ring-2 focus:ring-primary">
+            <div class="flex items-center gap-4">
+              <label class="flex items-center gap-1 text-sm">
+                <input type="radio" name="retainType" id="retainTypeMoney" value="money" checked 
+                       class="form-radio text-primary dark:text-secondary border-gray-300 dark:border-gray-600">
+                <span>Tiền</span>
+              </label>
+              <label class="flex items-center gap-1 text-sm">
+                <input type="radio" name="retainType" id="retainTypePercentage" value="percentage" 
+                       class="form-radio text-primary dark:text-secondary border-gray-300 dark:border-gray-600">
+                <span>Phần trăm</span>
+              </label>
+            </div>
+          </div>
         </div>
-    </div>
 
-    <div id="reportSection" class="main-section" style="display: none;">
-        <h3>Tạo Báo Cáo Chi Tiết</h3>
-        <div class="controls-panel">
-            <label for="soSoInput">Nhập số sổ (ví dụ: 550):</label>
-            <div class="inline-form">
-                <input type="text" id="soSoInput" inputmode="numeric" placeholder="Nhập số sổ...">
+        <!-- Lottery Results Card (Ported from thau_lode.html) -->
+        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg space-y-4">
+          <div class="flex justify-between items-center flex-wrap gap-2">
+            <label class="text-sm font-medium">Kết quả Xổ số:</label>
+            <div class="flex gap-1 text-xs">
+              <button type="button" id="btnSourceMinhNgoc" class="px-2.5 py-1 rounded bg-primary text-white font-semibold border border-transparent">
+                Minh Ngọc
+              </button>
+              <button type="button" id="btnSourceXSKT" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 font-semibold border border-transparent">
+                XSKT.com.vn
+              </button>
+              <button type="button" id="btnSourceMKetqua" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 font-semibold border border-transparent">
+                mketqua.net
+              </button>
             </div>
-            <div class="report-actions-grid">
-                <button id="btnCreateReport">Tạo báo cáo</button>
-                <button id="btnShowManualReport_inline" class="warning">Thêm Báo cáo</button>
-            </div>
-        </div>
-        
-        <div id="reportContainer"></div>
-        <div id="actionButtonContainer">
-            <button id="btnCopyReport">Copy Ảnh</button>
-            <button id="toggleChoicesBtn" class="secondary">Thêm tiền Thưởng/Nợ</button>
-            <div id="actionChoices"></div>
-        </div>
-    </div>
+          </div>
 
-    <div id="sellSection" class="main-section" style="display: none;">
-        <h3>Bán thêm Vé (Thêm vào Báo cáo chi tiết)</h3>
-        <p class="context-note">Vé sẽ được thêm vào báo cáo chi tiết đang được hiển thị.</p>
-        <div id="sellTicketControls" class="controls-panel">
-            <div>
-                <label>Loại hình:</label>
-                <div class="ticket-type-selector">
-                    <label><input type="radio" name="sellTicketType" value="xo-so" checked> Xổ số</label>
-                    <label><input type="radio" name="sellTicketType" value="ve-boc"> Vé bóc</label>
-                    <label><input type="radio" name="sellTicketType" value="custom-name"> Tự nhập tên</label>
-                </div>
-                <input type="text" id="customTicketName" placeholder="Nhập tên loại hình..." style="display:none; margin-top: 5px;">
+          <div class="flex items-center justify-between bg-gray-50 dark:bg-dark-700 p-2 rounded-lg flex-wrap gap-2 text-xs">
+            <div class="flex items-center gap-2 flex-wrap">
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input type="radio" name="resultMode" value="auto" checked class="form-radio text-primary h-3 w-3">
+                <span>Tự động tải</span>
+              </label>
+              <input type="date" id="resultDateInput" class="border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-xs bg-white dark:bg-dark-800">
+              
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input type="radio" name="resultMode" value="manual" class="form-radio text-primary h-3 w-3">
+                <span>Nhập thủ công</span>
+              </label>
             </div>
-            <div>
-                <label>Giá bán:</label>
-                <div class="ticket-type-selector">
-                    <label><input type="radio" name="sellPrice" value="10000" checked> 10.000</label>
-                    <label><input type="radio" name="sellPrice" value="20000"> 20.000</label>
-                    <label><input type="radio" name="sellPrice" value="5000"> 5.000</label>
-                    <label><input type="radio" name="sellPrice" value="custom-price"> Tự nhập giá</label>
-                </div>
-                <input type="text" id="customTicketPrice" inputmode="numeric" placeholder="Nhập giá bán..." style="display:none; margin-top: 5px;">
-            </div>
-            <div>
-                <label>Hoa hồng:</label>
-                <div class="ticket-type-selector">
-                    <label><input type="radio" name="commissionRate" value="0.10" checked> 10%</label>
-                    <label><input type="radio" name="commissionRate" value="0.12"> 12%</label>
-                    <label><input type="radio" name="commissionRate" value="custom-commission"> Tự nhập %</label>
-                </div>
-                <input type="number" id="customCommissionPercent" placeholder="Nhập % hoa hồng (ví dụ: 15)" style="display:none; margin-top: 5px;" min="0">
-            </div>
-            <div>
-                <label for="sellQuantityInput">Số lượng:</label>
-                <input type="number" id="sellQuantityInput" placeholder="Nhập số lượng vé..." min="0">
-            </div>
-            <button id="btnAddTicket" class="success">Thêm vé vào báo cáo</button>
-        </div>
-    </div>
-  </div>
-
-   <div id="manualInputModal" class="modal-overlay">
-     <div class="modal-content">
-       <span id="closeModalBtn" class="modal-close-btn">&times;</span>
-       <div id="manualReportFormContent" class="controls-panel"> 
-           <h4 style="margin-top:0; text-align:center;">Thêm Báo Cáo Thủ Công</h4>
-           
-           <div class="manual-grid">
-               <label for="manualAgentName">Tên Đại Lý:</label>
-               <input type="text" id="manualAgentName" placeholder="Tự nhập...">
-               <label for="manualDateRange">Thời gian:</label>
-               <input type="text" id="manualDateRange" placeholder="Tự nhập...">
-               <label for="manualLotoDB">Lô tô Đặc biệt:</label>
-               <input type="text" id="manualLotoDB" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
-               <label for="manualLoCap">Lô cặp:</label>
-               <input type="text" id="manualLoCap" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
-               <label for="manualC227">2/27:</label>
-               <input type="text" id="manualC227" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
-               <label for="manualC323">3/23:</label>
-               <input type="text" id="manualC323" inputmode="numeric" class="manual-currency" placeholder="Nhập doanh thu...">
-               <label for="manualThuong">Thưởng:</label>
-               <input type="text" id="manualThuong" inputmode="numeric" class="manual-currency" placeholder="Nhập tiền thưởng...">
-           </div>
-           <div class="form-actions" style="margin-top: 15px;">
-               <button id="btnClearManualReport" class="secondary">Xoá</button>
-               <button id="btnCreateManualReport" class="success">Thêm</button>
-           </div>
-       </div>
-     </div>
-   </div>
-
-   <div id="imagePreviewModal" class="modal-overlay">
-     <div class="modal-content">
-       <span id="closePreviewModalBtn" class="modal-close-btn">&times;</span>
-       <h4 style="margin-top:0; text-align:center;">Sao chép Ảnh Báo cáo</h4>
-       <p style="text-align: center; color: var(--text-light); margin-top: -10px;">
-           Nhấn chuột phải vào ảnh dưới đây và chọn "Sao chép hình ảnh":
-       </p>
-       <img id="imagePreviewHolder" src="" alt="Bản xem trước báo cáo" style="width: 100%; border: 1px solid var(--border-color); border-radius: 4px; user-select: auto; -webkit-user-select: auto;">
-     </div>
-   </div>
-
-    <div id="reloadModal" class="modal-overlay">
-      <div class="modal-content">
-        <span id="closeReloadModalBtn" class="modal-close-btn">&times;</span>
-        <div id="reloadFormContent" class="controls-panel" style="border: none; box-shadow: none; padding: 10px 0;"> 
-            <h4 style="margin-top:0; text-align:center;">Nạp lại File Excel</h4>
             
-            <label for="reloadFile1">Chọn file Biểu 31 (Lô tô):</label>
-            <input type="file" id="reloadFile1" accept=".xls,.xlsx">
-            
-            <label for="reloadFile2">Chọn file Biểu 35 (XSKT - Tùy chọn):</label>
-            <input type="file" id="reloadFile2" accept=".xls,.xlsx">
-            
-            <button id="btnReloadSubmit" class="success" style="margin-top: 15px;">Nạp</button>
+            <span id="autoResultStatus" class="text-[10px] font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/30 hidden">
+              Chưa tải
+            </span>
+
+            <button type="button" id="btnFetchResults" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded transition-all active:scale-95 flex items-center gap-1">
+              <span id="fetchBtnSpinner" class="hidden animate-spin rounded-full h-2.5 w-2.5 border-b border-white"></span>
+              <span id="fetchBtnText">Tải KQ</span>
+            </button>
+          </div>
+
+          <!-- Manual Fields -->
+          <div id="manualFields" class="grid grid-cols-1 md:grid-cols-12 gap-3 hidden">
+            <div class="md:col-span-3">
+              <label for="specialPrizeInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase">Giải ĐB</label>
+              <input type="text" id="specialPrizeInput" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-center font-bold tracking-widest text-emerald-600 dark:text-emerald-400 bg-white dark:bg-dark-700" placeholder="e.g. 58495">
+            </div>
+            <div class="md:col-span-9">
+              <label for="allPrizesInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase">
+                27 Giải (Nhập số cuối hoặc đầy đủ, cách nhau bằng dấu cách/phẩy)
+              </label>
+              <textarea id="allPrizesInput" rows="2" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-sm bg-white dark:bg-dark-700 leading-relaxed font-mono" placeholder="Ví dụ: 09253, 77988... hoặc 53 88 65 45..."></textarea>
+            </div>
+          </div>
+
+          <!-- 2-Digit visual board -->
+          <div id="twoDigitBoardContainer" class="hidden border-t border-gray-200 dark:border-gray-700 pt-3">
+            <label id="lbl27Giai" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">
+              27 Giải
+            </label>
+            <div id="twoDigitBoard" class="flex flex-wrap gap-1 bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-semibold">
+              <!-- populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg">
+          <label class="block text-sm font-medium mb-2">
+            <a href="nhaptat.html" class="text-primary dark:text-secondary hover:underline">Nhập tắt:</a>
+          </label>
+          <textarea 
+            id="shortcuts" 
+            class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-primary dark:focus:ring-secondary focus:border-transparent bg-white dark:bg-dark-700" 
+            style="height: 99px"
+            placeholder="Định nghĩa các phím tắt..."
+          ></textarea>
+          <p class="text-center mt-3 text-xs text-gray-500 dark:text-gray-400">
+            <a href="dothuong.html" class="hover:underline">copyright</a> © by 
+            <a href="ex.html" class="text-primary dark:text-secondary hover:underline">Angle</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex-1 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
+            <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+              <span class="animate-bounce-slow">📊</span>
+              <span>Kết quả:</span>
+            </h3>
+            <div class="flex flex-col gap-2 mb-2">
+              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
+                <span class="text-sm text-gray-600">Tổng số: <span id="numResults" class="font-medium">0 con</span></span>
+              </div>
+              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
+                <span class="text-lg font-bold text-danger">Tổng: <span id="totalSum">0</span></span>
+              </div>
+            </div>
+            <div class="h-[calc(100%-8rem)]">
+              <div id="result" class="space-y-1 h-full overflow-y-auto p-2"></div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
+            <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+              <span class="animate-bounce-slow">🔄</span>
+              <span>Chuyển:</span>
+            </h3>
+            <div class="flex flex-col gap-2 mb-2">
+              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
+                <span class="text-sm text-gray-600">Tổng số: <span id="modifiedNumResults" class="font-medium">0 con</span></span>
+              </div>
+              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
+                <span class="text-lg font-bold text-danger">Tổng: <span id="modifiedTotalSum">0</span></span>
+              </div>
+            </div>
+            <div class="h-[calc(100%-8rem)]">
+              <div id="modifiedResult" class="space-y-1 h-full overflow-y-auto p-2"></div>
+            </div>
+          </div>
+
+          <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
+            <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+              <span class="animate-bounce-slow">🔍</span>
+              <span>Chi tiết:</span>
+            </h3>
+            <div class="border border-gray-200 dark:border-gray-700 rounded p-2 mb-2">
+              <span class="text-sm text-gray-600">Theo Input</span>
+            </div>
+            <div class="h-[calc(100%-8rem)]">
+              <ul id="inputList" class="space-y-1 h-full overflow-y-auto p-2"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lotto Report & Grand Summary Card (Ported from thau_lode.html style) -->
+        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg space-y-4">
+          <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
+            <h2 class="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
+              📊 Báo Cáo Thầu
+            </h2>
+            <button type="button" id="btnPriceConfig" class="px-2.5 py-1 bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 rounded text-xs font-bold transition-all flex items-center gap-1.5 border border-gray-300 dark:border-gray-600">
+              ⚙️ Cấu hình giá
+            </button>
+          </div>
+
+          <!-- Financial Figures -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+            <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
+              <span class="text-xs text-gray-500 block mb-0.5">Tiền Gốc</span>
+              <span id="summaryTotalCost" class="text-lg font-bold text-gray-800 dark:text-gray-200">0</span>
+            </div>
+            <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
+              <span class="text-xs text-gray-500 block mb-0.5">Tiền Trúng</span>
+              <span id="summaryTotalWinnings" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">0</span>
+            </div>
+            <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
+              <span id="summaryNetLabel" class="text-xs text-gray-500 block mb-0.5">Kết quả thầu</span>
+              <span id="summaryNetValue" class="text-lg font-extrabold text-gray-800 dark:text-gray-200">0</span>
+            </div>
+          </div>
+
+          <!-- Breakdown Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse border border-gray-200 dark:border-gray-700">
+              <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300">
+                <tr>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700">Thể loại</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-center">Xác</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Vốn</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Trúng</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Kết quả</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                <tr>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🔴 Đề</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblDeXac">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblDeVon">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblDeTrung">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblDeNet">0</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🔵 Lô</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblLoXac">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblLoVon">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblLoTrung">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblLoNet">0</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟢 Xiên</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblXienXac">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblXienVon">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblXienTrung">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblXienNet">0</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟣 3 Càng</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tbl3CXac">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CVon">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CTrung">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tbl3CNet">0</td>
+                </tr>
+                <tr>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟤 3C Lô</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tbl3CLXac">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CLVon">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CLTrung">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tbl3CLNet">0</td>
+                </tr>
+                <tr class="bg-gray-50 dark:bg-dark-900 font-bold text-gray-800 dark:text-gray-200">
+                  <td class="p-2 border border-gray-200 dark:border-gray-700">Tổng cộng</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center">-</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblTotalVon">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblTotalTrung">0</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-black" id="tblTotalNet">0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex gap-2">
+            <button type="button" id="btnCopyTextReport" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-bold transition-all flex-1 flex items-center justify-center gap-1.5 active:scale-95">
+              📋 Copy Báo Cáo
+            </button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div id="passwordModal" class="modal-overlay">
-      <div class="modal-content">
-        <span id="closePasswordModalBtn" class="modal-close-btn">&times;</span>
-        <div class="controls-panel" style="border: none; box-shadow: none; padding: 10px 0;"> 
-            <h4 style="margin-top:0; text-align:center;">Yêu cầu Mật khẩu</h4>
-            <label for="passwordInput">Vui lòng nhập mật khẩu để chỉnh sửa:</label>
-            <input type="password" id="passwordInput" style="font-size: 18px;">
-            <div class="form-actions" style="margin-top: 15px;">
-                <button id="cancelPasswordBtn" class="secondary">Huỷ</button>
-                <button id="btnSubmitPassword" class="success">Xác nhận</button>
+  <script src="script.js?v=2"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const shortcutsArea = document.getElementById('shortcuts');
+      const STORAGE_KEY = 'lucky_wheel_shortcuts';
+      const DATA_URL = 'https://raw.githubusercontent.com/doducdungvn/doducdungvn.github.io/refs/heads/main/nhaptat.txt';
+
+      // Nếu không tìm thấy ô nhập tắt thì dừng
+      if (!shortcutsArea) return;
+
+      // Hàm lưu vào LocalStorage
+      const saveToStorage = () => {
+        localStorage.setItem(STORAGE_KEY, shortcutsArea.value);
+      };
+
+      // 1. Tải dữ liệu từ LocalStorage ra trước
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData !== null) {
+        shortcutsArea.value = savedData;
+      }
+
+      // 2. Chỉ tải từ URL nếu ô nhập liệu TRỐNG (lần đầu hoặc đã xóa hết)
+      if (!shortcutsArea.value.trim()) {
+        fetch(DATA_URL)
+          .then(response => {
+            if (!response.ok) throw new Error('Kết nối thất bại');
+            return response.text();
+          })
+          .then(text => {
+            shortcutsArea.value = text;
+            saveToStorage(); // Lưu luôn dữ liệu mặc định vào storage
+          })
+          .catch(error => {
+            console.error('Lỗi tải dữ liệu nhập tắt mặc định:', error);
+            shortcutsArea.placeholder = "Không thể tải dữ liệu mặc định. Vui lòng kiểm tra kết nối.";
+          });
+      }
+
+  </script>
+
+  <!-- Modal Cấu hình giá (Ported from thau_lode.html) -->
+  <div id="modalPriceConfig" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/60 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-dark-800 w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700">
+      <!-- Modal Header -->
+      <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900">
+        <h3 class="text-sm font-bold text-primary dark:text-indigo-400 flex items-center gap-2 uppercase tracking-wider">
+          ⚙️ Cấu Hình Giá & Hoa Hồng
+        </h3>
+        <button id="btnClosePriceConfig" class="text-gray-400 hover:text-gray-200 text-lg font-bold transition-all p-1">
+          &times;
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-4">
+        <div class="flex justify-end mb-1">
+          <button id="btnResetRates" class="text-xs text-primary dark:text-indigo-400 hover:underline">
+            Khôi phục mặc định
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Số Đề settings -->
+          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🔴 Số Đề</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
+                <input type="number" id="rateDeComm" value="82" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Thưởng (1 ăn...)</label>
+                <input type="number" id="rateDePayout" value="80" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
             </div>
+          </div>
+
+          <!-- Đánh Lô settings -->
+          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🔵 Đánh Lô</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Vốn 1 điểm (đ)</label>
+                <input type="number" id="rateLoCost" value="23000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">Thưởng 1 điểm (đ)</label>
+                <input type="number" id="rateLoPayout" value="80000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+            </div>
+          </div>
+
+          <!-- Lô Xiên settings -->
+          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🟢 Lô Xiên (Xiên 2, 3, 4)</h3>
+            <div class="grid grid-cols-4 gap-2 mb-2">
+              <div class="col-span-4">
+                <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
+                <input type="number" id="rateXienComm" value="65" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 2 (1 ăn...)</label>
+                <input type="number" id="rateXien2Payout" value="15" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 3 (1 ăn...)</label>
+                <input type="number" id="rateXien3Payout" value="50" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 4 (1 ăn...)</label>
+                <input type="number" id="rateXien4Payout" value="120" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Càng settings -->
+          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🟣 Ba Càng Đề & Lô</h3>
+            <div class="grid grid-cols-2 gap-3 mb-2">
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">3C Đề Giá gốc (%)</label>
+                <input type="number" id="rate3CComm" value="75" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-1">3C Đề (1 ăn...)</label>
+                <input type="number" id="rate3CPayout" value="400" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Áp Má (1 ăn...)</label>
+                <input type="number" id="rate3CApMa" value="5" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Vốn (đ)</label>
+                <input type="number" id="rate3CLoCost" value="23000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+              <div>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Thưởng (đ)</label>
+                <input type="number" id="rate3CLoPayout" value="960000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end bg-gray-50 dark:bg-dark-900">
+        <button id="btnClosePriceConfigBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-5 rounded-md text-xs font-bold">
+          Xác nhận
+        </button>
+      </div>
     </div>
-
-  <button id="scrollToTopBtn" title="Cuộn lên đầu trang">&#9650;</button>
-  <button id="scrollToBottomBtn" title="Cuộn xuống dưới">&#9660;</button>
-  
-  <script src="js/main.js" type="module"></script>
+  </div>
 </body>
 </html>
