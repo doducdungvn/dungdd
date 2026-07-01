@@ -245,7 +245,7 @@ function parseNumbersFromBetString(numbersString, betType) {
         numbers.push(seg.substring(0, 2));
         numbers.push(seg.substring(1, 3));
       }
-    } else if (betType === 'xien') {
+    } else if (betType === 'xien' || betType === 'xienquay') {
       if (seg.length === 2) {
         numbers.push(seg);
       }
@@ -260,7 +260,7 @@ function parseNumbersFromBetString(numbersString, betType) {
 
 function parseCombinedInput(inputString) {
   let processedInput = inputString.replace(/[’‘ʼ＇`]/g, "'");
-  const sameLinePattern = /[\s,;]+\b(đề|de|lô|lo|xiên|xien|x|x2|x3|x4)\b|[\s,;]+\b(3càng|3cang|3c|3clô|3clo|3cl)\b|[\s,;]+\b(d|l)\b(?=\s+[a-z0-9'’‘ʼ＇`])/gi;
+  const sameLinePattern = /[\s,;]+\b(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|lô|lo|xiên|xien|x|x2|x3|x4)\b|[\s,;]+\b(3càng|3cang|3c|3clô|3clo|3cl)\b|[\s,;]+\b(d|l)\b(?=\s+[a-z0-9'’‘ʼ＇`])/gi;
   processedInput = processedInput.replace(sameLinePattern, (match) => {
     return "\n" + match.replace(/^[\s,;]+/g, '').trim();
   });
@@ -273,13 +273,15 @@ function parseCombinedInput(inputString) {
     xien3: [],
     xien4: [],
     bacang: [],
-    bacang_lo: []
+    bacang_lo: [],
+    rawOrder: []
   };
 
   const typeRegex = {
     de: /^(đề|de|d)$/i,
     lo: /^(lô|lo|l)$/i,
-    xien: /^(xiên|xien|x|x2|x3|x4)$/i,
+    xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
+    xien: /^(lô\s+xiên|lo\s+xien|xiên|xien|x|x2|x3|x4)$/i,
     bacang: /^(3càng|3cang|3c)$/i,
     bacang_lo: /^(3clô|3clo|3cl)$/i
   };
@@ -291,11 +293,12 @@ function parseCombinedInput(inputString) {
     if (!trimmed) return;
 
     let lineType = '';
-    const spaceMatch = trimmed.match(/^(đề|de|lô|lo|xiên|xien|x|x2|x3|x4|3càng|3cang|3c|3clô|3clo|3cl|d|l)\s+(.*)$/i);
+    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|lô|lo|xiên|xien|x|x2|x3|x4|3càng|3cang|3c|3clô|3clo|3cl|d|l)\s+(.*)$/i);
     if (spaceMatch) {
       const rawType = spaceMatch[1].toLowerCase();
       if (typeRegex.de.test(rawType)) lineType = 'de';
       else if (typeRegex.lo.test(rawType)) lineType = 'lo';
+      else if (typeRegex.xienquay.test(rawType)) lineType = 'xienquay';
       else if (typeRegex.xien.test(rawType)) lineType = 'xien';
       else if (typeRegex.bacang.test(rawType)) lineType = 'bacang';
       else if (typeRegex.bacang_lo.test(rawType)) lineType = 'bacang_lo';
@@ -308,6 +311,14 @@ function parseCombinedInput(inputString) {
       if (trimmed.match(/^l(\d+)/i)) {
         activeCategory = 'lo';
         lineType = 'lo';
+        trimmed = trimmed.substring(1).trim();
+      } else if (trimmed.match(/^xq(\d+)/i)) {
+        activeCategory = 'xienquay';
+        lineType = 'xienquay';
+        trimmed = trimmed.substring(2).trim();
+      } else if (trimmed.match(/^q(\d+)/i)) {
+        activeCategory = 'xienquay';
+        lineType = 'xienquay';
         trimmed = trimmed.substring(1).trim();
       } else if (trimmed.match(/^3c(\d+)/i)) {
         activeCategory = 'bacang';
@@ -335,14 +346,61 @@ function parseCombinedInput(inputString) {
 
       if (lineType === 'xien') {
         if (numbers.length >= 2 && numbers.length <= 4) {
-          parsedBets[`xien${numbers.length}`].push({
+          const item = {
+            numbers: numbers,
+            amount: amount
+          };
+          parsedBets[`xien${numbers.length}`].push(item);
+          parsedBets.rawOrder.push({
+            type: `xien${numbers.length}`,
             numbers: numbers,
             amount: amount
           });
         }
+      } else if (lineType === 'xienquay') {
+        if (numbers.length >= 2) {
+          const getCombos = (arr, k) => {
+            const result = [];
+            const fork = (i, combo) => {
+              if (combo.length === k) {
+                result.push(combo);
+                return;
+              }
+              if (i === arr.length) return;
+              fork(i + 1, [...combo, arr[i]]);
+              fork(i + 1, combo);
+            };
+            fork(0, []);
+            return result;
+          };
+
+          for (let size = 2; size <= 4; size++) {
+            if (numbers.length >= size) {
+              const combos = getCombos(numbers, size);
+              combos.forEach(combo => {
+                const item = {
+                  numbers: combo,
+                  amount: amount
+                };
+                parsedBets[`xien${size}`].push(item);
+                parsedBets.rawOrder.push({
+                  type: `xien${size}`,
+                  numbers: combo,
+                  amount: amount
+                });
+              });
+            }
+          }
+        }
       } else {
         numbers.forEach(num => {
-          parsedBets[lineType].push({
+          const item = {
+            numbers: [num],
+            amount: amount
+          };
+          parsedBets[lineType].push(item);
+          parsedBets.rawOrder.push({
+            type: lineType,
             numbers: [num],
             amount: amount
           });
@@ -681,6 +739,42 @@ function calculateSum() {
   const allPrizesLast2 = allPrizes.map(p => p.slice(-2));
   const allPrizesLast3 = allPrizes.filter(p => p.length >= 3).map(p => p.slice(-3));
 
+  const parseVal = (id, fallback) => {
+    const el = document.getElementById(id);
+    if (!el) return fallback;
+    const valStr = el.value || '';
+    const cleaned = valStr.toString().replace(/,/g, '.').trim();
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? fallback : parsed;
+  };
+
+  const deComm = parseVal('rateDeComm', 82);
+  const dePayout = parseVal('rateDePayout', 80);
+  const loCost = parseVal('rateLoCost', 23000);
+  const loPayout = parseVal('rateLoPayout', 80000);
+  const xienComm = parseVal('rateXienComm', 65);
+  const x2Payout = parseVal('rateXien2Payout', 15);
+  const x3Payout = parseVal('rateXien3Payout', 50);
+  const x4Payout = parseVal('rateXien4Payout', 120);
+  const baCangComm = parseVal('rate3CComm', 75);
+  const baCangPayout = parseVal('rate3CPayout', 400);
+  const baCangApMa = parseVal('rate3CApMa', 5);
+  const baCangLoCost = parseVal('rate3CLoCost', 75);
+  const baCangLoPayout = parseVal('rate3CLoPayout', 960);
+
+  const getLoCostFactor = (val) => {
+    if (val < 100) return val;
+    if (val < 10000) return val / 100;
+    return val / 1000;
+  };
+  const getLoPayoutFactor = (val) => {
+    if (val < 1000) return val;
+    return val / 1000;
+  };
+
+  const loCostFactor = getLoCostFactor(loCost);
+  const loPayoutFactor = getLoPayoutFactor(loPayout);
+
   const parsedBets = parseCombinedInput(inputString);
 
   const resultDiv = document.getElementById("result");
@@ -738,7 +832,6 @@ function calculateSum() {
     if (isMatch) {
       deWinSum += bet.amount;
     }
-    renderDetail(num, bet.amount, "Đề", isMatch ? 1 : 0);
   });
 
   // 2. Lô
@@ -752,7 +845,6 @@ function calculateSum() {
     if (occurrences > 0) {
       loWinSum += occurrences * bet.amount;
     }
-    renderDetail(num, bet.amount, "Lô", occurrences);
   });
 
   // 3. Xiên
@@ -763,11 +855,9 @@ function calculateSum() {
 
     const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
     if (allHit) {
-      // old fallback calculations
-      const winRate = size === 2 ? 15 : (size === 3 ? 50 : 120);
+      const winRate = size === 2 ? x2Payout : (size === 3 ? x3Payout : x4Payout);
       xienWinSum += bet.amount * winRate;
     }
-    renderDetail(bet.numbers.join('-'), bet.amount, `Xiên${size}`, allHit ? 1 : 0);
   });
 
   // 4. 3 Càng & 3 Càng Lô
@@ -787,22 +877,45 @@ function calculateSum() {
       baCangWinSum += bet.amount * 5;
       baCangDeApMaWinSum += bet.amount;
     }
-    renderDetail(num, bet.amount, "3C", match3 ? 1 : (match2 ? 0.5 : 0));
   });
 
   // 3 Càng Lô
   parsedBets.bacang_lo.forEach(bet => {
     const num = bet.numbers[0];
-    const costInThousands = bet.amount * 23;
+    const costInThousands = bet.amount * (baCangLoCost / 100);
     baCangBetSum += costInThousands;
     baCangLoBetSum += bet.amount;
 
     const occurrences = allPrizesLast3.filter(p => p === num).length;
     if (occurrences > 0) {
-      baCangWinSum += occurrences * bet.amount * 960;
+      baCangWinSum += occurrences * bet.amount * baCangLoPayout;
       baCangLoWinSum += occurrences * bet.amount;
     }
-    renderDetail(num, bet.amount, "3CLô", occurrences);
+  });
+
+  // Render detail in original entry order
+  parsedBets.rawOrder.forEach(bet => {
+    let occurrences = 0;
+    const num = bet.numbers[0];
+    const typeLabel = bet.type === "de" ? "Đề" : (bet.type === "lo" ? "Lô" : (bet.type.startsWith("xien") ? `Xiên${bet.numbers.length}` : (bet.type === "bacang" ? "3C" : "3CLô")));
+    
+    if (bet.type === "de") {
+      occurrences = num === specialPrizeLast2 ? 1 : 0;
+    } else if (bet.type === "lo") {
+      occurrences = allPrizesLast2.filter(p => p === num).length;
+    } else if (bet.type.startsWith("xien")) {
+      const allHit = bet.numbers.every(n => allPrizesLast2.includes(n));
+      occurrences = allHit ? 1 : 0;
+    } else if (bet.type === "bacang") {
+      const match3 = num === specialPrizeLast3;
+      const match2 = num.slice(-2) === specialPrizeLast2;
+      occurrences = match3 ? 1 : (match2 ? 0.5 : 0);
+    } else if (bet.type === "bacang_lo") {
+      occurrences = allPrizesLast3.filter(p => p === num).length;
+    }
+
+    const numStr = bet.type.startsWith("xien") ? bet.numbers.join('-') : num;
+    renderDetail(numStr, bet.amount, typeLabel, occurrences);
   });
 
   // Render Kết quả column
@@ -818,12 +931,15 @@ function calculateSum() {
 
     sorted.forEach(([key, value]) => {
       const div = document.createElement("div");
-      div.textContent = `${key} = ${value}${isLoto ? 'đ' : 'k'}`;
+      const suffix = title.includes("Lô(đ)") ? 'đ' : 'k';
+      div.textContent = `${key} = ${value}${suffix}`;
       totalUniquePairs++;
 
       let isWin = false;
       let hitText = "";
-      if (isLoto) {
+      
+      const isLotoType = title.includes("Lô") || title.includes("3cLô");
+      if (isLotoType) {
         const targetList = key.length === 3 ? allPrizesLast3 : allPrizesLast2;
         const occurrences = targetList.filter(p => p === key).length;
         if (occurrences > 0) {
@@ -831,9 +947,19 @@ function calculateSum() {
           hitText = occurrences > 1 ? ` (${occurrences} nháy)` : " (Trúng)";
         }
       } else {
-        if (key === specialPrizeLast2) {
-          isWin = true;
-          hitText = " (Trúng)";
+        if (key.length === 3) {
+          if (key === specialPrizeLast3) {
+            isWin = true;
+            hitText = " (Trúng)";
+          } else if (key.slice(-2) === specialPrizeLast2) {
+            isWin = true;
+            hitText = " (Áp má)";
+          }
+        } else {
+          if (key === specialPrizeLast2) {
+            isWin = true;
+            hitText = " (Trúng)";
+          }
         }
       }
 
@@ -845,12 +971,117 @@ function calculateSum() {
     });
   };
 
-  renderGroupResult("🔴 Đề", deSums, false);
-  renderGroupResult("🔵 Lô (điểm)", loSums, true);
+  // 1. Calculations for Kết quả column
+  const deVon = deBetSum * (deComm / 100);
+  const deTrung = deWinSum * dePayout;
+  const deNet = deVon - deTrung;
+
+  const loVon = loBetSum * loCostFactor;
+  const loTrung = loWinSum * loPayoutFactor;
+  const loNet = loVon - loTrung;
+
+  const xienVon = xienBetSum * (xienComm / 100);
+  const xienTrung = xienWinSum;
+  const xienNet = xienVon - xienTrung;
+
+  const baCangVon = baCangDeBetSum * (baCangComm / 100);
+  const baCangTrung = baCangDeWinSum * baCangPayout + baCangDeApMaWinSum * baCangApMa;
+  const baCangNet = baCangVon - baCangTrung;
+
+  // 3 Càng Lô sums map
+  const baCangLoSums = {};
+  parsedBets.bacang_lo.forEach(bet => {
+    const num = bet.numbers[0];
+    baCangLoSums[num] = (baCangLoSums[num] || 0) + bet.amount;
+  });
+  const baCangLoVon = baCangLoBetSum * (baCangLoCost / 100);
+  const baCangLoTrung = baCangLoWinSum * baCangLoPayout;
+  const baCangLoNet = baCangLoVon - baCangLoTrung;
+
+  const totalVon = deVon + loVon + xienVon + baCangVon + baCangLoVon;
+  const totalTrung = deTrung + loTrung + xienTrung + baCangTrung + baCangLoTrung;
+  const totalNet = totalVon - totalTrung;
+
+  // 2. Calculations for Chuyển column
+  const retainNumber = parseInt(document.getElementById("retainNumber")?.value) || 0;
+  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+
+  const getLayoffValues = (sumsMap, getPayoutFn) => {
+    let costSum = 0;
+    let winSum = 0;
+    Object.entries(sumsMap).forEach(([key, value]) => {
+      let modifiedSum = retainType === "money" ? value - retainNumber : value - (value * (retainNumber / 100));
+      if (modifiedSum >= 1) {
+        modifiedSum = Math.trunc(modifiedSum);
+        costSum += modifiedSum;
+        winSum += getPayoutFn(key, modifiedSum);
+      }
+    });
+    return { costSum, winSum };
+  };
+
+  const deLayoff = getLayoffValues(deSums, (key, amt) => (key === specialPrizeLast2 ? amt * dePayout : 0));
+  const deVonChuyen = deLayoff.costSum * (deComm / 100);
+  const deTrungChuyen = deLayoff.winSum;
+
+  let loLayoffWinPoints = 0;
+  const loLayoff = getLayoffValues(loSums, (key, amt) => {
+    const occurrences = allPrizesLast2.filter(p => p === key).length;
+    if (occurrences > 0) {
+      loLayoffWinPoints += occurrences * amt;
+    }
+    return occurrences * amt * loPayoutFactor;
+  });
+  const loVonChuyen = loLayoff.costSum * loCostFactor;
+  const loTrungChuyen = loLayoff.winSum;
+
+  let xienVonChuyen = 0;
+  let xienTrungChuyen = 0;
+  xienBets.forEach(bet => {
+    let modifiedSum = retainType === "money" ? bet.amount - retainNumber : bet.amount - (bet.amount * (retainNumber / 100));
+    if (modifiedSum >= 1) {
+      modifiedSum = Math.trunc(modifiedSum);
+      xienVonChuyen += modifiedSum * (xienComm / 100);
+      const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
+      if (allHit) {
+        const size = bet.numbers.length;
+        const winRate = size === 2 ? x2Payout : (size === 3 ? x3Payout : x4Payout);
+        xienTrungChuyen += modifiedSum * winRate;
+      }
+    }
+  });
+
+  const baCangLayoff = getLayoffValues(baCangSums, (key, amt) => {
+    const match3 = key === specialPrizeLast3;
+    const match2 = key.slice(-2) === specialPrizeLast2;
+    if (match3) return amt * baCangPayout;
+    if (match2) return amt * baCangApMa;
+    return 0;
+  });
+  const baCangVonChuyen = baCangLayoff.costSum * (baCangComm / 100);
+  const baCangTrungChuyen = baCangLayoff.winSum;
+
+  const baCangLoLayoff = getLayoffValues(baCangLoSums, (key, amt) => {
+    const occurrences = allPrizesLast3.filter(p => p === key).length;
+    return occurrences * amt * baCangLoPayout;
+  });
+  const baCangLoVonChuyen = baCangLoLayoff.costSum * (baCangLoCost / 100);
+  const baCangLoTrungChuyen = baCangLoLayoff.winSum;
+
+  const totalVonChuyen = deVonChuyen + loVonChuyen + xienVonChuyen + baCangVonChuyen + baCangLoVonChuyen;
+  const totalTrungChuyen = deTrungChuyen + loTrungChuyen + xienTrungChuyen + baCangTrungChuyen + baCangLoTrungChuyen;
+
+  // 3. Render Kết quả list with formatHeaderMoney
+  const formatHeaderMoney = (von, trung) => {
+    return `(${Math.round(von).toLocaleString('vi-VN')} / ${Math.round(trung).toLocaleString('vi-VN')})`;
+  };
+
+  renderGroupResult(`🔴 Đề ${formatHeaderMoney(deVon, deTrung)}`, deSums, false);
+  renderGroupResult(`🔵 Lô(đ) ${formatHeaderMoney(loVon, loTrung)}`, loSums, true);
 
   if (xienBets.length > 0 && resultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟢 Xiên</strong>`;
+    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVon, xienTrung)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-gray-500 text-xs";
     resultDiv.appendChild(header);
     xienBets.forEach(bet => {
@@ -867,7 +1098,7 @@ function calculateSum() {
 
   if (Object.keys(baCangSums).length > 0 && resultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟣 3 Càng</strong>`;
+    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVon, baCangTrung)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-gray-500 text-xs";
     resultDiv.appendChild(header);
     Object.entries(baCangSums).sort((a,b) => b[1]-a[1]).forEach(([key, value]) => {
@@ -886,21 +1117,11 @@ function calculateSum() {
     });
   }
 
-  // 3 Càng Lô sums map
-  const baCangLoSums = {};
-  parsedBets.bacang_lo.forEach(bet => {
-    const num = bet.numbers[0];
-    baCangLoSums[num] = (baCangLoSums[num] || 0) + bet.amount;
-  });
-
   if (Object.keys(baCangLoSums).length > 0 && resultDiv) {
-    renderGroupResult("🟤 3 Càng Lô (điểm)", baCangLoSums, true);
+    renderGroupResult(`🟤 3cLô ${formatHeaderMoney(baCangLoVon, baCangLoTrung)}`, baCangLoSums, false);
   }
 
-  // Render Chuyển (Layoff) column
-  const retainNumber = parseInt(document.getElementById("retainNumber")?.value) || 0;
-  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
-
+  // 4. Render Chuyển (Layoff) lists
   const renderGroupLayoff = (title, sumsMap, isLoto = false) => {
     if (!modifiedResultDiv) return;
     const sorted = Object.entries(sumsMap);
@@ -918,7 +1139,9 @@ function calculateSum() {
         modifiedSum = Math.trunc(modifiedSum);
         let isWin = false;
         let hitText = "";
-        if (isLoto) {
+        
+        const isLotoType = title.includes("Lô") || title.includes("3cLô");
+        if (isLotoType) {
           const targetList = key.length === 3 ? allPrizesLast3 : allPrizesLast2;
           const occurrences = targetList.filter(p => p === key).length;
           if (occurrences > 0) {
@@ -926,16 +1149,27 @@ function calculateSum() {
             hitText = occurrences > 1 ? ` (${occurrences} nháy)` : " (Trúng)";
           }
         } else {
-          if (key === specialPrizeLast2) {
-            isWin = true;
-            hitText = " (Trúng)";
+          if (key.length === 3) {
+            if (key === specialPrizeLast3) {
+              isWin = true;
+              hitText = " (Trúng)";
+            } else if (key.slice(-2) === specialPrizeLast2) {
+              isWin = true;
+              hitText = " (Áp má)";
+            }
+          } else {
+            if (key === specialPrizeLast2) {
+              isWin = true;
+              hitText = " (Trúng)";
+            }
           }
         }
 
+        const suffix = title.includes("Lô(đ)") ? 'đ' : 'k';
         if (isWin) {
-          groupHtml += `<div class="matching-number">${key}x${modifiedSum}${isLoto ? 'đ' : 'k'}${hitText}</div>`;
+          groupHtml += `<div class="matching-number">${key}x${modifiedSum}${suffix}${hitText}</div>`;
         } else {
-          groupHtml += `<div>${key}x${modifiedSum}${isLoto ? 'đ' : 'k'}</div>`;
+          groupHtml += `<div>${key}x${modifiedSum}${suffix}</div>`;
         }
       }
     });
@@ -952,18 +1186,13 @@ function calculateSum() {
     }
   };
 
-  renderGroupLayoff("🔴 Đề", deSums, false);
-  renderGroupLayoff("🔵 Lô", loSums, true);
-  renderGroupLayoff("🟤 3 Càng Lô", baCangLoSums, true);
+  renderGroupLayoff(`🔴 Đề ${formatHeaderMoney(deVonChuyen, deTrungChuyen)}`, deSums, false);
+  renderGroupLayoff(`🔵 Lô(đ) ${formatHeaderMoney(loVonChuyen, loTrungChuyen)}`, loSums, true);
+  renderGroupLayoff(`🟤 3cLô ${formatHeaderMoney(baCangLoVonChuyen, baCangLoTrungChuyen)}`, baCangLoSums, false);
 
   let xienLayoffHtml = "";
   xienBets.forEach(bet => {
-    let modifiedSum;
-    if (retainType === "money") {
-      modifiedSum = bet.amount - retainNumber;
-    } else {
-      modifiedSum = bet.amount - (bet.amount * (retainNumber / 100));
-    }
+    let modifiedSum = retainType === "money" ? bet.amount - retainNumber : bet.amount - (bet.amount * (retainNumber / 100));
     if (modifiedSum >= 1) {
       modifiedSum = Math.trunc(modifiedSum);
       const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
@@ -976,7 +1205,7 @@ function calculateSum() {
   });
   if (xienLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟢 Xiên</strong>`;
+    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVonChuyen, xienTrungChuyen)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-gray-500 text-xs";
     modifiedResultDiv.appendChild(header);
     const listContainer = document.createElement("div");
@@ -986,12 +1215,7 @@ function calculateSum() {
 
   let baCangLayoffHtml = "";
   Object.entries(baCangSums).forEach(([key, value]) => {
-    let modifiedSum;
-    if (retainType === "money") {
-      modifiedSum = value - retainNumber;
-    } else {
-      modifiedSum = value - (value * (retainNumber / 100));
-    }
+    let modifiedSum = retainType === "money" ? value - retainNumber : value - (value * (retainNumber / 100));
     if (modifiedSum >= 1) {
       modifiedSum = Math.trunc(modifiedSum);
       const match3 = key === specialPrizeLast3;
@@ -1007,7 +1231,7 @@ function calculateSum() {
   });
   if (baCangLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟣 3 Càng</strong>`;
+    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVonChuyen, baCangTrungChuyen)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-gray-500 text-xs";
     modifiedResultDiv.appendChild(header);
     const listContainer = document.createElement("div");
@@ -1018,61 +1242,12 @@ function calculateSum() {
   const isNewLayout = document.getElementById("tblDeXac") !== null;
 
   if (isNewLayout) {
-    // 1. Get rates
-    const deComm = parseFloat(document.getElementById('rateDeComm')?.value) || 82;
-    const dePayout = parseFloat(document.getElementById('rateDePayout')?.value) || 80;
-    const loCost = parseFloat(document.getElementById('rateLoCost')?.value) || 23000;
-    const loPayout = parseFloat(document.getElementById('rateLoPayout')?.value) || 80000;
-    const xienComm = parseFloat(document.getElementById('rateXienComm')?.value) || 65;
-    const x2Payout = parseFloat(document.getElementById('rateXien2Payout')?.value) || 15;
-    const x3Payout = parseFloat(document.getElementById('rateXien3Payout')?.value) || 50;
-    const x4Payout = parseFloat(document.getElementById('rateXien4Payout')?.value) || 120;
-    const baCangComm = parseFloat(document.getElementById('rate3CComm')?.value) || 75;
-    const baCangPayout = parseFloat(document.getElementById('rate3CPayout')?.value) || 400;
-    const baCangApMa = parseFloat(document.getElementById('rate3CApMa')?.value) || 5;
-    const baCangLoCost = parseFloat(document.getElementById('rate3CLoCost')?.value) || 23000;
-    const baCangLoPayout = parseFloat(document.getElementById('rate3CLoPayout')?.value) || 960000;
-
-    // Recalculate xiên winnings based on config rates!
-    let configuredXienWinSum = 0;
-    xienBets.forEach(bet => {
-      const size = bet.numbers.length;
-      const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
-      if (allHit) {
-        const winRate = size === 2 ? x2Payout : (size === 3 ? x3Payout : x4Payout);
-        configuredXienWinSum += bet.amount * winRate;
-      }
-    });
-
     // 2. Calculations
     const deXac = deBetSum;
-    const deVon = deBetSum * (deComm / 100);
-    const deTrung = deWinSum * dePayout;
-    const deNet = deVon - deTrung;
-
     const loXac = loBetSum;
-    const loVon = loBetSum * (loCost / 1000);
-    const loTrung = loWinSum * (loPayout / 1000);
-    const loNet = loVon - loTrung;
-
     const xienXac = xienBetSum;
-    const xienVon = xienBetSum * (xienComm / 100);
-    const xienTrung = configuredXienWinSum;
-    const xienNet = xienVon - xienTrung;
-
     const baCangXac = baCangDeBetSum;
-    const baCangVon = baCangDeBetSum * (baCangComm / 100);
-    const baCangTrung = baCangDeWinSum * baCangPayout + baCangDeApMaWinSum * baCangApMa;
-    const baCangNet = baCangVon - baCangTrung;
-
     const baCangLoXac = baCangLoBetSum;
-    const baCangLoVon = baCangLoBetSum * (baCangLoCost / 1000);
-    const baCangLoTrung = baCangLoWinSum * (baCangLoPayout / 1000);
-    const baCangLoNet = baCangLoVon - baCangLoTrung;
-
-    const totalVon = deVon + loVon + xienVon + baCangVon + baCangLoVon;
-    const totalTrung = deTrung + loTrung + xienTrung + baCangTrung + baCangLoTrung;
-    const totalNet = totalVon - totalTrung;
 
     // 3. Update Table Cells
     const setCell = (id, val, isFormat = true) => {
@@ -1174,7 +1349,7 @@ function calculateSum() {
       totalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
     }
     if (modifiedTotalSumLabel) {
-      modifiedTotalSumLabel.textContent = Math.round(totalNet).toLocaleString("vi-VN");
+      modifiedTotalSumLabel.textContent = `${Math.round(totalVonChuyen).toLocaleString("vi-VN")} / ${Math.round(totalTrungChuyen).toLocaleString("vi-VN")}`;
     }
 
   } else {
@@ -1218,16 +1393,85 @@ function calculateSum() {
     }
   }
 
+  const getBreakdownHtml = (de, lo, xien, bacang, bacang_lo) => {
+    return `
+      <div class="grid grid-cols-2 gap-x-2 text-[11px] text-gray-500 dark:text-gray-400 font-mono leading-relaxed" style="max-width: 140px;">
+        <span class="text-left">Đề:</span>
+        <span class="font-bold text-gray-700 dark:text-gray-300 text-right">${de} con</span>
+        <span class="text-left">Lô:</span>
+        <span class="font-bold text-gray-700 dark:text-gray-300 text-right">${lo} con</span>
+        <span class="text-left">Xiên:</span>
+        <span class="font-bold text-gray-700 dark:text-gray-300 text-right">${xien} con</span>
+        <span class="text-left">3c:</span>
+        <span class="font-bold text-gray-700 dark:text-gray-300 text-right">${bacang} con</span>
+        <span class="text-left">3cLô:</span>
+        <span class="font-bold text-gray-700 dark:text-gray-300 text-right">${bacang_lo} con</span>
+      </div>
+    `;
+  };
+
+  const getLayoffCount = (sumsMap) => {
+    return Object.values(sumsMap).filter(value => {
+      let modifiedSum = retainType === "money" ? value - retainNumber : value - (value * (retainNumber / 100));
+      return Math.trunc(modifiedSum) >= 1;
+    }).length;
+  };
+
+  const resDeCount = Object.keys(deSums).length;
+  const resLoCount = Object.keys(loSums).length;
+  const resXienCount = xienBets.length;
+  const res3CCount = Object.keys(baCangSums).length;
+  const res3CLCount = Object.keys(baCangLoSums).length;
+
+  const layoffDeCount = getLayoffCount(deSums);
+  const layoffLoCount = getLayoffCount(loSums);
+  const layoffXienCount = xienBets.filter(bet => {
+    let modifiedSum = retainType === "money" ? bet.amount - retainNumber : bet.amount - (bet.amount * (retainNumber / 100));
+    return Math.trunc(modifiedSum) >= 1;
+  }).length;
+  const layoff3CCount = getLayoffCount(baCangSums);
+  const layoff3CLCount = getLayoffCount(baCangLoSums);
+
+  const inpDeCount = parsedBets.de.length;
+  const inpLoCount = parsedBets.lo.length;
+  const inpXienCount = parsedBets.xien2.length + parsedBets.xien3.length + parsedBets.xien4.length;
+  const inp3CCount = parsedBets.bacang.length;
+  const inp3CLCount = parsedBets.bacang_lo.length;
+
   const numResultsDiv = document.getElementById("numResults");
   if (numResultsDiv) {
-    numResultsDiv.textContent = `${totalUniquePairs} con`;
+    if (numResultsDiv.tagName.toLowerCase() === "div") {
+      numResultsDiv.innerHTML = getBreakdownHtml(resDeCount, resLoCount, resXienCount, res3CCount, res3CLCount);
+    } else {
+      numResultsDiv.textContent = `${totalUniquePairs} con`;
+    }
+  }
+
+  const modifiedNumResultsDiv = document.getElementById("modifiedNumResults");
+  if (modifiedNumResultsDiv) {
+    if (modifiedNumResultsDiv.tagName.toLowerCase() === "div") {
+      modifiedNumResultsDiv.innerHTML = getBreakdownHtml(layoffDeCount, layoffLoCount, layoffXienCount, layoff3CCount, layoff3CLCount);
+    } else {
+      let layoffTotal = layoffDeCount + layoffLoCount + layoffXienCount + layoff3CCount + layoff3CLCount;
+      modifiedNumResultsDiv.textContent = `${layoffTotal} con`;
+    }
   }
 
   // Input lists count and total
   const inputListCountSpan = document.getElementById("inputListCount");
   const inputListTotalSpan = document.getElementById("inputListTotal");
-  if (inputListCountSpan) inputListCountSpan.textContent = `${totalBetCount} con`;
+  if (inputListCountSpan) {
+    if (inputListCountSpan.tagName.toLowerCase() === "div") {
+      inputListCountSpan.innerHTML = getBreakdownHtml(inpDeCount, inpLoCount, inpXienCount, inp3CCount, inp3CLCount);
+    } else {
+      inputListCountSpan.textContent = `${totalBetCount} con`;
+    }
+  }
   if (inputListTotalSpan) inputListTotalSpan.textContent = totalBetValue.toLocaleString("vi-VN");
+  const inputTotalSumEl = document.getElementById("inputTotalSum");
+  if (inputTotalSumEl) {
+    inputTotalSumEl.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
+  }
 }
 
 function calculateResult(row) {
@@ -1301,6 +1545,17 @@ function normalizeTwentySevenNumbers() {
   if (!el) return;
   const raw = el.value.trim();
   if (!raw) return;
+
+  // Extract special prize if present (e.g. Đặc biệt\n31854 or db 31854)
+  const dbMatch = raw.match(/(?:đặc\s+biệt|db|đb)[\s\r\n\t]+(\d+)/i);
+  if (dbMatch) {
+    const dbValue = dbMatch[1];
+    const dbInput = document.getElementById("specialPrizeInput") || document.getElementById("specialPrize");
+    if (dbInput) {
+      dbInput.value = dbValue;
+    }
+  }
+
   const tokens = raw.split(/[\s,;\t\n\r.\-+*]+/).map(n => n.trim());
   const numbers = tokens.filter(n => n.length >= 2 && n.length <= 5 && /^\d+$/.test(n));
   el.value = numbers.join(', ');
@@ -1381,17 +1636,17 @@ const RATES_STORAGE_KEY = 'lucky_wheel_rates';
 const DEFAULT_RATES = {
   rateDeComm: 82,
   rateDePayout: 80,
-  rateLoCost: 21700,
-  rateLoPayout: 80000,
+  rateLoCost: 2165,
+  rateLoPayout: 80,
   rateXienComm: 65,
-  rateXien2Payout: 15,
-  rateXien3Payout: 50,
-  rateXien4Payout: 120,
+  rateXien2Payout: 11,
+  rateXien3Payout: 45,
+  rateXien4Payout: 140,
   rate3CComm: 75,
   rate3CPayout: 400,
   rate3CApMa: 5,
-  rate3CLoCost: 23000,
-  rate3CLoPayout: 960000
+  rate3CLoCost: 75,
+  rate3CLoPayout: 20
 };
 
 function loadRates() {
@@ -1399,14 +1654,41 @@ function loadRates() {
   let rates = DEFAULT_RATES;
   if (saved) {
     try {
-      rates = { ...DEFAULT_RATES, ...JSON.parse(saved) };
+      let parsed = JSON.parse(saved);
+      // Migrate old Lô point rates to new defaults
+      if (parsed.rateLoCost > 10000) {
+        parsed.rateLoCost = 2165; // migrate to 2165
+      }
+      if (parsed.rateLoPayout > 1000) {
+        parsed.rateLoPayout = 80; // migrate to 80
+      }
+      // Migrate old Xiên rates to new defaults
+      if (parsed.rateXien2Payout === 15) {
+        parsed.rateXien2Payout = 11;
+      }
+      if (parsed.rateXien3Payout === 50) {
+        parsed.rateXien3Payout = 45;
+      }
+      if (parsed.rateXien4Payout === 120) {
+        parsed.rateXien4Payout = 140;
+      }
+      // Migrate old 3C Lô point rates to percentage rates
+      if (parsed.rate3CLoCost > 100) {
+        parsed.rate3CLoCost = 75; // migrate to 75%
+      }
+      if (parsed.rate3CLoPayout > 100) {
+        parsed.rate3CLoPayout = 20; // migrate to 1 ăn 20
+      }
+      rates = Object.assign({}, DEFAULT_RATES, parsed);
     } catch (e) {
       console.error("Error parsing saved rates", e);
     }
   }
   Object.entries(rates).forEach(([id, val]) => {
     const el = document.getElementById(id);
-    if (el) el.value = val;
+    if (el) {
+      el.value = (val !== undefined && val !== null) ? val.toString() : '';
+    }
   });
 }
 
@@ -1415,7 +1697,10 @@ function saveRates() {
   Object.keys(DEFAULT_RATES).forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      rates[id] = parseFloat(el.value) || DEFAULT_RATES[id];
+      const valStr = el.value || '';
+      const valCleaned = valStr.toString().replace(/,/g, '.').trim();
+      const valParsed = parseFloat(valCleaned);
+      rates[id] = isNaN(valParsed) ? DEFAULT_RATES[id] : valParsed;
     }
   });
   localStorage.setItem(RATES_STORAGE_KEY, JSON.stringify(rates));
@@ -1446,14 +1731,7 @@ function setupEventListeners() {
   // Auto-normalize allPrizesInput on blur
   const allPrizesInput = document.getElementById('allPrizesInput');
   if (allPrizesInput) {
-    allPrizesInput.addEventListener('blur', () => {
-      const raw = allPrizesInput.value.trim();
-      if (!raw) return;
-      const tokens = raw.split(/[\s,;\t\n\r.\-+*]+/).map(n => n.trim());
-      const numbers = tokens.filter(n => n.length >= 2 && n.length <= 5 && /^\d+$/.test(n));
-      allPrizesInput.value = numbers.join(', ');
-      updateTwoDigitBoard();
-    });
+    allPrizesInput.addEventListener('blur', normalizeTwentySevenNumbers);
   }
 
   const specialPrizeInput = document.getElementById('specialPrizeInput');
@@ -1607,7 +1885,7 @@ function setupEventListeners() {
       const loStr = `Lô: ${data.loXac} / ${data.loTrung}`;
       const xienStr = `Xiên: ${formatMoneyK(data.xienXac)} / ${formatMoneyK(data.xienTrung)}`;
       const baCangStr = `3c: ${formatMoneyK(data.baCangXac)} / ${formatMoneyK(data.baCangTrung)}`;
-      const baCangLoStr = `3c Lô: ${data.baCangLoXac} / ${data.baCangLoTrung}`;
+      const baCangLoStr = `3c Lô: ${formatMoneyK(data.baCangLoXac)} / ${formatMoneyK(data.baCangLoTrung)}`;
       
       const netLabelText = data.totalNet < 0 ? "LẤY VỀ" : "NỘP";
       const netValK = formatMoneyK(Math.abs(data.totalNet));
