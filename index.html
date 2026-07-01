@@ -64,7 +64,7 @@
             placeholder="Ví dụ nhập:&#10;Đề 12.34.56x50&#10;Lô 01-02-03x10&#10;Xiên 12-34-56x100&#10;3C 123.456x20&#10;3CL 789.912x5"
           ></textarea>
           <p class="text-[11px] text-gray-500 mt-1.5">
-            💡 Hỗ trợ: Đề (de, d), Lô (lo, l), Xiên (x, x2, x3, x4, xien), 3 Càng (3c, 3cang), 3 Càng Lô (3cl, 3clo). Phân cách bằng dấu cách, phẩy, chấm, gạch ngang; dùng 'x', '+' hoặc '*' trước tiền/điểm cược.
+            💡 Hỗ trợ: Đề (de, d), Lô (lo, l), Xiên (x, x2, x3, x4, xien), Xiên Quay (xienquay, xq, xienq, quay, q, xquay), 3 Càng (3c, 3cang), 3 Càng Lô (3cl, 3clo). Phân cách bằng dấu cách, phẩy, chấm, gạch ngang; dùng 'x', '+' hoặc '*' trước tiền/điểm cược.
           </p>
         </div>
 
@@ -148,9 +148,14 @@
               <input type="text" id="specialPrizeInput" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-center font-bold tracking-widest text-emerald-600 dark:text-emerald-400 bg-white dark:bg-dark-700" placeholder="e.g. 58495">
             </div>
             <div class="md:col-span-9">
-              <label for="allPrizesInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase">
-                27 Giải (Nhập số cuối hoặc đầy đủ, cách nhau bằng dấu cách/phẩy)
-              </label>
+              <div class="flex justify-between items-center mb-1">
+                <label for="allPrizesInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                  27 Giải (Nhập số cuối hoặc đầy đủ, cách nhau bằng dấu cách/phẩy)
+                </label>
+                <button type="button" id="normalizeButton" class="px-2 py-0.5 bg-gray-600 hover:bg-gray-500 text-white text-[10px] font-bold rounded transition-all active:scale-95">
+                  Chuẩn hóa 27
+                </button>
+              </div>
               <textarea id="allPrizesInput" rows="2" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-sm bg-white dark:bg-dark-700 leading-relaxed font-mono" placeholder="Ví dụ: 09253, 77988... hoặc 53 88 65 45..."></textarea>
             </div>
           </div>
@@ -192,17 +197,19 @@
             </h3>
             <div class="flex flex-col gap-2 mb-2">
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-sm text-gray-600">Tổng số: <span id="numResults" class="font-medium">0 con</span></span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng số:</span>
+                <div id="numResults" class="mt-1">0 con</div>
               </div>
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-lg font-bold text-danger">Tổng: <span id="totalSum">0</span></span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng:</span>
+                <div id="totalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
               </div>
             </div>
-            <div class="h-[calc(100%-8rem)]">
+            <div class="h-[calc(100%-12rem)]">
               <div id="result" class="space-y-1 h-full overflow-y-auto p-2"></div>
             </div>
           </div>
-
+ 
           <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
             <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
               <span class="animate-bounce-slow">🔄</span>
@@ -210,26 +217,35 @@
             </h3>
             <div class="flex flex-col gap-2 mb-2">
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-sm text-gray-600">Tổng số: <span id="modifiedNumResults" class="font-medium">0 con</span></span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng số:</span>
+                <div id="modifiedNumResults" class="mt-1">0 con</div>
               </div>
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-lg font-bold text-danger">Tổng: <span id="modifiedTotalSum">0</span></span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng Chuyển:</span>
+                <div id="modifiedTotalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
               </div>
             </div>
-            <div class="h-[calc(100%-8rem)]">
+            <div class="h-[calc(100%-12rem)]">
               <div id="modifiedResult" class="space-y-1 h-full overflow-y-auto p-2"></div>
             </div>
           </div>
-
+ 
           <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
             <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
               <span class="animate-bounce-slow">🔍</span>
               <span>Chi tiết:</span>
             </h3>
-            <div class="border border-gray-200 dark:border-gray-700 rounded p-2 mb-2">
-              <span class="text-sm text-gray-600">Theo Input</span>
+            <div class="flex flex-col gap-2 mb-2">
+              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
+                <span class="text-xs text-gray-600 font-semibold">Theo Input:</span>
+                <div id="inputListCount" class="mt-1">0 con</div>
+              </div>
+              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
+                <span class="text-xs text-gray-600 font-semibold">Tổng Nhập:</span>
+                <div id="inputTotalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
+              </div>
             </div>
-            <div class="h-[calc(100%-8rem)]">
+            <div class="h-[calc(100%-12rem)]">
               <ul id="inputList" class="space-y-1 h-full overflow-y-auto p-2"></ul>
             </div>
           </div>
@@ -399,11 +415,11 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
-                <input type="number" id="rateDeComm" value="82" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateDeComm" value="82" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Thưởng (1 ăn...)</label>
-                <input type="number" id="rateDePayout" value="80" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateDePayout" value="80" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
@@ -414,11 +430,11 @@
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Vốn 1 điểm (đ)</label>
-                <input type="number" id="rateLoCost" value="23000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateLoCost" value="2165" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">Thưởng 1 điểm (đ)</label>
-                <input type="number" id="rateLoPayout" value="80000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateLoPayout" value="80" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
@@ -429,21 +445,21 @@
             <div class="grid grid-cols-4 gap-2 mb-2">
               <div class="col-span-4">
                 <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
-                <input type="number" id="rateXienComm" value="65" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateXienComm" value="65" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
                 <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 2 (1 ăn...)</label>
-                <input type="number" id="rateXien2Payout" value="15" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateXien2Payout" value="11" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
                 <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 3 (1 ăn...)</label>
-                <input type="number" id="rateXien3Payout" value="50" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateXien3Payout" value="45" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
                 <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 4 (1 ăn...)</label>
-                <input type="number" id="rateXien4Payout" value="120" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rateXien4Payout" value="140" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
@@ -454,25 +470,25 @@
             <div class="grid grid-cols-2 gap-3 mb-2">
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">3C Đề Giá gốc (%)</label>
-                <input type="number" id="rate3CComm" value="75" min="0" max="100" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rate3CComm" value="75" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
                 <label class="block text-[11px] text-gray-500 mb-1">3C Đề (1 ăn...)</label>
-                <input type="number" id="rate3CPayout" value="400" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rate3CPayout" value="400" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
                 <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Áp Má (1 ăn...)</label>
-                <input type="number" id="rate3CApMa" value="5" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <input type="text" id="rate3CApMa" value="5" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Vốn (đ)</label>
-                <input type="number" id="rate3CLoCost" value="23000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Giá gốc (%)</label>
+                <input type="text" id="rate3CLoCost" value="75" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Thưởng (đ)</label>
-                <input type="number" id="rate3CLoPayout" value="960000" min="0" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô (1 ăn...)</label>
+                <input type="text" id="rate3CLoPayout" value="20" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
