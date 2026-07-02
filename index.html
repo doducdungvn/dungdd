@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>â˜† Lucky Wheel â˜†</title>
+  <title>☆ Lucky Wheel ☆</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -47,54 +47,54 @@
 <body class="bg-gray-50 dark:bg-dark-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen">
   <div class="container max-w-7xl mx-auto px-4 py-6">
     <button id="darkModeToggle" class="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-dark-800 shadow-lg hover:scale-110 transition-transform">
-      <span class="dark:hidden">đŸŒ™</span>
-      <span class="hidden dark:inline">â˜€ï¸</span>
+      <span class="dark:hidden">🌙</span>
+      <span class="hidden dark:inline">☀️</span>
     </button>
 
-    <h1 class="text-3xl font-bold text-center mb-6 text-primary dark:text-secondary text-shadow">â˜† Lucky Wheel â˜†</h1>
+    <h1 class="text-3xl font-bold text-center mb-6 text-primary dark:text-secondary text-shadow">☆ Lucky Wheel ☆</h1>
 
     <div class="flex flex-col lg:flex-row gap-6">
       <div class="flex-1 space-y-4">
         <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg">
-          <label class="block text-sm font-medium mb-1">Nháº­p sá»‘ liá»‡u (Há»—n há»£p):</label>
+          <label class="block text-sm font-medium mb-1">Nhập số liệu (Hỗn hợp):</label>
           <textarea 
             id="combinedBetInput" 
             class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-primary dark:focus:ring-secondary focus:border-transparent bg-white dark:bg-dark-700 font-mono text-sm leading-relaxed" 
             style="height: 330px"
-            placeholder="VĂ­ dá»¥ nháº­p:&#10;Äá» 12.34.56x50&#10;LĂ´ 01-02-03x10&#10;XiĂªn 12-34-56x100&#10;3C 123.456x20&#10;3CL 789.912x5"
+            placeholder="Ví dụ nhập:&#10;Đề 12.34.56x50&#10;Lô 01-02-03x10&#10;Xiên 12-34-56x100&#10;3C 123.456x20&#10;3CL 789.912x5"
           ></textarea>
           <p class="text-[11px] text-gray-500 mt-1.5">
-            đŸ’¡ Há»— trá»£: Äá» (de, d), LĂ´ (lo, l), XiĂªn (x, x2, x3, x4, xien), XiĂªn Quay (xienquay, xq, xienq, quay, q, xquay), 3 CĂ ng (3c, 3cang), 3 CĂ ng LĂ´ (3cl, 3clo). PhĂ¢n cĂ¡ch báº±ng dáº¥u cĂ¡ch, pháº©y, cháº¥m, gáº¡ch ngang; dĂ¹ng 'x', '+' hoáº·c '*' trÆ°á»›c tiá»n/Ä‘iá»ƒm cÆ°á»£c.
+            💡 Hỗ trợ: Đề (de, d), Lô (lo, l), Xiên (x, x2, x3, x4, xien), Xiên Quay (xienquay, xq, xienq, quay, q, xquay), 3 Càng (3c, 3cang), 3 Càng Lô (3cl, 3clo). Phân cách bằng dấu cách, phẩy, chấm, gạch ngang; dùng 'x', '+' hoặc '*' trước tiền/điểm cược.
           </p>
         </div>
 
         <div class="flex flex-wrap gap-2">
           <button id="calculateButton" class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
-            TĂ­nh tá»•ng
+            Tính tổng
           </button>
           <button id="copyButton" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
-            Sao chĂ©p Chuyá»ƒn
+            Sao chép Chuyển
           </button>
           <button id="copyInputListButton" class="bg-warning hover:bg-warning/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
-            Sao chĂ©p Input
+            Sao chép Input
           </button>
         </div>
 
         <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 space-y-2 transition-all hover:shadow-lg">
           <div class="flex flex-wrap items-center gap-2">
-            <label class="text-sm font-medium">Giá»¯ láº¡i:</label>
+            <label class="text-sm font-medium">Giữ lại:</label>
             <input type="text" id="retainNumber" value="0" 
                    class="w-20 border border-gray-300 dark:border-gray-600 rounded-md p-1 text-center bg-white dark:bg-dark-700 focus:ring-2 focus:ring-primary">
             <div class="flex items-center gap-4">
               <label class="flex items-center gap-1 text-sm">
                 <input type="radio" name="retainType" id="retainTypeMoney" value="money" checked 
                        class="form-radio text-primary dark:text-secondary border-gray-300 dark:border-gray-600">
-                <span>Tiá»n</span>
+                <span>Tiền</span>
               </label>
               <label class="flex items-center gap-1 text-sm">
                 <input type="radio" name="retainType" id="retainTypePercentage" value="percentage" 
                        class="form-radio text-primary dark:text-secondary border-gray-300 dark:border-gray-600">
-                <span>Pháº§n trÄƒm</span>
+                <span>Phần trăm</span>
               </label>
             </div>
           </div>
@@ -103,10 +103,10 @@
         <!-- Lottery Results Card (Ported from thau_lode.html) -->
         <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg space-y-4">
           <div class="flex justify-between items-center flex-wrap gap-2">
-            <label class="text-sm font-medium">Káº¿t quáº£ Xá»• sá»‘:</label>
+            <label class="text-sm font-medium">Kết quả Xổ số:</label>
             <div class="flex gap-1 text-xs">
               <button type="button" id="btnSourceMinhNgoc" class="px-2.5 py-1 rounded bg-primary text-white font-semibold border border-transparent">
-                Minh Ngá»c
+                Minh Ngọc
               </button>
               <button type="button" id="btnSourceXSKT" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 font-semibold border border-transparent">
                 XSKT.com.vn
@@ -122,44 +122,44 @@
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" id="autoFetchToggle" class="sr-only peer">
                 <div class="w-7 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-dark-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-500 peer-checked:bg-primary"></div>
-                <span class="ml-2 text-xs font-medium text-gray-700 dark:text-gray-300">Tá»± Ä‘á»™ng táº£i</span>
+                <span class="ml-2 text-xs font-medium text-gray-700 dark:text-gray-300">Tự động tải</span>
               </label>
               <input type="date" id="resultDateInput" class="border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-xs bg-white dark:bg-dark-800">
             </div>
             
             <span id="autoResultStatus" class="text-[10px] font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/30 hidden">
-              ChÆ°a táº£i
+              Chưa tải
             </span>
 
             <button type="button" id="btnFetchResults" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded transition-all active:scale-95 flex items-center gap-1 hidden">
               <span id="fetchBtnSpinner" class="hidden animate-spin rounded-full h-2.5 w-2.5 border-b border-white"></span>
-              <span id="fetchBtnText">Táº£i KQ</span>
+              <span id="fetchBtnText">Tải KQ</span>
             </button>
           </div>
 
           <!-- Manual Fields -->
           <div id="manualFields" class="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div class="md:col-span-3">
-              <label for="specialPrizeInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase">Giáº£i ÄB</label>
+              <label for="specialPrizeInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase">Giải ĐB</label>
               <input type="text" id="specialPrizeInput" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-center font-bold tracking-widest text-emerald-600 dark:text-emerald-400 bg-white dark:bg-dark-700" placeholder="e.g. 58495">
             </div>
             <div class="md:col-span-9">
               <div class="flex justify-between items-center mb-1">
                 <label for="allPrizesInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                  27 Giáº£i (Nháº­p sá»‘ cuá»‘i hoáº·c Ä‘áº§y Ä‘á»§, cĂ¡ch nhau báº±ng dáº¥u cĂ¡ch/pháº©y)
+                  27 Giải (Nhập số cuối hoặc đầy đủ, cách nhau bằng dấu cách/phẩy)
                 </label>
                 <button type="button" id="normalizeButton" class="px-2 py-0.5 bg-gray-600 hover:bg-gray-500 text-white text-[10px] font-bold rounded transition-all active:scale-95">
-                  Chuáº©n hĂ³a 27
+                  Chuẩn hóa 27
                 </button>
               </div>
-              <textarea id="allPrizesInput" rows="2" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-sm bg-white dark:bg-dark-700 leading-relaxed font-mono" placeholder="VĂ­ dá»¥: 09253, 77988... hoáº·c 53 88 65 45..."></textarea>
+              <textarea id="allPrizesInput" rows="2" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-sm bg-white dark:bg-dark-700 leading-relaxed font-mono" placeholder="Ví dụ: 09253, 77988... hoặc 53 88 65 45..."></textarea>
             </div>
           </div>
 
           <!-- 2-Digit visual board -->
           <div id="twoDigitBoardContainer" class="hidden border-t border-gray-200 dark:border-gray-700 pt-3">
             <label id="lbl27Giai" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">
-              27 Giáº£i
+              27 Giải
             </label>
             <div id="twoDigitBoard" class="flex flex-wrap gap-1 bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-semibold">
               <!-- populated by JS -->
@@ -169,16 +169,16 @@
 
         <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg">
           <label class="block text-sm font-medium mb-2">
-            <a href="nhaptat.html" class="text-primary dark:text-secondary hover:underline">Nháº­p táº¯t:</a>
+            <a href="nhaptat.html" class="text-primary dark:text-secondary hover:underline">Nhập tắt:</a>
           </label>
           <textarea 
             id="shortcuts" 
             class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-primary dark:focus:ring-secondary focus:border-transparent bg-white dark:bg-dark-700" 
             style="height: 99px"
-            placeholder="Äá»‹nh nghÄ©a cĂ¡c phĂ­m táº¯t..."
+            placeholder="Định nghĩa các phím tắt..."
           ></textarea>
           <p class="text-center mt-3 text-xs text-gray-500 dark:text-gray-400">
-            <a href="dothuong.html" class="hover:underline">copyright</a> Â© by 
+            <a href="dothuong.html" class="hover:underline">copyright</a> © by 
             <a href="ex.html" class="text-primary dark:text-secondary hover:underline">Angle</a>
           </p>
         </div>
@@ -188,16 +188,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
             <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <span class="animate-bounce-slow">đŸ“</span>
-              <span>Káº¿t quáº£:</span>
+              <span class="animate-bounce-slow">📊</span>
+              <span>Kết quả:</span>
             </h3>
             <div class="flex flex-col gap-2 mb-2">
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tá»•ng sá»‘:</span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng số:</span>
                 <div id="numResults" class="mt-1">0 con</div>
               </div>
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tá»•ng:</span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng:</span>
                 <div id="totalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
               </div>
             </div>
@@ -208,16 +208,16 @@
  
           <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
             <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <span class="animate-bounce-slow">đŸ”„</span>
-              <span>Chuyá»ƒn:</span>
+              <span class="animate-bounce-slow">🔄</span>
+              <span>Chuyển:</span>
             </h3>
             <div class="flex flex-col gap-2 mb-2">
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tá»•ng sá»‘:</span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng số:</span>
                 <div id="modifiedNumResults" class="mt-1">0 con</div>
               </div>
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tá»•ng Chuyá»ƒn:</span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng Chuyển:</span>
                 <div id="modifiedTotalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
               </div>
             </div>
@@ -228,8 +228,8 @@
  
           <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
             <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <span class="animate-bounce-slow">đŸ”</span>
-              <span>Chi tiáº¿t:</span>
+              <span class="animate-bounce-slow">🔍</span>
+              <span>Chi tiết:</span>
             </h3>
             <div class="flex flex-col gap-2 mb-2">
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
@@ -237,7 +237,7 @@
                 <div id="inputListCount" class="mt-1">0 con</div>
               </div>
               <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tá»•ng Nháº­p:</span>
+                <span class="text-xs text-gray-600 font-semibold">Tổng Nhập:</span>
                 <div id="inputTotalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
               </div>
             </div>
@@ -251,25 +251,25 @@
         <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg space-y-4">
           <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
             <h2 class="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
-              đŸ“ BĂ¡o CĂ¡o Tháº§u
+              📊 Báo Cáo Thầu
             </h2>
             <button type="button" id="btnPriceConfig" class="px-2.5 py-1 bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 rounded text-xs font-bold transition-all flex items-center gap-1.5 border border-gray-300 dark:border-gray-600">
-              â™ï¸ Cáº¥u hĂ¬nh giĂ¡
+              ⚙️ Cấu hình giá
             </button>
           </div>
 
           <!-- Financial Figures -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
             <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
-              <span class="text-xs text-gray-500 block mb-0.5">Tiá»n Gá»‘c</span>
+              <span class="text-xs text-gray-500 block mb-0.5">Tiền Gốc</span>
               <span id="summaryTotalCost" class="text-lg font-bold text-gray-800 dark:text-gray-200">0</span>
             </div>
             <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
-              <span class="text-xs text-gray-500 block mb-0.5">Tiá»n TrĂºng</span>
+              <span class="text-xs text-gray-500 block mb-0.5">Tiền Trúng</span>
               <span id="summaryTotalWinnings" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">0</span>
             </div>
             <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
-              <span id="summaryNetLabel" class="text-xs text-gray-500 block mb-0.5">Káº¿t quáº£ tháº§u</span>
+              <span id="summaryNetLabel" class="text-xs text-gray-500 block mb-0.5">Kết quả thầu</span>
               <span id="summaryNetValue" class="text-lg font-extrabold text-gray-800 dark:text-gray-200">0</span>
             </div>
           </div>
@@ -279,51 +279,51 @@
             <table class="w-full text-xs text-left border-collapse border border-gray-200 dark:border-gray-700">
               <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300">
                 <tr>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700">Thá»ƒ loáº¡i</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-center">XĂ¡c</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Vá»‘n</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">TrĂºng</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Káº¿t quáº£</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700">Thể loại</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-center">Xác</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Vốn</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Trúng</th>
+                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Kết quả</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">đŸ”´ Äá»</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🔴 Đề</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblDeXac">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblDeVon">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblDeTrung">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblDeNet">0</td>
                 </tr>
                 <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">đŸ”µ LĂ´</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🔵 Lô</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblLoXac">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblLoVon">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblLoTrung">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblLoNet">0</td>
                 </tr>
                 <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">đŸŸ¢ XiĂªn</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟢 Xiên</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblXienXac">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblXienVon">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblXienTrung">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblXienNet">0</td>
                 </tr>
                 <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">đŸŸ£ 3 CĂ ng</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟣 3 Càng</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tbl3CXac">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CVon">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CTrung">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tbl3CNet">0</td>
                 </tr>
                 <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">đŸŸ¤ 3C LĂ´</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟤 3C Lô</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tbl3CLXac">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CLVon">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CLTrung">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tbl3CLNet">0</td>
                 </tr>
                 <tr class="bg-gray-50 dark:bg-dark-900 font-bold text-gray-800 dark:text-gray-200">
-                  <td class="p-2 border border-gray-200 dark:border-gray-700">Tá»•ng cá»™ng</td>
+                  <td class="p-2 border border-gray-200 dark:border-gray-700">Tổng cộng</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-center">-</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblTotalVon">0</td>
                   <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblTotalTrung">0</td>
@@ -335,7 +335,7 @@
 
           <div class="flex gap-2">
             <button type="button" id="btnCopyTextReport" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-bold transition-all flex-1 flex items-center justify-center gap-1.5 active:scale-95">
-              đŸ“‹ Copy BĂ¡o CĂ¡o
+              📋 Copy Báo Cáo
             </button>
           </div>
         </div>
@@ -605,8 +605,8 @@ function parseNumbersFromBetString(numbersString, betType) {
 }
 
 function parseCombinedInput(inputString) {
-  let processedInput = inputString.replace(/[â€™â€˜Ê¼ï¼‡`]/g, "'");
-  const sameLinePattern = /[\s,;]+\b(xienquay|xq|xienq|quay|q|xquay|lĂ´\s+xiĂªn|lo\s+xien|Ä‘á»|de|lĂ´|lo|xiĂªn|xien|x|x2|x3|x4)\b|[\s,;]+\b(3cĂ ng|3cang|3c|3clĂ´|3clo|3cl)\b|[\s,;]+\b(d|l)\b(?=\s+[a-z0-9'â€™â€˜Ê¼ï¼‡`])/gi;
+  let processedInput = inputString.replace(/[’‘ʼ＇`]/g, "'");
+  const sameLinePattern = /[\s,;]+\b(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|lô|lo|xiên|xien|x|x2|x3|x4)\b|[\s,;]+\b(3càng|3cang|3c|3clô|3clo|3cl)\b|[\s,;]+\b(d|l|c)\b(?=\s+[a-z0-9'’‘ʼ＇`])/gi;
   processedInput = processedInput.replace(sameLinePattern, (match) => {
     return "\n" + match.replace(/^[\s,;]+/g, '').trim();
   });
@@ -624,12 +624,12 @@ function parseCombinedInput(inputString) {
   };
 
   const typeRegex = {
-    de: /^(Ä‘á»|de|d)$/i,
-    lo: /^(lĂ´|lo|l)$/i,
+    de: /^(đề|de|d)$/i,
+    lo: /^(lô|lo|l)$/i,
     xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
-    xien: /^(lĂ´\s+xiĂªn|lo\s+xien|xiĂªn|xien|x|x2|x3|x4)$/i,
-    bacang: /^(3cĂ ng|3cang|3c)$/i,
-    bacang_lo: /^(3clĂ´|3clo|3cl)$/i
+    xien: /^(lô\s+xiên|lo\s+xien|xiên|xien|x|x2|x3|x4)$/i,
+    bacang: /^(3càng|3cang|3c|c)$/i,
+    bacang_lo: /^(3clô|3clo|3cl)$/i
   };
 
   let activeCategory = 'de';
@@ -639,7 +639,7 @@ function parseCombinedInput(inputString) {
     if (!trimmed) return;
 
     let lineType = '';
-    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lĂ´\s+xiĂªn|lo\s+xien|Ä‘á»|de|lĂ´|lo|xiĂªn|xien|x|x2|x3|x4|3cĂ ng|3cang|3c|3clĂ´|3clo|3cl|d|l)(?:\s+(.*))?$/i);
+    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|lô|lo|xiên|xien|x|x2|x3|x4|3càng|3cang|3c|3clô|3clo|3cl|d|l|c)(?:\s+(.*))?$/i);
     if (spaceMatch) {
       const rawType = spaceMatch[1].toLowerCase();
       if (typeRegex.de.test(rawType)) lineType = 'de';
@@ -666,10 +666,10 @@ function parseCombinedInput(inputString) {
         activeCategory = 'xienquay';
         lineType = 'xienquay';
         trimmed = trimmed.substring(1).trim();
-      } else if (trimmed.match(/^3c(\d+)/i)) {
+      } else if (trimmed.match(/^3c(\d+)/i) || trimmed.match(/^c(\d+)/i)) {
         activeCategory = 'bacang';
         lineType = 'bacang';
-        trimmed = trimmed.substring(2).trim();
+        trimmed = trimmed.replace(/^(3c|c)/i, '').trim();
       } else if (trimmed.match(/^3cl(\d+)/i)) {
         activeCategory = 'bacang_lo';
         lineType = 'bacang_lo';
@@ -787,7 +787,7 @@ function updateTwoDigitBoard() {
   const bacangDe = specialPrize.length >= 3 ? specialPrize.slice(-3) : specialPrize;
   
   if (lbl27Giai) {
-    lbl27Giai.innerHTML = `<span class="text-red-600 dark:text-red-400 font-bold">GIáº¢I Äáº¶C BIá»†T</span> <span class="text-red-500 font-black text-lg ml-1">${bacangDe}</span>`;
+    lbl27Giai.innerHTML = `<span class="text-red-600 dark:text-red-400 font-bold">GIẢI ĐẶC BIỆT</span> <span class="text-red-500 font-black text-lg ml-1">${bacangDe}</span>`;
   }
 
   // Extract last 2 digits and sort
@@ -835,10 +835,10 @@ async function triggerAutoFetch() {
   if (!btnFetchResults) return;
 
   if (fetchBtnSpinner) fetchBtnSpinner.classList.remove('hidden');
-  if (fetchBtnText) fetchBtnText.innerText = 'Äang táº£i...';
+  if (fetchBtnText) fetchBtnText.innerText = 'Đang tải...';
   btnFetchResults.disabled = true;
   if (autoResultStatus) {
-    autoResultStatus.innerText = 'Äang táº£i...';
+    autoResultStatus.innerText = 'Đang tải...';
     autoResultStatus.className = 'text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 dark:text-indigo-400 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/30';
     autoResultStatus.classList.remove('hidden');
   }
@@ -851,7 +851,7 @@ async function triggerAutoFetch() {
 
     // Try selected source first
     if (currentSource === 'minhngoc') {
-      try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngá»c: " + e.message); }
+      try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc: " + e.message); }
     } else if (currentSource === 'xskt') {
       try { data = await fetchFromXSKT(targetDate); } catch (e) { errors.push("XSKT: " + e.message); }
     } else {
@@ -860,7 +860,7 @@ async function triggerAutoFetch() {
 
     // Fallback chain
     if (!data && currentSource !== 'minhngoc') {
-      try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngá»c (fallback): " + e.message); }
+      try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc (fallback): " + e.message); }
     }
     if (!data && currentSource !== 'xskt') {
       try { data = await fetchFromXSKT(targetDate); } catch (e) { errors.push("XSKT (fallback): " + e.message); }
@@ -879,7 +879,7 @@ async function triggerAutoFetch() {
     fetchedPrizesData = data;
     const dayMonth = data.dateText.split('/').slice(0, 2).join('/');
     if (autoResultStatus) {
-      autoResultStatus.innerText = `Táº£i Ok! ${dayMonth}`;
+      autoResultStatus.innerText = `Tải Ok! ${dayMonth}`;
       autoResultStatus.className = 'text-[10px] font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/30';
       autoResultStatus.classList.remove('hidden');
     }
@@ -892,13 +892,13 @@ async function triggerAutoFetch() {
   } catch (error) {
     console.error(error);
     if (autoResultStatus) {
-      autoResultStatus.innerText = `Lá»—i!`;
+      autoResultStatus.innerText = `Lỗi!`;
       autoResultStatus.className = 'text-[10px] font-bold text-rose-600 bg-rose-100 dark:bg-rose-950/20 dark:text-rose-400 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-900/30';
       autoResultStatus.classList.remove('hidden');
     }
   } finally {
     if (fetchBtnSpinner) fetchBtnSpinner.classList.add('hidden');
-    if (fetchBtnText) fetchBtnText.innerText = 'Táº£i KQ';
+    if (fetchBtnText) fetchBtnText.innerText = 'Tải KQ';
     btnFetchResults.disabled = false;
   }
 }
@@ -916,7 +916,7 @@ function updateSourceButtons(sourceName) {
   btnXSKT.className = inactiveCls;
   btnMKetqua.className = inactiveCls;
 
-  if (sourceName === "Minh Ngá»c") {
+  if (sourceName === "Minh Ngọc") {
     currentSource = 'minhngoc';
     btnMinhNgoc.className = activeCls;
   } else if (sourceName === "XSKT.com.vn") {
@@ -938,7 +938,7 @@ async function fetchHtmlWithProxy(targetUrl) {
     console.warn("Proxy allorigins failed, trying corsproxy...");
   }
   const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
-  if (!res.ok) throw new Error("Cáº£ 2 dá»‹ch vá»¥ proxy Ä‘á»u khĂ´ng táº£i Ä‘Æ°á»£c dá»¯ liá»‡u.");
+  if (!res.ok) throw new Error("Cả 2 dịch vụ proxy đều không tải được dữ liệu.");
   return await res.text();
 }
 
@@ -952,16 +952,16 @@ async function fetchFromMinhNgoc(dateStr) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   const box = doc.querySelector('.box_kqxs');
-  if (!box) throw new Error("KhĂ´ng tĂ¬m tháº¥y báº£ng káº¿t quáº£ (Minh Ngá»c).");
+  if (!box) throw new Error("Không tìm thấy bảng kết quả (Minh Ngọc).");
 
   const titleEl = box.querySelector('.title');
-  const dateText = titleEl ? titleEl.textContent.trim().replace("Káº¾T QUáº¢ Xá»” Sá» Miá»n Báº¯c - ", "") : "";
+  const dateText = titleEl ? titleEl.textContent.trim().replace("KẾT QUẢ XỔ SỐ Miền Bắc - ", "") : "";
   const divs = box.querySelectorAll('td[class^="giai"] div');
   const prizes = Array.from(divs).map(div => div.textContent.trim()).filter(Boolean);
 
-  if (prizes.length === 0) throw new Error("KhĂ´ng trĂ­ch xuáº¥t Ä‘Æ°á»£c giáº£i.");
+  if (prizes.length === 0) throw new Error("Không trích xuất được giải.");
   return {
-    sourceName: "Minh Ngá»c",
+    sourceName: "Minh Ngọc",
     dateText: dateText || formatDateDDMMYYYY(dateStr),
     specialPrize: prizes[0],
     prizes
@@ -978,10 +978,10 @@ async function fetchFromXSKT(dateStr) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   const table = doc.querySelector('#kqMB') || doc.querySelector('table');
-  if (!table) throw new Error("KhĂ´ng tĂ¬m tháº¥y báº£ng káº¿t quáº£ (XSKT).");
+  if (!table) throw new Error("Không tìm thấy bảng kết quả (XSKT).");
 
   const titleEl = doc.querySelector('h1') || doc.querySelector('.title');
-  const dateText = titleEl ? titleEl.textContent.trim().replace("Káº¿t quáº£ xá»• sá»‘ Miá»n Báº¯c ", "") : "";
+  const dateText = titleEl ? titleEl.textContent.trim().replace("Kết quả xổ số Miền Bắc ", "") : "";
 
   const classes = ['db', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'g7'];
   const prizes = [];
@@ -994,7 +994,7 @@ async function fetchFromXSKT(dateStr) {
     });
   });
 
-  if (prizes.length === 0) throw new Error("KhĂ´ng trĂ­ch xuáº¥t Ä‘Æ°á»£c giáº£i.");
+  if (prizes.length === 0) throw new Error("Không trích xuất được giải.");
   return {
     sourceName: "XSKT.com.vn",
     dateText: dateText || formatDateDDMMYYYY(dateStr),
@@ -1021,7 +1021,7 @@ async function fetchFromMKetqua(dateStr) {
     });
   }
 
-  if (prizes.length === 0) throw new Error("KhĂ´ng trĂ­ch xuáº¥t Ä‘Æ°á»£c giáº£i.");
+  if (prizes.length === 0) throw new Error("Không trích xuất được giải.");
   const dateEl = doc.querySelector('#result_date');
   const dateText = dateEl ? dateEl.textContent.trim() : "";
 
@@ -1157,7 +1157,7 @@ function calculateSum() {
     if (occurrences > 0) {
       li.innerHTML = `<span class="matching-number">${type} ${numStr}x${amount}</span>`;
       if (occurrences > 1) {
-        li.innerHTML += ` <span class="matching-number">(${occurrences} nhĂ¡y)</span>`;
+        li.innerHTML += ` <span class="matching-number">(${occurrences} nháy)</span>`;
       }
     } else {
       li.textContent = text;
@@ -1167,7 +1167,7 @@ function calculateSum() {
     totalBetValue += amount;
   };
 
-  // 1. Äá»
+  // 1. Đề
   const deSums = {};
   parsedBets.de.forEach(bet => {
     const num = bet.numbers[0];
@@ -1180,7 +1180,7 @@ function calculateSum() {
     }
   });
 
-  // 2. LĂ´
+  // 2. Lô
   const loSums = {};
   parsedBets.lo.forEach(bet => {
     const num = bet.numbers[0];
@@ -1193,7 +1193,7 @@ function calculateSum() {
     }
   });
 
-  // 3. XiĂªn
+  // 3. Xiên
   const xienBets = [...parsedBets.xien2, ...parsedBets.xien3, ...parsedBets.xien4];
   xienBets.forEach(bet => {
     const size = bet.numbers.length;
@@ -1206,7 +1206,7 @@ function calculateSum() {
     }
   });
 
-  // 4. 3 CĂ ng & 3 CĂ ng LĂ´
+  // 4. 3 Càng & 3 Càng Lô
   const baCangSums = {};
   parsedBets.bacang.forEach(bet => {
     const num = bet.numbers[0];
@@ -1225,7 +1225,7 @@ function calculateSum() {
     }
   });
 
-  // 3 CĂ ng LĂ´
+  // 3 Càng Lô
   parsedBets.bacang_lo.forEach(bet => {
     const num = bet.numbers[0];
     const costInThousands = bet.amount * (baCangLoCost / 100);
@@ -1243,7 +1243,7 @@ function calculateSum() {
   parsedBets.rawOrder.forEach(bet => {
     let occurrences = 0;
     const num = bet.numbers[0];
-    const typeLabel = bet.type === "de" ? "Äá»" : (bet.type === "lo" ? "LĂ´" : (bet.type.startsWith("xien") ? `XiĂªn${bet.numbers.length}` : (bet.type === "bacang" ? "3C" : "3CLĂ´")));
+    const typeLabel = bet.type === "de" ? "Đề" : (bet.type === "lo" ? "Lô" : (bet.type.startsWith("xien") ? `Xiên${bet.numbers.length}` : (bet.type === "bacang" ? "3C" : "3CLô")));
     
     if (bet.type === "de") {
       occurrences = num === specialPrizeLast2 ? 1 : 0;
@@ -1264,7 +1264,7 @@ function calculateSum() {
     renderDetail(numStr, bet.amount, typeLabel, occurrences);
   });
 
-  // Render Káº¿t quáº£ column
+  // Render Kết quả column
   const renderGroupResult = (title, sumsMap, isLoto = false) => {
     if (!resultDiv) return;
     const sorted = Object.entries(sumsMap).sort((a, b) => b[1] - a[1]);
@@ -1277,34 +1277,34 @@ function calculateSum() {
 
     sorted.forEach(([key, value]) => {
       const div = document.createElement("div");
-      const suffix = title.includes("LĂ´(Ä‘)") ? 'Ä‘' : '';
+      const suffix = title.includes("Lô(đ)") ? 'đ' : '';
       div.textContent = `${key} = ${value}${suffix}`;
       totalUniquePairs++;
 
       let isWin = false;
       let hitText = "";
       
-      const isLotoType = title.includes("LĂ´") || title.includes("3cLĂ´");
+      const isLotoType = title.includes("Lô") || title.includes("3cLô");
       if (isLotoType) {
         const targetList = key.length === 3 ? allPrizesLast3 : allPrizesLast2;
         const occurrences = targetList.filter(p => p === key).length;
         if (occurrences > 0) {
           isWin = true;
-          hitText = occurrences > 1 ? ` (${occurrences} nhĂ¡y)` : " (TrĂºng)";
+          hitText = occurrences > 1 ? ` (${occurrences} nháy)` : " (Trúng)";
         }
       } else {
         if (key.length === 3) {
           if (key === specialPrizeLast3) {
             isWin = true;
-            hitText = " (TrĂºng)";
+            hitText = " (Trúng)";
           } else if (key.slice(-2) === specialPrizeLast2) {
             isWin = true;
-            hitText = " (Ăp mĂ¡)";
+            hitText = " (Áp má)";
           }
         } else {
           if (key === specialPrizeLast2) {
             isWin = true;
-            hitText = " (TrĂºng)";
+            hitText = " (Trúng)";
           }
         }
       }
@@ -1317,7 +1317,7 @@ function calculateSum() {
     });
   };
 
-  // 1. Calculations for Káº¿t quáº£ column
+  // 1. Calculations for Kết quả column
   const deVon = deBetSum * (deComm / 100);
   const deTrung = deWinSum * dePayout;
   const deNet = deVon - deTrung;
@@ -1334,7 +1334,7 @@ function calculateSum() {
   const baCangTrung = baCangDeWinSum * baCangPayout + baCangDeApMaWinSum * baCangApMa;
   const baCangNet = baCangVon - baCangTrung;
 
-  // 3 CĂ ng LĂ´ sums map
+  // 3 Càng Lô sums map
   const baCangLoSums = {};
   parsedBets.bacang_lo.forEach(bet => {
     const num = bet.numbers[0];
@@ -1348,7 +1348,7 @@ function calculateSum() {
   const totalTrung = deTrung + loTrung + xienTrung + baCangTrung + baCangLoTrung;
   const totalNet = totalVon - totalTrung;
 
-  // 2. Calculations for Chuyá»ƒn column
+  // 2. Calculations for Chuyển column
   const retainNumber = parseInt(document.getElementById("retainNumber")?.value) || 0;
   const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
 
@@ -1413,17 +1413,17 @@ function calculateSum() {
   const totalVonChuyen = deVonChuyen + loVonChuyen + xienVonChuyen + baCangVonChuyen + baCangLoVonChuyen;
   const totalTrungChuyen = deTrungChuyen + loTrungChuyen + xienTrungChuyen + baCangTrungChuyen + baCangLoTrungChuyen;
 
-  // 3. Render Káº¿t quáº£ list with formatHeaderMoney
+  // 3. Render Kết quả list with formatHeaderMoney
   const formatHeaderMoney = (von, trung) => {
     return `(${Math.round(von).toLocaleString('vi-VN')} / ${Math.round(trung).toLocaleString('vi-VN')})`;
   };
 
-  renderGroupResult(`đŸ”´ Äá» ${formatHeaderMoney(deVon, deTrung)}`, deSums, false);
-  renderGroupResult(`đŸ”µ LĂ´(Ä‘) ${formatHeaderMoney(loVon, loTrung)} <span class="text-yellow-600 dark:text-yellow-400">[${Math.round(loBetSum)}Ä‘ / ${Math.round(loWinSum)}Ä‘]</span>`, loSums, true);
+  renderGroupResult(`🔴 Đề ${formatHeaderMoney(deVon, deTrung)}`, deSums, false);
+  renderGroupResult(`🔵 Lô(đ) ${formatHeaderMoney(loVon, loTrung)} <span class="text-yellow-600 dark:text-yellow-400">[${Math.round(loBetSum)}đ / ${Math.round(loWinSum)}đ]</span>`, loSums, true);
 
   if (xienBets.length > 0 && resultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>đŸŸ¢ XiĂªn ${formatHeaderMoney(xienVon, xienTrung)}</strong>`;
+    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVon, xienTrung)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
     resultDiv.appendChild(header);
     xienBets.forEach(bet => {
@@ -1432,7 +1432,7 @@ function calculateSum() {
       div.textContent = `${bet.numbers.join('-')} = ${bet.amount}k`;
       if (allHit) {
         div.className = "matching-number";
-        div.textContent += " (TrĂºng)";
+        div.textContent += " (Trúng)";
       }
       resultDiv.appendChild(div);
     });
@@ -1440,7 +1440,7 @@ function calculateSum() {
 
   if (Object.keys(baCangSums).length > 0 && resultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>đŸŸ£ 3C ${formatHeaderMoney(baCangVon, baCangTrung)}</strong>`;
+    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVon, baCangTrung)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
     resultDiv.appendChild(header);
     Object.entries(baCangSums).sort((a,b) => b[1]-a[1]).forEach(([key, value]) => {
@@ -1450,20 +1450,20 @@ function calculateSum() {
       div.textContent = `${key} = ${value}k`;
       if (match3) {
         div.className = "matching-number";
-        div.textContent += " (TrĂºng 3C)";
+        div.textContent += " (Trúng 3C)";
       } else if (match2) {
         div.className = "matching-number";
-        div.textContent += " (Ăp MĂ¡)";
+        div.textContent += " (Áp Má)";
       }
       resultDiv.appendChild(div);
     });
   }
 
   if (Object.keys(baCangLoSums).length > 0 && resultDiv) {
-    renderGroupResult(`đŸŸ¤ 3cLĂ´ ${formatHeaderMoney(baCangLoVon, baCangLoTrung)}`, baCangLoSums, false);
+    renderGroupResult(`🟤 3cLô ${formatHeaderMoney(baCangLoVon, baCangLoTrung)}`, baCangLoSums, false);
   }
 
-  // 4. Render Chuyá»ƒn (Layoff) lists
+  // 4. Render Chuyển (Layoff) lists
   const renderGroupLayoff = (title, sumsMap, isLoto = false) => {
     if (!modifiedResultDiv) return;
     const sorted = Object.entries(sumsMap);
@@ -1482,32 +1482,32 @@ function calculateSum() {
         let isWin = false;
         let hitText = "";
         
-        const isLotoType = title.includes("LĂ´") || title.includes("3cLĂ´");
+        const isLotoType = title.includes("Lô") || title.includes("3cLô");
         if (isLotoType) {
           const targetList = key.length === 3 ? allPrizesLast3 : allPrizesLast2;
           const occurrences = targetList.filter(p => p === key).length;
           if (occurrences > 0) {
             isWin = true;
-            hitText = occurrences > 1 ? ` (${occurrences} nhĂ¡y)` : " (TrĂºng)";
+            hitText = occurrences > 1 ? ` (${occurrences} nháy)` : " (Trúng)";
           }
         } else {
           if (key.length === 3) {
             if (key === specialPrizeLast3) {
               isWin = true;
-              hitText = " (TrĂºng)";
+              hitText = " (Trúng)";
             } else if (key.slice(-2) === specialPrizeLast2) {
               isWin = true;
-              hitText = " (Ăp mĂ¡)";
+              hitText = " (Áp má)";
             }
           } else {
             if (key === specialPrizeLast2) {
               isWin = true;
-              hitText = " (TrĂºng)";
+              hitText = " (Trúng)";
             }
           }
         }
 
-        const suffix = title.includes("LĂ´(Ä‘)") ? 'Ä‘' : '';
+        const suffix = title.includes("Lô(đ)") ? 'đ' : '';
         if (isWin) {
           groupHtml += `<div class="matching-number">${key}x${modifiedSum}${suffix}${hitText}</div>`;
         } else {
@@ -1530,9 +1530,9 @@ function calculateSum() {
 
   const loLayoffPointsWin = loPayoutFactor > 0 ? Math.round(loLayoff.winSum / loPayoutFactor) : 0;
   
-  renderGroupLayoff(`đŸ”´ Äá» ${formatHeaderMoney(deVonChuyen, deTrungChuyen)}`, deSums, false);
-  renderGroupLayoff(`đŸ”µ LĂ´(Ä‘) ${formatHeaderMoney(loVonChuyen, loTrungChuyen)} <span class="text-yellow-600 dark:text-yellow-400">[${Math.round(loLayoff.costSum)}Ä‘ / ${loLayoffPointsWin}Ä‘]</span>`, loSums, true);
-  renderGroupLayoff(`đŸŸ¤ 3cLĂ´ ${formatHeaderMoney(baCangLoVonChuyen, baCangLoTrungChuyen)}`, baCangLoSums, false);
+  renderGroupLayoff(`🔴 Đề ${formatHeaderMoney(deVonChuyen, deTrungChuyen)}`, deSums, false);
+  renderGroupLayoff(`🔵 Lô(đ) ${formatHeaderMoney(loVonChuyen, loTrungChuyen)} <span class="text-yellow-600 dark:text-yellow-400">[${Math.round(loLayoff.costSum)}đ / ${loLayoffPointsWin}đ]</span>`, loSums, true);
+  renderGroupLayoff(`🟤 3cLô ${formatHeaderMoney(baCangLoVonChuyen, baCangLoTrungChuyen)}`, baCangLoSums, false);
 
   let xienLayoffHtml = "";
   xienBets.forEach(bet => {
@@ -1541,7 +1541,7 @@ function calculateSum() {
       modifiedSum = Math.trunc(modifiedSum);
       const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
       if (allHit) {
-        xienLayoffHtml += `<div class="matching-number">${bet.numbers.join('-')}x${modifiedSum}k (TrĂºng)</div>`;
+        xienLayoffHtml += `<div class="matching-number">${bet.numbers.join('-')}x${modifiedSum}k (Trúng)</div>`;
       } else {
         xienLayoffHtml += `<div>${bet.numbers.join('-')}x${modifiedSum}k</div>`;
       }
@@ -1549,7 +1549,7 @@ function calculateSum() {
   });
   if (xienLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>đŸŸ¢ XiĂªn ${formatHeaderMoney(xienVonChuyen, xienTrungChuyen)}</strong>`;
+    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVonChuyen, xienTrungChuyen)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
     modifiedResultDiv.appendChild(header);
     const listContainer = document.createElement("div");
@@ -1565,9 +1565,9 @@ function calculateSum() {
       const match3 = key === specialPrizeLast3;
       const match2 = key.slice(-2) === specialPrizeLast2;
       if (match3) {
-        baCangLayoffHtml += `<div class="matching-number">${key}x${modifiedSum}k (TrĂºng 3C)</div>`;
+        baCangLayoffHtml += `<div class="matching-number">${key}x${modifiedSum}k (Trúng 3C)</div>`;
       } else if (match2) {
-        baCangLayoffHtml += `<div class="matching-number">${key}x${modifiedSum}k (Ăp MĂ¡)</div>`;
+        baCangLayoffHtml += `<div class="matching-number">${key}x${modifiedSum}k (Áp Má)</div>`;
       } else {
         baCangLayoffHtml += `<div>${key}x${modifiedSum}k</div>`;
       }
@@ -1575,7 +1575,7 @@ function calculateSum() {
   });
   if (baCangLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>đŸŸ£ 3C ${formatHeaderMoney(baCangVonChuyen, baCangTrungChuyen)}</strong>`;
+    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVonChuyen, baCangTrungChuyen)}</strong>`;
     header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
     modifiedResultDiv.appendChild(header);
     const listContainer = document.createElement("div");
@@ -1661,15 +1661,15 @@ function calculateSum() {
     const summaryNetValue = document.getElementById("summaryNetValue");
     if (summaryNetLabel && summaryNetValue) {
       if (totalNet < 0) {
-        summaryNetLabel.innerText = "Chá»§ tháº§u bĂ¹";
+        summaryNetLabel.innerText = "Chủ thầu bù";
         summaryNetLabel.className = "text-xs font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5 uppercase tracking-wider";
         summaryNetValue.className = "text-lg font-extrabold text-emerald-600 dark:text-emerald-400";
       } else if (totalNet > 0) {
-        summaryNetLabel.innerText = "Äáº¡i lĂ½ Ná»™p";
+        summaryNetLabel.innerText = "Đại lý Nộp";
         summaryNetLabel.className = "text-xs font-bold text-red-500 dark:text-red-400 block mb-0.5 uppercase tracking-wider";
         summaryNetValue.className = "text-lg font-extrabold text-red-500 dark:text-red-400";
       } else {
-        summaryNetLabel.innerText = "HĂ²a vá»‘n";
+        summaryNetLabel.innerText = "Hòa vốn";
         summaryNetLabel.className = "text-xs font-bold text-gray-500 block mb-0.5 uppercase tracking-wider";
         summaryNetValue.className = "text-lg font-extrabold text-gray-500";
       }
@@ -1741,15 +1741,15 @@ function calculateSum() {
     const formatWin = (winStr) => wins ? ` / <span class="text-emerald-600 dark:text-emerald-400">${winStr}</span>` : "";
     return `
       <div class="grid grid-cols-[45px_1fr] gap-x-2 text-[11px] text-gray-500 dark:text-gray-400 font-mono leading-relaxed">
-        <span class="text-left">Äá»:</span>
+        <span class="text-left">Đề:</span>
         <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${de} con${formatWin(wins?.de)}</span>
-        <span class="text-left">LĂ´:</span>
+        <span class="text-left">Lô:</span>
         <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${lo} con${formatWin(wins?.lo)}</span>
-        <span class="text-left">XiĂªn:</span>
+        <span class="text-left">Xiên:</span>
         <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${xien} con${formatWin(wins?.xien)}</span>
         <span class="text-left">3c:</span>
         <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${bacang} con${formatWin(wins?.bacang)}</span>
-        <span class="text-left">3cLĂ´:</span>
+        <span class="text-left">3cLô:</span>
         <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${bacang_lo} con${formatWin(wins?.bacang_lo)}</span>
       </div>
     `;
@@ -1811,7 +1811,7 @@ function calculateSum() {
       if (allPrizesLast2.length > 0) {
         winsStr = {
           de: Math.round(deTrung).toLocaleString('vi-VN'),
-          lo: Math.round(loWinSum).toLocaleString('vi-VN') + "Ä‘",
+          lo: Math.round(loWinSum).toLocaleString('vi-VN') + "đ",
           xien: Math.round(xienTrung).toLocaleString('vi-VN'),
           bacang: Math.round(baCangTrung).toLocaleString('vi-VN'),
           bacang_lo: Math.round(baCangLoTrung).toLocaleString('vi-VN')
@@ -1838,19 +1838,19 @@ function calculateResult(row) {
   let bonusResult = 0;
 
   if (row === 2) {
-    // For LĂ´, percentage is price per point, e.g. 21.7 (which is 21.7k)
+    // For Lô, percentage is price per point, e.g. 21.7 (which is 21.7k)
     // Cost = points * cost_per_point
     result = Math.round(input * percentage);
     // Payout = winning points * 80
     bonusResult = Math.round(bonus * 80);
   } else if (row === 1) {
-    // For Äá», percentage is commission, e.g. 82%
+    // For Đề, percentage is commission, e.g. 82%
     // Cost = input * 82%
     result = Math.round(input * percentage / 100);
     // Payout = winning amount * 80
     bonusResult = Math.round(bonus * 80);
   } else if (row === 3 || row === 4) {
-    // For XiĂªn and Ba CĂ ng, percentage is commission
+    // For Xiên and Ba Càng, percentage is commission
     result = Math.round(input * percentage / 100);
     // Payout is calculated automatically and set as bonus value in thousands
     bonusResult = bonus;
@@ -1901,8 +1901,8 @@ function normalizeTwentySevenNumbers() {
   const raw = el.value.trim();
   if (!raw) return;
 
-  // Extract special prize if present (e.g. Äáº·c biá»‡t\n31854 or db 31854)
-  const dbMatch = raw.match(/(?:Ä‘áº·c\s+biá»‡t|db|Ä‘b)[\s\r\n\t]+(\d+)/i);
+  // Extract special prize if present (e.g. Đặc biệt\n31854 or db 31854)
+  const dbMatch = raw.match(/(?:đặc\s+biệt|db|đb)[\s\r\n\t]+(\d+)/i);
   if (dbMatch) {
     const dbValue = dbMatch[1];
     const dbInput = document.getElementById("specialPrizeInput") || document.getElementById("specialPrize");
@@ -1919,12 +1919,12 @@ function normalizeTwentySevenNumbers() {
 
 function copyText() {
   const textToCopy = document.getElementById("modifiedResult").innerText;
-  copyToClipboard(textToCopy, "ÄĂ£ sao chĂ©p káº¿t quáº£ thĂ nh cĂ´ng!");
+  copyToClipboard(textToCopy, "Đã sao chép kết quả thành công!");
 }
 
 function copyInputList() {
   const inputListContent = document.getElementById("inputList").innerText;
-  copyToClipboard(inputListContent, "ÄĂ£ sao chĂ©p input thĂ nh cĂ´ng!");
+  copyToClipboard(inputListContent, "Đã sao chép input thành công!");
 }
 
 function copyToClipboard(text, successMessage) {
@@ -1932,8 +1932,8 @@ function copyToClipboard(text, successMessage) {
     navigator.clipboard.writeText(text)
       .then(() => alert(successMessage))
       .catch(err => {
-        console.error("Lá»—i sao chĂ©p: ", err);
-        alert("Sao chĂ©p tháº¥t báº¡i. Vui lĂ²ng thá»­ láº¡i.");
+        console.error("Lỗi sao chép: ", err);
+        alert("Sao chép thất bại. Vui lòng thử lại.");
       });
   } else {
     const textArea = document.createElement("textarea");
@@ -1948,11 +1948,11 @@ function copyToClipboard(text, successMessage) {
       if (successful) {
         alert(successMessage);
       } else {
-        throw new Error("Sao chĂ©p khĂ´ng thĂ nh cĂ´ng");
+        throw new Error("Sao chép không thành công");
       }
     } catch (err) {
-      console.error("Lá»—i sao chĂ©p: ", err);
-      alert("Sao chĂ©p tháº¥t báº¡i. Vui lĂ²ng thá»­ láº¡i.");
+      console.error("Lỗi sao chép: ", err);
+      alert("Sao chép thất bại. Vui lòng thử lại.");
     } finally {
       document.body.removeChild(textArea);
     }
@@ -2010,14 +2010,14 @@ function loadRates() {
   if (saved) {
     try {
       let parsed = JSON.parse(saved);
-      // Migrate old LĂ´ point rates to new defaults
+      // Migrate old Lô point rates to new defaults
       if (parsed.rateLoCost > 10000) {
         parsed.rateLoCost = 2165; // migrate to 2165
       }
       if (parsed.rateLoPayout > 1000) {
         parsed.rateLoPayout = 80; // migrate to 80
       }
-      // Migrate old XiĂªn rates to new defaults
+      // Migrate old Xiên rates to new defaults
       if (parsed.rateXien2Payout === 15) {
         parsed.rateXien2Payout = 11;
       }
@@ -2027,12 +2027,12 @@ function loadRates() {
       if (parsed.rateXien4Payout === 120) {
         parsed.rateXien4Payout = 140;
       }
-      // Migrate old 3C LĂ´ point rates to percentage rates
+      // Migrate old 3C Lô point rates to percentage rates
       if (parsed.rate3CLoCost > 100) {
         parsed.rate3CLoCost = 75; // migrate to 75%
       }
       if (parsed.rate3CLoPayout > 100) {
-        parsed.rate3CLoPayout = 20; // migrate to 1 Äƒn 20
+        parsed.rate3CLoPayout = 20; // migrate to 1 ăn 20
       }
       rates = Object.assign({}, DEFAULT_RATES, parsed);
     } catch (e) {
@@ -2125,7 +2125,7 @@ function setupEventListeners() {
   }
 
   const btnSourceMinhNgoc = document.getElementById('btnSourceMinhNgoc');
-  if (btnSourceMinhNgoc) btnSourceMinhNgoc.addEventListener('click', () => updateSourceButtons("Minh Ngá»c"));
+  if (btnSourceMinhNgoc) btnSourceMinhNgoc.addEventListener('click', () => updateSourceButtons("Minh Ngọc"));
 
   const btnSourceXSKT = document.getElementById('btnSourceXSKT');
   if (btnSourceXSKT) btnSourceXSKT.addEventListener('click', () => updateSourceButtons("XSKT.com.vn"));
@@ -2209,7 +2209,7 @@ function setupEventListeners() {
 
   if (btnResetRates) {
     btnResetRates.addEventListener('click', () => {
-      if (confirm("Báº¡n cĂ³ cháº¯c cháº¯n muá»‘n khĂ´i phá»¥c giĂ¡ trá»‹ cáº¥u hĂ¬nh máº·c Ä‘á»‹nh khĂ´ng?")) {
+      if (confirm("Bạn có chắc chắn muốn khôi phục giá trị cấu hình mặc định không?")) {
         localStorage.removeItem(RATES_STORAGE_KEY);
         loadRates();
         calculateSum();
@@ -2223,7 +2223,7 @@ function setupEventListeners() {
     btnCopyTextReport.addEventListener("click", () => {
       const data = window.lastCalculatedReport;
       if (!data) {
-        alert("Vui lĂ²ng thá»±c hiá»‡n tĂ­nh toĂ¡n bĂ¡o cĂ¡o trÆ°á»›c!");
+        alert("Vui lòng thực hiện tính toán báo cáo trước!");
         return;
       }
 
@@ -2234,15 +2234,15 @@ function setupEventListeners() {
       const rawDate = data.date;
       const dayMonthText = rawDate.split('/').slice(0, 2).join('/'); // "29/06"
 
-      const headerText = `BĂO CĂO - ${dayMonthText}`;
+      const headerText = `BÁO CÁO - ${dayMonthText}`;
 
-      const deStr = `Äá»: ${formatMoneyK(data.deXac)} / ${formatMoneyK(data.deTrung)}`;
-      const loStr = `LĂ´: ${data.loXac} / ${data.loTrung}`;
-      const xienStr = `XiĂªn: ${formatMoneyK(data.xienXac)} / ${formatMoneyK(data.xienTrung)}`;
+      const deStr = `Đề: ${formatMoneyK(data.deXac)} / ${formatMoneyK(data.deTrung)}`;
+      const loStr = `Lô: ${data.loXac} / ${data.loTrung}`;
+      const xienStr = `Xiên: ${formatMoneyK(data.xienXac)} / ${formatMoneyK(data.xienTrung)}`;
       const baCangStr = `3c: ${formatMoneyK(data.baCangXac)} / ${formatMoneyK(data.baCangTrung)}`;
-      const baCangLoStr = `3c LĂ´: ${formatMoneyK(data.baCangLoXac)} / ${formatMoneyK(data.baCangLoTrung)}`;
+      const baCangLoStr = `3c Lô: ${formatMoneyK(data.baCangLoXac)} / ${formatMoneyK(data.baCangLoTrung)}`;
       
-      const netLabelText = data.totalNet < 0 ? "Láº¤Y Vá»€" : "Ná»˜P";
+      const netLabelText = data.totalNet < 0 ? "LẤY VỀ" : "NỘP";
       const netValK = formatMoneyK(Math.abs(data.totalNet));
 
       const reportText = `${headerText}\n` +
@@ -2254,11 +2254,11 @@ function setupEventListeners() {
         `${netLabelText}: ${netValK}`;
 
       navigator.clipboard.writeText(reportText).then(() => {
-        alert("ÄĂ£ copy bĂ¡o cĂ¡o vĂ o clipboard!");
+        alert("Đã copy báo cáo vào clipboard!");
       }).catch(err => {
-        console.error("Lá»—i copy bĂ¡o cĂ¡o:", err);
+        console.error("Lỗi copy báo cáo:", err);
         // Fallback using prompt
-        window.prompt("Copy bĂ¡o cĂ¡o táº¡i Ä‘Ă¢y:", reportText);
+        window.prompt("Copy báo cáo tại đây:", reportText);
       });
     });
   }
@@ -2400,46 +2400,46 @@ function resetTable() {
       const STORAGE_KEY = 'lucky_wheel_shortcuts';
       const DATA_URL = 'https://raw.githubusercontent.com/doducdungvn/doducdungvn.github.io/refs/heads/main/nhaptat.txt';
 
-      // Náº¿u khĂ´ng tĂ¬m tháº¥y Ă´ nháº­p táº¯t thĂ¬ dá»«ng
+      // Nếu không tìm thấy ô nhập tắt thì dừng
       if (!shortcutsArea) return;
 
-      // HĂ m lÆ°u vĂ o LocalStorage
+      // Hàm lưu vào LocalStorage
       const saveToStorage = () => {
         localStorage.setItem(STORAGE_KEY, shortcutsArea.value);
       };
 
-      // 1. Táº£i dá»¯ liá»‡u tá»« LocalStorage ra trÆ°á»›c
+      // 1. Tải dữ liệu từ LocalStorage ra trước
       const savedData = localStorage.getItem(STORAGE_KEY);
       if (savedData !== null) {
         shortcutsArea.value = savedData;
       }
 
-      // 2. Chá»‰ táº£i tá»« URL náº¿u Ă´ nháº­p liá»‡u TRá»NG (láº§n Ä‘áº§u hoáº·c Ä‘Ă£ xĂ³a háº¿t)
+      // 2. Chỉ tải từ URL nếu ô nhập liệu TRỐNG (lần đầu hoặc đã xóa hết)
       if (!shortcutsArea.value.trim()) {
         fetch(DATA_URL)
           .then(response => {
-            if (!response.ok) throw new Error('Káº¿t ná»‘i tháº¥t báº¡i');
+            if (!response.ok) throw new Error('Kết nối thất bại');
             return response.text();
           })
           .then(text => {
             shortcutsArea.value = text;
-            saveToStorage(); // LÆ°u luĂ´n dá»¯ liá»‡u máº·c Ä‘á»‹nh vĂ o storage
+            saveToStorage(); // Lưu luôn dữ liệu mặc định vào storage
           })
           .catch(error => {
-            console.error('Lá»—i táº£i dá»¯ liá»‡u nháº­p táº¯t máº·c Ä‘á»‹nh:', error);
-            shortcutsArea.placeholder = "KhĂ´ng thá»ƒ táº£i dá»¯ liá»‡u máº·c Ä‘á»‹nh. Vui lĂ²ng kiá»ƒm tra káº¿t ná»‘i.";
+            console.error('Lỗi tải dữ liệu nhập tắt mặc định:', error);
+            shortcutsArea.placeholder = "Không thể tải dữ liệu mặc định. Vui lòng kiểm tra kết nối.";
           });
       }
 
   </script>
 
-  <!-- Modal Cáº¥u hĂ¬nh giĂ¡ (Ported from thau_lode.html) -->
+  <!-- Modal Cấu hình giá (Ported from thau_lode.html) -->
   <div id="modalPriceConfig" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/60 backdrop-blur-sm p-4">
     <div class="bg-white dark:bg-dark-800 w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700">
       <!-- Modal Header -->
       <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900">
         <h3 class="text-sm font-bold text-primary dark:text-indigo-400 flex items-center gap-2 uppercase tracking-wider">
-          â™ï¸ Cáº¥u HĂ¬nh GiĂ¡ & Hoa Há»“ng
+          ⚙️ Cấu Hình Giá & Hoa Hồng
         </h3>
         <button id="btnClosePriceConfig" class="text-gray-400 hover:text-gray-200 text-lg font-bold transition-all p-1">
           &times;
@@ -2450,89 +2450,89 @@ function resetTable() {
       <div class="p-5 overflow-y-auto space-y-4">
         <div class="flex justify-end mb-1">
           <button id="btnResetRates" class="text-xs text-primary dark:text-indigo-400 hover:underline">
-            KhĂ´i phá»¥c máº·c Ä‘á»‹nh
+            Khôi phục mặc định
           </button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Sá»‘ Äá» settings -->
+          <!-- Số Đề settings -->
           <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">đŸ”´ Sá»‘ Äá»</h3>
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🔴 Số Đề</h3>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-[11px] text-gray-500 mb-1">GiĂ¡ gá»‘c (%)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
                 <input type="text" id="rateDeComm" value="82" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[11px] text-gray-500 mb-1">ThÆ°á»Ÿng (1 Äƒn...)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">Thưởng (1 ăn...)</label>
                 <input type="text" id="rateDePayout" value="80" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
 
-          <!-- ÄĂ¡nh LĂ´ settings -->
+          <!-- Đánh Lô settings -->
           <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">đŸ”µ ÄĂ¡nh LĂ´</h3>
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🔵 Đánh Lô</h3>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-[11px] text-gray-500 mb-1">Vá»‘n 1 Ä‘iá»ƒm (Ä‘)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">Vốn 1 điểm (đ)</label>
                 <input type="text" id="rateLoCost" value="2165" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[11px] text-gray-500 mb-1">ThÆ°á»Ÿng 1 Ä‘iá»ƒm (Ä‘)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">Thưởng 1 điểm (đ)</label>
                 <input type="text" id="rateLoPayout" value="80" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
 
-          <!-- LĂ´ XiĂªn settings -->
+          <!-- Lô Xiên settings -->
           <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">đŸŸ¢ LĂ´ XiĂªn (XiĂªn 2, 3, 4)</h3>
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🟢 Lô Xiên (Xiên 2, 3, 4)</h3>
             <div class="grid grid-cols-4 gap-2 mb-2">
               <div class="col-span-4">
-                <label class="block text-[11px] text-gray-500 mb-1">GiĂ¡ gá»‘c (%)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
                 <input type="text" id="rateXienComm" value="65" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">XiĂªn 2 (1 Äƒn...)</label>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 2 (1 ăn...)</label>
                 <input type="text" id="rateXien2Payout" value="11" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">XiĂªn 3 (1 Äƒn...)</label>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 3 (1 ăn...)</label>
                 <input type="text" id="rateXien3Payout" value="45" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">XiĂªn 4 (1 Äƒn...)</label>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 4 (1 ăn...)</label>
                 <input type="text" id="rateXien4Payout" value="140" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
           </div>
 
-          <!-- 3 CĂ ng settings -->
+          <!-- 3 Càng settings -->
           <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">đŸŸ£ Ba CĂ ng Äá» & LĂ´</h3>
+            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🟣 Ba Càng Đề & Lô</h3>
             <div class="grid grid-cols-2 gap-3 mb-2">
               <div>
-                <label class="block text-[11px] text-gray-500 mb-1">3C Äá» GiĂ¡ gá»‘c (%)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">3C Đề Giá gốc (%)</label>
                 <input type="text" id="rate3CComm" value="75" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[11px] text-gray-500 mb-1">3C Äá» (1 Äƒn...)</label>
+                <label class="block text-[11px] text-gray-500 mb-1">3C Đề (1 ăn...)</label>
                 <input type="text" id="rate3CPayout" value="400" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Ăp MĂ¡ (1 Äƒn...)</label>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Áp Má (1 ăn...)</label>
                 <input type="text" id="rate3CApMa" value="5" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C LĂ´ GiĂ¡ gá»‘c (%)</label>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Giá gốc (%)</label>
                 <input type="text" id="rate3CLoCost" value="75" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
               <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C LĂ´ (1 Äƒn...)</label>
+                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô (1 ăn...)</label>
                 <input type="text" id="rate3CLoPayout" value="20" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
               </div>
             </div>
@@ -2543,7 +2543,7 @@ function resetTable() {
       <!-- Modal Footer -->
       <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end bg-gray-50 dark:bg-dark-900">
         <button id="btnClosePriceConfigBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-5 rounded-md text-xs font-bold">
-          XĂ¡c nháº­n
+          Xác nhận
         </button>
       </div>
     </div>
