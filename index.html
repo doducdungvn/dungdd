@@ -1918,7 +1918,8 @@ function normalizeTwentySevenNumbers() {
 }
 
 function copyText() {
-  const textToCopy = document.getElementById("modifiedResult").innerText;
+  let textToCopy = document.getElementById("modifiedResult").innerText;
+  textToCopy = textToCopy.replace(/^(🔴 Đề|🔵 Lô\(đ\)|🟤 3cLô|🟢 Xiên|🟣 3C)\s*\(.*?$/gm, "$1");
   copyToClipboard(textToCopy, "Đã sao chép kết quả thành công!");
 }
 
