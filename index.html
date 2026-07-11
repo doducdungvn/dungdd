@@ -1,358 +1,651 @@
 <!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
+<html lang="vi">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>☆ Lucky Wheel ☆</title>
+  <title>☆ Z™ ☆</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            primary: '#3b82f6',
-            secondary: '#6366f1',
-            success: '#10b981',
-            warning: '#f59e0b',
-            danger: '#ef4444',
-            dark: {
-              900: '#0f172a',
-              800: '#1e293b',
-              700: '#334155',
-            },
-          },
-          animation: {
-            'bounce-slow': 'bounce 3s infinite',
-            'pulse-slow': 'pulse 3s infinite',
-          }
-        }
-      }
-    }
-  </script>
-  <style type="text/tailwindcss">
-    @layer utilities {
-      .text-shadow {
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-      }
-      .matching-number {
-        @apply text-danger font-bold;
-        color: #ef4444 !important;
-      }
-    }
-  </style>
+<style>
+:root {
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --danger-color: #dc3545;
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --border-color: #cbd5e1;
+  --text-main: #334155;
+  --text-muted: #64748b;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  margin: 0;
+  padding: 10px;
+}
+
+.app-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.right-column {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-section label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  resize: vertical;
+}
+
+#numbers {
+  height: 250px;
+}
+
+#shortcuts {
+  height: 90px;
+}
+
+#twentySevenNumbers {
+  height: 70px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  background: #f1f5f9;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.control-row input[type="text"] {
+  width: 40px;
+  text-align: center;
+  padding: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.crawler-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  background: #f8fafc;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-top: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.crawler-controls select, .crawler-controls input[type="date"] {
+  padding: 2px 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.results-top {
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  padding: 15px 20px;
+}
+
+.results-top h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  align-items: start;
+}
+
+.result-section {
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  padding: 15px;
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+}
+
+.result-section h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
+}
+
+.details-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.details-list li {
+  padding: 4px 0;
+  border-bottom: 1px dotted #e2e8f0;
+}
+
+.bottom-layout {
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 650px;
+  font-size: 14px;
+}
+
+th, td {
+  border: 1px solid #cbd5e1;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+th {
+  background-color: #f1f5f9;
+  font-weight: 600;
+}
+
+td input[type="text"] {
+  width: 70px;
+  text-align: center;
+  padding: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+.matching-number {
+  color: var(--danger-color) !important;
+  font-weight: bold !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Modal configuration */
+.modal {
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-footer {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.config-tabs {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 15px;
+}
+
+.config-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+}
+
+.config-tab.active {
+  border-bottom-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.config-section {
+  background: #f8fafc;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.config-section h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 4px;
+  font-size: 14px;
+}
+
+.config-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.config-row label {
+  font-size: 12px;
+}
+
+.config-row input {
+  width: 60px;
+  text-align: center;
+  padding: 3px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+}
+
+@media (max-width: 950px) {
+  .main-layout {
+    flex-direction: column;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+  .result-section {
+    min-height: auto;
+  }
+}
+</style>
+  
 </head>
 
-<body class="bg-gray-50 dark:bg-dark-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen">
-  <div class="container max-w-7xl mx-auto px-4 py-6">
-    <button id="darkModeToggle" class="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-dark-800 shadow-lg hover:scale-110 transition-transform">
-      <span class="dark:hidden">🌙</span>
-      <span class="hidden dark:inline">☀️</span>
-    </button>
-
-    <h1 class="text-3xl font-bold text-center mb-6 text-primary dark:text-secondary text-shadow">☆ Lucky Wheel ☆</h1>
-
-    <div class="flex flex-col lg:flex-row gap-6">
-      <div class="flex-1 space-y-4">
-        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg">
-          <label class="block text-sm font-medium mb-1">Nhập số liệu (Hỗn hợp):</label>
-          <textarea 
-            id="combinedBetInput" 
-            class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-primary dark:focus:ring-secondary focus:border-transparent bg-white dark:bg-dark-700 font-mono text-sm leading-relaxed" 
-            style="height: 330px"
-            placeholder="Ví dụ nhập:&#10;Đề 12.34.56x50&#10;Lô 01-02-03x10&#10;Xiên 12-34-56x100&#10;3C 123.456x20&#10;3CL 789.912x5"
-          ></textarea>
-          <p class="text-[11px] text-gray-500 mt-1.5">
-            💡 Hỗ trợ: Đề (de, d), Lô (lo, l), Xiên (x, x2, x3, x4, xien), Xiên Quay (xienquay, xq, xienq, quay, q, xquay), 3 Càng (3c, 3cang), 3 Càng Lô (3cl, 3clo). Phân cách bằng dấu cách, phẩy, chấm, gạch ngang; dùng 'x', '+' hoặc '*' trước tiền/điểm cược.
-          </p>
+<body>
+  <div class="app-container">
+    <div class="main-layout">
+      <!-- Cột bên trái: Nhập liệu và cấu hình -->
+      <div class="left-column">
+        <div class="input-section">
+          <label for="numbers">Nhập số:</label>
+          <textarea id="numbers" rows="6" placeholder="Nhập tin cược tại đây..."></textarea>
         </div>
 
-        <div class="flex flex-wrap gap-2">
-          <button id="calculateButton" class="bg-success hover:bg-success/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
-            Tính tổng
-          </button>
-          <button id="copyButton" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
-            Sao chép Chuyển
-          </button>
-          <button id="copyInputListButton" class="bg-warning hover:bg-warning/90 text-white px-4 py-2 rounded-md flex-1 transition-all hover:scale-[1.02] active:scale-95">
-            Sao chép Input
-          </button>
-        </div>
-
-        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 space-y-2 transition-all hover:shadow-lg">
-          <div class="flex flex-wrap items-center gap-2">
-            <label class="text-sm font-medium">Giữ lại:</label>
-            <input type="text" id="retainNumber" value="0" 
-                   class="w-20 border border-gray-300 dark:border-gray-600 rounded-md p-1 text-center bg-white dark:bg-dark-700 focus:ring-2 focus:ring-primary">
-            <div class="flex items-center gap-4">
-              <label class="flex items-center gap-1 text-sm">
-                <input type="radio" name="retainType" id="retainTypeMoney" value="money" checked 
-                       class="form-radio text-primary dark:text-secondary border-gray-300 dark:border-gray-600">
-                <span>Tiền</span>
-              </label>
-              <label class="flex items-center gap-1 text-sm">
-                <input type="radio" name="retainType" id="retainTypePercentage" value="percentage" 
-                       class="form-radio text-primary dark:text-secondary border-gray-300 dark:border-gray-600">
-                <span>Phần trăm</span>
-              </label>
+        <div class="input-section">
+          <div class="button-group">
+            <button id="normalizeButton">Chuẩn hóa 27</button>
+            <button id="calculateButton">Tính tổng</button>
+            <button id="copyButton">Sao chép Chuyển</button>
+            <button id="copyInputListButton">Sao chép Input</button>
+            <button id="btnPriceConfig">Cấu hình giá</button>
+          </div>
+          <div class="control-row">
+            <label style="font-weight: bold;">Giữ lại: </label>
+            <span>Đề <input type="text" id="retainDe" value="0"></span>
+            <span>Lô <input type="text" id="retainLo" value="0"></span>
+            <span>3c <input type="text" id="retain3c" value="0"></span>
+            <span>X <input type="text" id="retainX" value="0"></span>
+            <span>3cL <input type="text" id="retain3cL" value="0"></span>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+              <label><input type="radio" name="retainType" id="retainTypeMoney" value="money" checked> Tiền</label>
+              <label><input type="radio" name="retainType" id="retainTypePercentage" value="percentage"> %</label>
+              <button id="btnResetBalance" style="padding: 2px 6px; font-size: 11px; background-color: #dc3545; color: white;">Từ đầu</button>
             </div>
           </div>
-        </div>
-
-        <div class="flex items-center justify-end px-1">
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="toggleExtraPanels" class="sr-only peer">
-            <div class="w-8 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-dark-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-500 peer-checked:bg-primary"></div>
-            <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Tiện ích KQ & Nhập tắt</span>
-          </label>
-        </div>
-
-        <!-- Lottery Results Card (Ported from thau_lode.html) -->
-        <div id="lotteryResultsPanel" class="hidden bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg space-y-4">
-          <div class="flex justify-between items-center flex-wrap gap-2">
-            <label class="text-sm font-medium">Kết quả Xổ số:</label>
-            <div class="flex gap-1 text-xs">
-              <button type="button" id="btnSourceMinhNgoc" class="px-2.5 py-1 rounded bg-primary text-white font-semibold border border-transparent">
-                Minh Ngọc
-              </button>
-              <button type="button" id="btnSourceXSKT" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 font-semibold border border-transparent">
-                XSKT.com.vn
-              </button>
-              <button type="button" id="btnSourceMKetqua" class="px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 font-semibold border border-transparent">
-                mketqua.net
-              </button>
-            </div>
+          <div style="margin-top: 4px; text-align: right;">
+            <span id="balanceCounterLabel" style="font-size: 11px; font-weight: bold; color: #555;">Số Lần Đã Cân Chuyển = 0</span>
           </div>
-
-          <div class="flex items-center justify-between bg-gray-50 dark:bg-dark-700 p-2 rounded-lg flex-wrap gap-2 text-xs">
-            <div class="flex items-center gap-3 flex-wrap">
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="autoFetchToggle" class="sr-only peer">
-                <div class="w-7 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-dark-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-500 peer-checked:bg-primary"></div>
-                <span class="ml-2 text-xs font-medium text-gray-700 dark:text-gray-300">Tự động tải</span>
-              </label>
-              <input type="date" id="resultDateInput" class="border border-gray-300 dark:border-gray-600 rounded px-1.5 py-0.5 text-xs bg-white dark:bg-dark-800">
-            </div>
-            
-            <span id="autoResultStatus" class="text-[10px] font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/30 hidden">
-              Chưa tải
+        </div>
+        
+        <div class="input-section">
+          <label for="twentySevenNumbers">27 giải:</label>
+          <textarea id="twentySevenNumbers" rows="3" placeholder="Kết quả 27 giải..."></textarea>
+          <div class="crawler-controls">
+            <label><input type="checkbox" id="autoFetchToggle"> Tự động tải KQ</label>
+            <span style="color: #ccc;">|</span>
+            <span>Ngày: <input type="date" id="resultDateInput"></span>
+            <span style="color: #ccc;">|</span>
+            <span>Nguồn: 
+              <select id="crawlerSource">
+                <option value="minhngoc">Minh Ngọc</option>
+                <option value="xskt">XSKT.com.vn</option>
+                <option value="mketqua">mketqua.net</option>
+              </select>
             </span>
-
-            <button type="button" id="btnFetchResults" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded transition-all active:scale-95 flex items-center gap-1 hidden">
-              <span id="fetchBtnSpinner" class="hidden animate-spin rounded-full h-2.5 w-2.5 border-b border-white"></span>
-              <span id="fetchBtnText">Tải KQ</span>
-            </button>
+            <button id="btnFetchResults" style="padding: 2px 8px; font-size: 12px;">Tải KQ</button>
+            <span id="autoResultStatus" style="font-size: 11px; font-weight: bold; display: none;"></span>
           </div>
-
-          <!-- Manual Fields -->
-          <div id="manualFields" class="grid grid-cols-1 md:grid-cols-12 gap-3">
-            <div class="md:col-span-3">
-              <label for="specialPrizeInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase">Giải ĐB</label>
-              <input type="text" id="specialPrizeInput" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-center font-bold tracking-widest text-emerald-600 dark:text-emerald-400 bg-white dark:bg-dark-700" placeholder="e.g. 58495">
-            </div>
-            <div class="md:col-span-9">
-              <div class="flex justify-between items-center mb-1">
-                <label for="allPrizesInput" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                  27 Giải (Nhập số cuối hoặc đầy đủ, cách nhau bằng dấu cách/phẩy)
-                </label>
-                <button type="button" id="normalizeButton" class="px-2 py-0.5 bg-gray-600 hover:bg-gray-500 text-white text-[10px] font-bold rounded transition-all active:scale-95">
-                  Chuẩn hóa 27
-                </button>
-              </div>
-              <textarea id="allPrizesInput" rows="2" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-sm bg-white dark:bg-dark-700 leading-relaxed font-mono" placeholder="Ví dụ: 09253, 77988... hoặc 53 88 65 45..."></textarea>
-            </div>
+          <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+            <label for="specialPrizeInput" style="font-weight: bold;">Giải Đặc Biệt: </label>
+            <input type="text" id="specialPrizeInput" style="width: 80px; text-align: center;" placeholder="Ví dụ: 58495">
           </div>
-
-          <!-- 2-Digit visual board -->
-          <div id="twoDigitBoardContainer" class="hidden border-t border-gray-200 dark:border-gray-700 pt-3">
-            <label id="lbl27Giai" class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider">
-              27 Giải
-            </label>
-            <div id="twoDigitBoard" class="flex flex-wrap gap-1 bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800 text-xs font-semibold">
-              <!-- populated by JS -->
-            </div>
+          <div id="twoDigitBoardContainer" class="hidden" style="margin-top: 10px;">
+            <label id="lbl27Giai" style="font-size: 12px; font-weight: bold; display: block; margin-bottom: 4px;"></label>
+            <div id="twoDigitBoard" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px;"></div>
           </div>
         </div>
 
-        <div id="shortcutsPanel" class="hidden bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg">
-          <label class="block text-sm font-medium mb-2">
-            <a href="nhaptat.html" class="text-primary dark:text-secondary hover:underline">Nhập tắt:</a>
-          </label>
-          <textarea 
-            id="shortcuts" 
-            class="w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:ring-2 focus:ring-primary dark:focus:ring-secondary focus:border-transparent bg-white dark:bg-dark-700" 
-            style="height: 99px"
-            placeholder="Định nghĩa các phím tắt..."
-          ></textarea>
-          <p class="text-center mt-3 text-xs text-gray-500 dark:text-gray-400">
-            <a href="dothuong.html" class="hover:underline">copyright</a> © by 
-            <a href="ex.html" class="text-primary dark:text-secondary hover:underline">Angle</a>
-          </p>
+        <div class="input-section">
+          <label for="shortcuts"><a href="nhaptat.html">Nhập tắt:</a></label>
+          <textarea name="shortcuts" rows="3" id="shortcuts" placeholder="Cấu hình phím tắt..."></textarea>
+          <p style="font-size: 11px; margin: 4px 0 0 0; text-align: right;"><a href="dothuong.html">copyright</a> © by <a href="ex.html">Angle</a></p>
         </div>
       </div>
 
-      <div class="flex-1 space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <span class="animate-bounce-slow">📊</span>
-              <span>Kết quả:</span>
-            </h3>
-            <div class="flex flex-col gap-2 mb-2">
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tổng số:</span>
-                <div id="numResults" class="mt-1">0 con</div>
-              </div>
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tổng:</span>
-                <div id="totalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
-              </div>
-            </div>
-            <div class="h-[calc(100%-12rem)]">
-              <div id="result" class="space-y-1 h-full overflow-y-auto p-2"></div>
-            </div>
+      <!-- Cột bên phải: Hiển thị kết quả tính toán -->
+      <div class="right-column">
+        <div class="results-top">
+          <h3><u>Tất cả:</u></h3>
+          <div id="totalSum2" style="font-weight: bold; font-size: 16px; color: #007bff; margin-bottom: 4px;"></div>
+          <div id="numResults" style="font-size: 12px; color: #666;"></div>
+        </div>
+
+        <div class="results-grid">
+          <div class="result-section">
+            <h3>Kết quả:</h3>
+            <div id="totalSum" class="red-text" style="font-weight: bold; margin-bottom: 8px;"></div>
+            <div id="result" style="font-size: 13px;"></div>
           </div>
- 
-          <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <span class="animate-bounce-slow">🔄</span>
-              <span>Chuyển:</span>
-            </h3>
-            <div class="flex flex-col gap-2 mb-2">
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tổng số:</span>
-                <div id="modifiedNumResults" class="mt-1">0 con</div>
-              </div>
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tổng Chuyển:</span>
-                <div id="modifiedTotalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
-              </div>
-            </div>
-            <div class="h-[calc(100%-12rem)]">
-              <div id="modifiedResult" class="space-y-1 h-full overflow-y-auto p-2"></div>
-            </div>
+          
+          <div class="result-section">
+            <h3>Chuyển:</h3>
+            <div id="modifiedTotalSum" class="red-text" style="font-weight: bold; margin-bottom: 8px;"></div>
+            <div id="modifiedResult" style="font-size: 13px;"></div>
+            <div id="totalSum3" style="font-size: 11px; margin-top: 8px; color: #666;"></div>
           </div>
- 
-          <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 class="font-medium flex items-center gap-2 mb-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <span class="animate-bounce-slow">🔍</span>
-              <span>Chi tiết:</span>
-            </h3>
-            <div class="flex flex-col gap-2 mb-2">
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Theo Input:</span>
-                <div id="inputListCount" class="mt-1">0 con</div>
-              </div>
-              <div class="border border-gray-200 dark:border-gray-700 rounded p-2">
-                <span class="text-xs text-gray-600 font-semibold">Tổng Nhập:</span>
-                <div id="inputTotalSum" class="text-xs font-bold text-danger mt-0.5">0</div>
-              </div>
+
+          <div class="result-section">
+            <h3>Chi tiết:</h3>
+            <ul id="inputList" class="details-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phần báo cáo ở dưới cùng -->
+    <div class="bottom-layout">
+      <div style="font-size: 14px; user-select: none; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <span style="font-weight: bold;">Xem báo cáo:</span>
+        <button id="tabThau" style="padding: 4px 12px; font-weight: bold; border-radius: 4px;">📊 Thầu</button>
+        <button id="tabChuyen" style="padding: 4px 12px; border-radius: 4px;">🔄 Chuyển</button>
+        <button id="tabGiulai" style="padding: 4px 12px; border-radius: 4px;">🔒 Giữ lại</button>
+      </div>
+    <table width="611" border="1">
+      <tr>
+      <td width="77" align="center">&nbsp;</td>
+      <td width="103">Cược</td>
+      <td width="115">Tiền</td>
+      <td width="113">Tiền Trúng</td>
+      <td width="169">Trúng</td>
+    </tr>
+    <tr>
+      <td height="27" align="center"><p>Đ</p></td>
+      <td><input type="text" id="input1" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(1)" /></td>
+      <td><span id="result1"></span></td>
+      <td><span id="bonusResult1"></span></td>
+      <td><input type="text" id="bonus1" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(1)" /></td>
+    </tr>
+    <tr>
+      <td align="center">L</td>
+      <td><input type="text" id="input2" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"   oninput="calculateResult(2)" /></td>
+      <td><span id="result2"></span></td>
+      <td><span id="bonusResult2"></span></td>
+      <td><input type="text" id="bonus2" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(2)" /></td>
+    </tr>
+    <tr>
+      <td align="center">X</td>
+      <td><input type="text" id="input3" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(3)" /></td>
+      <td><span id="result3"></span></td>
+      <td><span id="bonusResult3"></span></td>
+      <td><input type="text" id="bonus3" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(3)" /></td>
+    </tr>
+    <tr>
+      <td align="center">C</td>
+      <td><input type="text" id="input4" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(4)" /></td>
+      <td><span id="result4"></span></td>
+      <td><span id="bonusResult4"></span></td>
+      <td><input type="text" id="bonus4" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(4)" /></td>
+    </tr>
+    <tr>
+      <td align="center">Thầu</td>
+      <td>&nbsp;</td>
+      <td><span id="total"></span></td>
+      <td><span id="bonusTotal"></span></td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td align="center">Tổng thanh toán</td>
+      <td>&nbsp;</td>
+      <td colspan="2"><span id="finalResult"></span></td>
+      <td>&nbsp;</td>
+    </tr>
+  </table>
+
+  <p>&nbsp;</p>
+  <p>
+    <label for="percentage1">Đ:</label>
+    <input type="text" id="percentage1" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)" oninput="calculateResult(1)" />
+    <label for="percentage2">L:</label>
+    <input type="text" id="percentage2" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(2)" />
+    <label for="percentage3">X:</label>
+    <input type="text" id="percentage3" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(3)" />
+    <label for="percentage4">C:</label>
+    <input type="text" id="percentage4" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(4)" />
+  <!-- Modal Cấu hình giá -->
+  <div id="modalPriceConfig" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin: 0;">⚙️ Cấu Hình Giá & Hoa Hồng</h3>
+        <span id="btnClosePriceConfig" style="cursor: pointer; font-size: 24px; font-weight: bold;">&times;</span>
+      </div>
+      <div class="config-tabs">
+        <div id="configTabThau" class="config-tab active">📊 Cấu hình Thầu</div>
+        <div id="configTabChuyen" class="config-tab">🔄 Cấu hình Chuyển</div>
+      </div>
+      <div style="text-align: right; margin-bottom: 10px;">
+        <a href="#" id="btnResetRates" style="font-size: 12px; color: #007bff; text-decoration: none;">Khôi phục mặc định</a>
+      </div>
+      <div class="config-grid">
+        <!-- Số Đề settings -->
+        <div class="config-section">
+          <h4>🔴 Số Đề</h4>
+          <div class="config-row">
+            <label>Giá gốc (%)</label>
+            <input type="text" id="rateDeComm" value="82">
+          </div>
+          <div class="config-row">
+            <label>Thưởng (1 ăn...)</label>
+            <input type="text" id="rateDePayout" value="80">
+          </div>
+        </div>
+        <!-- Đánh Lô settings -->
+        <div class="config-section">
+          <h4>🔵 Đánh Lô</h4>
+          <div class="config-row">
+            <label>Vốn 1 điểm (đ)</label>
+            <input type="text" id="rateLoCost" value="2165">
+          </div>
+          <div class="config-row">
+            <label>Thưởng 1 điểm (đ)</label>
+            <input type="text" id="rateLoPayout" value="80">
+          </div>
+        </div>
+        <!-- Lô Xiên settings -->
+        <div class="config-section" style="grid-column: span 2;">
+          <h4>🟢 Lô Xiên (Xiên 2, 3, 4)</h4>
+          <div class="config-row" style="justify-content: flex-start; gap: 20px;">
+            <label>Giá gốc (%)</label>
+            <input type="text" id="rateXienComm" value="65">
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <div style="flex: 1; text-align: center;">
+              <span style="font-size: 10px; display: block;">Xiên 2</span>
+              <input type="text" id="rateXien2Payout" value="11" style="width: 50px;">
             </div>
-            <div class="h-[calc(100%-12rem)]">
-              <ul id="inputList" class="space-y-1 h-full overflow-y-auto p-2"></ul>
+            <div style="flex: 1; text-align: center;">
+              <span style="font-size: 10px; display: block;">Xiên 3</span>
+              <input type="text" id="rateXien3Payout" value="45" style="width: 50px;">
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <span style="font-size: 10px; display: block;">Xiên 4</span>
+              <input type="text" id="rateXien4Payout" value="140" style="width: 50px;">
             </div>
           </div>
         </div>
-
-        <!-- Lotto Report & Grand Summary Card (Ported from thau_lode.html style) -->
-        <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md p-4 transition-all hover:shadow-lg space-y-4">
-          <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
-            <h2 class="text-sm font-semibold uppercase tracking-wider flex items-center gap-2">
-              📊 Báo Cáo Thầu
-            </h2>
-            <button type="button" id="btnPriceConfig" class="px-2.5 py-1 bg-gray-100 dark:bg-dark-700 hover:bg-gray-200 dark:hover:bg-dark-600 rounded text-xs font-bold transition-all flex items-center gap-1.5 border border-gray-300 dark:border-gray-600">
-              ⚙️ Cấu hình giá
-            </button>
-          </div>
-
-          <!-- Financial Figures -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
-            <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
-              <span class="text-xs text-gray-500 block mb-0.5">Tiền Gốc</span>
-              <span id="summaryTotalCost" class="text-lg font-bold text-gray-800 dark:text-gray-200">0</span>
+        <!-- 3 Càng settings -->
+        <div class="config-section" style="grid-column: span 2;">
+          <h4>🟣 Ba Càng Đề & Lô</h4>
+          <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+            <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+              <label style="font-size: 12px;">3C Đề Gốc (%)</label>
+              <input type="text" id="rate3CComm" value="75" style="width: 60px;">
             </div>
-            <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
-              <span class="text-xs text-gray-500 block mb-0.5">Tiền Trúng</span>
-              <span id="summaryTotalWinnings" class="text-lg font-bold text-emerald-600 dark:text-emerald-400">0</span>
-            </div>
-            <div class="bg-gray-50 dark:bg-dark-900 p-2.5 rounded-lg border border-gray-200 dark:border-gray-800">
-              <span id="summaryNetLabel" class="text-xs text-gray-500 block mb-0.5">Kết quả thầu</span>
-              <span id="summaryNetValue" class="text-lg font-extrabold text-gray-800 dark:text-gray-200">0</span>
+            <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+              <label style="font-size: 12px;">3C Đề (1 ăn...)</label>
+              <input type="text" id="rate3CPayout" value="400" style="width: 60px;">
             </div>
           </div>
-
-          <!-- Breakdown Table -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left border-collapse border border-gray-200 dark:border-gray-700">
-              <thead class="bg-gray-100 dark:bg-dark-700 text-gray-700 dark:text-gray-300">
-                <tr>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700">Thể loại</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-center">Xác</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Vốn</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Trúng</th>
-                  <th class="p-2 border border-gray-200 dark:border-gray-700 text-right">Kết quả</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🔴 Đề</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblDeXac">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblDeVon">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblDeTrung">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblDeNet">0</td>
-                </tr>
-                <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🔵 Lô</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblLoXac">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblLoVon">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblLoTrung">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblLoNet">0</td>
-                </tr>
-                <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟢 Xiên</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tblXienXac">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblXienVon">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblXienTrung">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tblXienNet">0</td>
-                </tr>
-                <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟣 3 Càng</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tbl3CXac">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CVon">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CTrung">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tbl3CNet">0</td>
-                </tr>
-                <tr>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 font-bold">🟤 3C Lô</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center" id="tbl3CLXac">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CLVon">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tbl3CLTrung">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-bold" id="tbl3CLNet">0</td>
-                </tr>
-                <tr class="bg-gray-50 dark:bg-dark-900 font-bold text-gray-800 dark:text-gray-200">
-                  <td class="p-2 border border-gray-200 dark:border-gray-700">Tổng cộng</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-center">-</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblTotalVon">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right" id="tblTotalTrung">0</td>
-                  <td class="p-2 border border-gray-200 dark:border-gray-700 text-right font-black" id="tblTotalNet">0</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="flex gap-2">
-            <button type="button" id="btnCopyTextReport" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-md text-xs font-bold transition-all flex-1 flex items-center justify-center gap-1.5 active:scale-95">
-              📋 Copy Báo Cáo
-            </button>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex: 1; text-align: center;">
+              <span style="font-size: 10px; display: block;">Áp Má</span>
+              <input type="text" id="rate3CApMa" value="5" style="width: 50px;">
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <span style="font-size: 10px; display: block;">3C Lô Gốc (%)</span>
+              <input type="text" id="rate3CLoCost" value="75" style="width: 50px;">
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <span style="font-size: 10px; display: block;">3C Lô (1 ăn...)</span>
+              <input type="text" id="rate3CLoPayout" value="20" style="width: 50px;">
+            </div>
           </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnClosePriceConfigBtn" style="padding: 6px 15px; cursor: pointer;">Xác nhận</button>
       </div>
     </div>
   </div>
 
   <script>
-// Predefined shorthands map from thau_lode.html
+
+
+// Phân giải viết tắt mặc định từ thau_lode.html / index.html
 const shorthands = {
   "k": "00.11.22.33.44.55.66.77.88.99",
   "kl": "050.161.272.383.494",
@@ -520,8 +813,22 @@ const shorthands = {
   "ditto": "05.06.07.08.09.15.16.17.18.19.25.26.27.28.29.35.36.37.38.39.45.46.47.48.49.55.56.57.58.59.65.66.67.68.69.75.76.77.78.79.85.86.87.88.89.95.96.97.98.99"
 };
 
+let balanceState = {
+  step: 0,
+  deTransfers: {},
+  loTransfers: {},
+  baCangTransfers: {},
+  xienTransfers: {},
+  baCangLoTransfers: {},
+  deSums: {},
+  loSums: {},
+  baCangSums: {},
+  baCangLoSums: {},
+  xienBets: []
+};
+
 function normalizeShorthandToken(token) {
-  let t = token.trim().toLowerCase();
+  let t = token.trim().toLowerCase().replace(/[’‘ʼ＇`]/g, "'");
   const dauMatch = t.match(/^dau(\d)$/);
   if (dauMatch) return 'd' + dauMatch[1];
   const ditMatch = t.match(/^dit(\d)$/);
@@ -561,7 +868,13 @@ function resolveShorthands(numbersString) {
     const shortcutName = shortcutParts[0]?.trim().toLowerCase();
     const shortcutValue = shortcutParts[1]?.trim();
     if (shortcutName && shortcutValue) {
-      customShortcuts[shortcutName] = shortcutValue;
+      const keys = shortcutName.split(",");
+      keys.forEach(k => {
+        const cleanedKey = k.trim();
+        if (cleanedKey) {
+          customShortcuts[cleanedKey] = shortcutValue;
+        }
+      });
     }
   }
 
@@ -591,17 +904,22 @@ function parseNumbersFromBetString(numbersString, betType) {
   segments.forEach(seg => {
     if (!/^\d+$/.test(seg)) return;
     if (betType === 'de' || betType === 'lo') {
-      if (seg.length === 1) {
-        numbers.push('0' + seg);
-      } else if (seg.length === 2) {
+      if (seg.length === 2) {
         numbers.push(seg);
       } else if (seg.length === 3) {
-        numbers.push(seg.substring(0, 2));
-        numbers.push(seg.substring(1, 3));
+        if (seg.charAt(0) === seg.charAt(2)) {
+          numbers.push(seg.substring(0, 2));
+          numbers.push(seg.substring(1, 3));
+        }
       }
     } else if (betType === 'xien' || betType === 'xienquay') {
       if (seg.length === 2) {
         numbers.push(seg);
+      } else if (seg.length === 3) {
+        if (seg.charAt(0) === seg.charAt(2)) {
+          numbers.push(seg.substring(0, 2));
+          numbers.push(seg.substring(1, 3));
+        }
       }
     } else if (betType === 'bacang' || betType === 'bacang_lo') {
       if (seg.length === 3) {
@@ -612,12 +930,284 @@ function parseNumbersFromBetString(numbersString, betType) {
   return numbers;
 }
 
+function verifyNonGroupText(text, currentCat) {
+  const tokens = text.match(/\s+|[^\s]+/g) || [];
+  let activeCat = currentCat;
+  let hasInvalid = false;
+  let html = "";
+  
+  tokens.forEach(token => {
+    const trimmed = token.trim();
+    if (!trimmed) {
+      html += escapeHtml(token);
+      return;
+    }
+    
+    const norm = normalizeBetLine(trimmed);
+    const spaceMatch = norm.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s+xien|de|lo|xien|x|x2|x3|x4|3cang|3c|3clo|3cl|d|l|c|bc|cang|3\s+cang)$/i);
+    if (spaceMatch) {
+      const rawType = spaceMatch[1].toLowerCase();
+      const typeRegex = {
+        de: /^(de|d)$/i,
+        lo: /^(lo|l)$/i,
+        xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
+        xien: /^(lo\s+xien|xien|x|x2|x3|x4)$/i,
+        bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i,
+        bacang_lo: /^(3clo|3cl)$/i
+      };
+      let newCat = '';
+      if (typeRegex.de.test(rawType)) newCat = 'de';
+      else if (typeRegex.lo.test(rawType)) newCat = 'lo';
+      else if (typeRegex.xienquay.test(rawType)) newCat = 'xienquay';
+      else if (typeRegex.xien.test(rawType)) newCat = 'xien';
+      else if (typeRegex.bacang.test(rawType)) newCat = 'bacang';
+      else if (typeRegex.bacang_lo.test(rawType)) newCat = 'bacang_lo';
+      
+      if (newCat) {
+        activeCat = newCat;
+        html += escapeHtml(token);
+        return;
+      }
+    }
+    
+    if (/\d/.test(token)) {
+      hasInvalid = true;
+      html += `<span class="matching-number">${escapeHtml(token)}</span>`;
+    } else {
+      html += escapeHtml(token);
+    }
+  });
+  
+  return {
+    html: html,
+    newCategory: activeCat,
+    hasInvalid: hasInvalid
+  };
+}
+
+function verifyGroupText(groupText, currentCat) {
+  let activeCat = currentCat;
+  let hasInvalid = false;
+  
+  const normalizedGroupText = groupText.normalize("NFC");
+  
+  const opRegex = /(?:mỗi\s+con\s*=?|moi\s+con\s*=?|mc\s*=|mc|=\s*mc|=|\+|\*|x)\s*\d+(?:\.\d+)?(?:\s*(?:d|đ|₫|k|n)(?=[\s.,;\-\d]|$))?$/i;
+  const opMatch = normalizedGroupText.match(opRegex);
+  
+  let numbersPart = normalizedGroupText;
+  let operatorPart = "";
+  if (opMatch) {
+    numbersPart = normalizedGroupText.substring(0, opMatch.index);
+    operatorPart = opMatch[0];
+  } else {
+    return {
+      html: `<span class="matching-number">${escapeHtml(normalizedGroupText)}</span>`,
+      newCategory: activeCat,
+      hasInvalid: true
+    };
+  }
+
+  const typeRegex = {
+    de: /^(de|d|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề)$/i,
+    lo: /^(lo|lô|l)$/i,
+    xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
+    xien: /^(xien|xiên|x)$/i,
+    bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i,
+    bacang_lo: /^(3clo|3cl)$/i
+  };
+
+  function isTokenValid(seg, cat, prefix) {
+    if (seg.indexOf(',') !== -1) {
+      const parts = seg.split(',');
+      return parts.every(p => isTokenValid(p.trim(), cat, prefix));
+    }
+    
+    let testStr = seg;
+    if (prefix && /^\d+$/.test(seg)) {
+      testStr = prefix + seg;
+    }
+    
+    const resolved = resolveShorthands(testStr);
+    const parsedNums = parseNumbersFromBetString(resolved, cat);
+    return parsedNums.length > 0;
+  }
+
+  const tokenRegex = /(\s+|[.,;/\-\+=\*x]+|(?:dau\s+dit|đầu\s+đít|dau\s+duoi|đầu\s+đuôi|đau\s+đit|đau\s+đít|dd|đđ)\s*\d(?![0-9])|(?:kep\s+lech|kép\s+lệch)|(?:dau|đầu|đau|đàu|dit|đít|đit|duoi|đuôi|cham|chạm|tong|tổng|bo|bộ|he|hệ|d|đ|t)\s*\d{1,2}(?![0-9])|[a-zA-Z0-9'’‘＇`\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036f]+|.)/gi;
+  const tokens = numbersPart.match(tokenRegex) || [];
+  let html = "";
+  let validTokensCount = 0;
+  let activeShorthandPrefix = "";
+
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (/^[\s.,;/\-\+=\*x]+$/.test(t)) {
+      html += escapeHtml(t);
+    } else {
+      const trimmed = t.trim();
+      if (!trimmed) {
+        html += escapeHtml(t);
+        continue;
+      }
+
+      let newCat = '';
+      const normTokenForCat = normalizeBetLine(trimmed);
+      if (typeRegex.de.test(normTokenForCat)) newCat = 'de';
+      else if (typeRegex.lo.test(normTokenForCat)) newCat = 'lo';
+      else if (typeRegex.xienquay.test(normTokenForCat)) newCat = 'xienquay';
+      else if (typeRegex.xien.test(normTokenForCat)) newCat = 'xien';
+      else if (typeRegex.bacang.test(normTokenForCat)) newCat = 'bacang';
+      else if (typeRegex.bacang_lo.test(normTokenForCat)) newCat = 'bacang_lo';
+
+      if (newCat) {
+        activeCat = newCat;
+        html += escapeHtml(t);
+        activeShorthandPrefix = "";
+      } else {
+        const normToken = normalizeBetLine(trimmed);
+        const isValid = isTokenValid(normToken, activeCat, activeShorthandPrefix);
+        
+        if (isValid) {
+          html += escapeHtml(t);
+          
+          if (normToken.indexOf(',') !== -1) {
+            validTokensCount += 2;
+          } else if (/^\d+$/.test(normToken)) {
+            if (normToken.length === 3 && (activeCat === 'de' || activeCat === 'lo' || activeCat === 'xien' || activeCat === 'xienquay')) {
+              validTokensCount += 2;
+            } else {
+              validTokensCount += 1;
+            }
+          } else {
+            validTokensCount += 2; 
+          }
+          
+          const m = normToken.match(/^(dau|dit|duoi|cham|tong|t|d|d'|bo|he)(\d{1,2})$/i);
+          if (m) {
+            activeShorthandPrefix = m[1].toLowerCase();
+            if (activeShorthandPrefix === 'd') activeShorthandPrefix = 'dau';
+            if (activeShorthandPrefix === 'd\'') activeShorthandPrefix = 'dit';
+            if (activeShorthandPrefix === 'duoi') activeShorthandPrefix = 'dit';
+            if (activeShorthandPrefix === 't') activeShorthandPrefix = 'tong';
+            if (activeShorthandPrefix === 'he') activeShorthandPrefix = 'bo';
+          } else if (/^\d+$/.test(normToken)) {
+            let isShorthandListItem = false;
+            if (activeShorthandPrefix === 'bo') {
+              if (normToken.length === 2) isShorthandListItem = true;
+            } else if (['dau', 'dit', 'tong', 'cham'].indexOf(activeShorthandPrefix) !== -1) {
+              if (normToken.length === 1) isShorthandListItem = true;
+            }
+            if (!isShorthandListItem) {
+              activeShorthandPrefix = "";
+            }
+          }
+        } else {
+          hasInvalid = true;
+          html += `<span class="matching-number">${escapeHtml(t)}</span>`;
+        }
+      }
+    }
+  }
+
+  if ((activeCat === 'xien' || activeCat === 'xienquay') && validTokensCount < 2 && !hasInvalid) {
+    return {
+      html: `<span class="matching-number">${escapeHtml(numbersPart)}</span>${escapeHtml(operatorPart)}`,
+      newCategory: activeCat,
+      hasInvalid: true
+    };
+  }
+
+  return {
+    html: html + escapeHtml(operatorPart),
+    newCategory: activeCat,
+    hasInvalid: hasInvalid
+  };
+}
+
+function formatLineWithHighlights(lineText, currentCategory) {
+  let activeCat = currentCategory;
+  let hasInvalid = false;
+  let htmlResult = "";
+  
+  const groupRegex = /(?:^|[\s,;])([a-wy-z0-9'’‘ʼ＇`.,\-\s\u00C0-\u024F\u1E00-\u1EFF]+?)(?:mỗi\s+con\s*=?|moi\s+con\s*=?|mc\s*=|mc|=\s*mc|=|\+|\*|x)\s*(\d+(?:\.\d+)?)(?:\s*(?:d|đ|₫|k|n)(?=[\s.,;\-\d]|$))?/gi;
+  
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = groupRegex.exec(lineText)) !== null) {
+    const matchIndex = match.index;
+    const matchedStr = match[0];
+    
+    if (matchIndex > lastIndex) {
+      const gapText = lineText.substring(lastIndex, matchIndex);
+      const gapRes = verifyNonGroupText(gapText, activeCat);
+      htmlResult += gapRes.html;
+      activeCat = gapRes.newCategory;
+      if (gapRes.hasInvalid) hasInvalid = true;
+    }
+    
+    const groupRes = verifyGroupText(matchedStr, activeCat);
+    htmlResult += groupRes.html;
+    activeCat = groupRes.newCategory;
+    if (groupRes.hasInvalid) hasInvalid = true;
+    
+    lastIndex = groupRegex.lastIndex;
+  }
+  
+  if (lastIndex < lineText.length) {
+    const gapText = lineText.substring(lastIndex);
+    const gapRes = verifyNonGroupText(gapText, activeCat);
+    htmlResult += gapRes.html;
+    activeCat = gapRes.newCategory;
+    if (gapRes.hasInvalid) hasInvalid = true;
+  }
+  
+  return {
+    html: htmlResult,
+    newCategory: activeCat,
+    hasInvalid: hasInvalid
+  };
+}
+
+function stripAccents(str) {
+  return str.normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D");
+}
+
+function normalizeBetLine(line) {
+  let normalized = stripAccents(line.trim());
+  normalized = normalized.replace(/([dđ])`/gi, '$1');
+  normalized = normalized.replace(/[’‘ʼ＇]/g, "'");
+  normalized = normalized.replace(/(\d)\s*,\s*(\d)/g, '$1.$2');
+  normalized = normalized.replace(/(\d)\s*\.\s*(\d)/g, '$1.$2');
+  normalized = normalized.replace(/\b(?:dau\s+dit|dau\s+duoi)\s*(\d)(?![0-9])/gi, 'dau$1, dit$1');
+  normalized = normalized.replace(/\b(?:dd)\s*(\d)(?![0-9])/gi, 'dau$1, dit$1');
+  normalized = normalized.replace(/\b(?:kep lech)\b/gi, 'kl');
+  normalized = normalized.replace(/\b(?:lip|kep)\b/gi, 'k');
+  normalized = normalized.replace(/\b(?:dau)\s*(\d)(?![0-9])/gi, 'dau$1');
+  normalized = normalized.replace(/\b(?:dit|duoi)\s*(\d)(?![0-9])/gi, 'dit$1');
+  normalized = normalized.replace(/\b(?:cham)\s*(\d)(?![0-9])/gi, 'cham$1');
+  normalized = normalized.replace(/\b(?:tong)\s*(\d)(?![0-9])/gi, 't$1');
+  normalized = normalized.replace(/\b(?:d)\s*(\d)(?![0-9])/gi, 'd$1');
+  normalized = normalized.replace(/\b(?:t)\s*(\d)(?![0-9])/gi, 't$1');
+  normalized = normalized.replace(/\b(?:bo|he)\s*(\d{1,2})(?![0-9])/gi, 'bo$1');
+  normalized = normalized.replace(/\bmc\s*(\d+(?:\.\d+)?)(?:\s*(?:d|đ|₫|k|n)(?=[\s.,;\-\d]|$))?(?![a-z0-9])/gi, 'x$1');
+  normalized = normalized.replace(/\s+(\d+(?:\.\d+)?)\s*(?:d|đ|₫|k|n)(?![a-z0-9])/gi, ' x$1');
+  return normalized;
+}
+
 function parseCombinedInput(inputString) {
   let processedInput = inputString.replace(/[’‘ʼ＇`]/g, "'");
-  const sameLinePattern = /[\s,;]+\b(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|lô|lo|xiên|xien|x|x2|x3|x4)\b|[\s,;]+\b(3càng|3cang|3c|3clô|3clo|3cl)\b|[\s,;]+\b(d|l|c)\b(?=\s+[a-z0-9'’‘ʼ＇`])/gi;
+  const keywordRegex = /(^|[\s,;])(xienquay|xquay|xienq|3cang|3càng|3\s+càng|3\s+cang|quay|xien|xiên|3cl|xq|de|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề|lo|lô|3c|bc|càng|cang|d|đ|l|c|q|x)(\d)/gi;
+  processedInput = processedInput.replace(keywordRegex, "$1$2 $3");
+  const sameLinePattern = /[\s,;]+(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề|lô|lo|l|xiên|xien|x2|x3|x4)(?=[\s.,;\-\d]|$)|[\s,;]+(3càng|3cang|3\s+càng|3\s+cang|3c|3clô|3clo|3cl|bc|càng|cang)(?=[\s.,;\-\d]|$)|[\s,;]+(d|đ|l|c)(?=[\s.,;\-\d]|$)(?=\s+[a-z0-9'’‘＇`])/gi;
   processedInput = processedInput.replace(sameLinePattern, (match) => {
     return "\n" + match.replace(/^[\s,;]+/g, '').trim();
   });
+
+  const betSplitRegex = /([a-z0-9])\s*((?:mỗi\s+con\s*=?|moi\s+con\s*=?|mc\s*=|mc|=\s*mc|=|\+|\*|x)\s*\d+(?:\.\d+)?(?:\s*(?:d|đ|₫|k|n)(?=[\s.,;\-\d]|$))?)\b[\s.,;\-]+(?=[^\s.,;\-])/gi;
+  processedInput = processedInput.replace(betSplitRegex, '$1$2\n');
 
   const lines = processedInput.split('\n');
   const parsedBets = {
@@ -632,22 +1222,24 @@ function parseCombinedInput(inputString) {
   };
 
   const typeRegex = {
-    de: /^(đề|de|d)$/i,
-    lo: /^(lô|lo|l)$/i,
+    de: /^(de|d)$/i,
+    lo: /^(lo|l)$/i,
     xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
-    xien: /^(lô\s+xiên|lo\s+xien|xiên|xien|x|x2|x3|x4)$/i,
-    bacang: /^(3càng|3cang|3c|c)$/i,
-    bacang_lo: /^(3clô|3clo|3cl)$/i
+    xien: /^(lo\s+xien|xien|x|x2|x3|x4)$/i,
+    bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i,
+    bacang_lo: /^(3clo|3cl)$/i
   };
 
   let activeCategory = 'de';
 
   lines.forEach(line => {
-    let trimmed = line.trim();
-    if (!trimmed) return;
+    let originalLine = line.trim();
+    if (!originalLine) return;
+
+    let trimmed = normalizeBetLine(originalLine);
 
     let lineType = '';
-    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|lô|lo|xiên|xien|x|x2|x3|x4|3càng|3cang|3c|3clô|3clo|3cl|d|l|c)(?:\s+(.*))?$/i);
+    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s+xien|de|lo|xien|x|x2|x3|x4|3cang|3c|3clo|3cl|d|l|c|bc|cang|3\s+cang)(?:\s+(.*))?$/i);
     if (spaceMatch) {
       const rawType = spaceMatch[1].toLowerCase();
       if (typeRegex.de.test(rawType)) lineType = 'de';
@@ -660,34 +1252,17 @@ function parseCombinedInput(inputString) {
       if (lineType) {
         activeCategory = lineType;
         trimmed = spaceMatch[2] ? spaceMatch[2].trim() : '';
-      }
-    } else {
-      if (trimmed.match(/^l(\d+)/i)) {
-        activeCategory = 'lo';
-        lineType = 'lo';
-        trimmed = trimmed.substring(1).trim();
-      } else if (trimmed.match(/^xq(\d+)/i)) {
-        activeCategory = 'xienquay';
-        lineType = 'xienquay';
-        trimmed = trimmed.substring(2).trim();
-      } else if (trimmed.match(/^q(\d+)/i)) {
-        activeCategory = 'xienquay';
-        lineType = 'xienquay';
-        trimmed = trimmed.substring(1).trim();
-      } else if (trimmed.match(/^3c(\d+)/i) || trimmed.match(/^c(\d+)/i)) {
-        activeCategory = 'bacang';
-        lineType = 'bacang';
-        trimmed = trimmed.replace(/^(3c|c)/i, '').trim();
-      } else if (trimmed.match(/^3cl(\d+)/i)) {
-        activeCategory = 'bacang_lo';
-        lineType = 'bacang_lo';
-        trimmed = trimmed.substring(3).trim();
+        if (trimmed === '') {
+          return; 
+        }
       }
     }
 
     if (!lineType) lineType = activeCategory;
 
-    const groupRegex = /([a-wy-z0-9'.,\-\s]+)([x+*])(\d+)/gi;
+    let parsedCountBefore = parsedBets.de.length + parsedBets.lo.length + parsedBets.xien2.length + parsedBets.xien3.length + parsedBets.xien4.length + parsedBets.bacang.length + parsedBets.bacang_lo.length;
+
+    const groupRegex = /([a-wy-z0-9'’‘＇`.,\-\s]+)([x+*])(\d+(?:\.\d+)?)/gi;
     let groupMatch;
     while ((groupMatch = groupRegex.exec(trimmed)) !== null) {
       const rawNumString = groupMatch[1].trim();
@@ -696,7 +1271,72 @@ function parseCombinedInput(inputString) {
 
       const numString = resolveShorthands(rawNumString);
       const numbers = parseNumbersFromBetString(numString, lineType);
-      if (numbers.length === 0) continue;
+      
+      let isValidGroup = (numbers.length > 0);
+      if (isValidGroup) {
+        let parsedNumbersCount = 0;
+        const segments = numString.split(/[.,\-\s]+/).filter(s => s.length > 0);
+        segments.forEach(seg => {
+          if (!/^\d+$/.test(seg)) {
+            const isShorthand = /^(kl|k|dau\d|dit\d|cham\d|t\d|bo\d{1,2})$/i.test(seg);
+            if (isShorthand) {
+              if (lineType !== 'de' && lineType !== 'lo') {
+                isValidGroup = false;
+              } else {
+                parsedNumbersCount += 2;
+              }
+            } else {
+              isValidGroup = false;
+            }
+            return;
+          }
+          if (lineType === 'de' || lineType === 'lo') {
+            if (seg.length === 2) {
+              parsedNumbersCount += 1;
+            } else if (seg.length === 3) {
+              if (seg.charAt(0) === seg.charAt(2)) {
+                parsedNumbersCount += 2;
+              } else {
+                isValidGroup = false;
+              }
+            } else {
+              isValidGroup = false;
+            }
+          } else if (lineType === 'xien' || lineType === 'xienquay') {
+            if (seg.length === 2) {
+              parsedNumbersCount += 1;
+            } else if (seg.length === 3) {
+              if (seg.charAt(0) === seg.charAt(2)) {
+                parsedNumbersCount += 2;
+              } else {
+                isValidGroup = false;
+              }
+            } else {
+              isValidGroup = false;
+            }
+          } else if (lineType === 'bacang' || lineType === 'bacang_lo') {
+            if (seg.length === 3) {
+              parsedNumbersCount += 1;
+            } else {
+              isValidGroup = false;
+            }
+          }
+        });
+
+        if ((lineType === 'xien' || lineType === 'xienquay') && parsedNumbersCount < 2) {
+          isValidGroup = false;
+        }
+      }
+
+      if (!isValidGroup) {
+        parsedBets.rawOrder.push({
+          type: 'invalid',
+          originalLine: originalLine,
+          invalidText: groupMatch[0],
+          amount: 0
+        });
+        continue;
+      }
 
       if (lineType === 'xien') {
         if (numbers.length >= 2 && numbers.length <= 4) {
@@ -707,6 +1347,7 @@ function parseCombinedInput(inputString) {
           parsedBets[`xien${numbers.length}`].push(item);
           parsedBets.rawOrder.push({
             type: `xien${numbers.length}`,
+            originalLine: originalLine,
             numbers: numbers,
             amount: amount
           });
@@ -739,6 +1380,7 @@ function parseCombinedInput(inputString) {
                 parsedBets[`xien${size}`].push(item);
                 parsedBets.rawOrder.push({
                   type: `xien${size}`,
+                  originalLine: originalLine,
                   numbers: combo,
                   amount: amount
                 });
@@ -755,21 +1397,39 @@ function parseCombinedInput(inputString) {
           parsedBets[lineType].push(item);
           parsedBets.rawOrder.push({
             type: lineType,
+            originalLine: originalLine,
             numbers: [num],
             amount: amount
           });
         });
       }
     }
+
+    let parsedCountAfter = parsedBets.de.length + parsedBets.lo.length + parsedBets.xien2.length + parsedBets.xien3.length + parsedBets.xien4.length + parsedBets.bacang.length + parsedBets.bacang_lo.length;
+    if (parsedCountAfter === parsedCountBefore) {
+      parsedBets.rawOrder.push({
+        type: 'invalid',
+        originalLine: originalLine,
+        amount: 0
+      });
+    }
+  });
+
+  parsedBets.lineStates = lines.map(line => {
+    let originalLine = line.trim();
+    if (!originalLine) return { text: line, isValid: true };
+    const hasValid = parsedBets.rawOrder.some(b => b.originalLine === originalLine && b.type !== 'invalid');
+    const hasInvalid = parsedBets.rawOrder.some(b => b.originalLine === originalLine && b.type === 'invalid');
+    return { text: line, isValid: hasValid || !hasInvalid };
   });
 
   return parsedBets;
 }
 
-// Visual layout helper for 2-digit board
+// Bảng 2 số trực quan
 function updateTwoDigitBoard() {
   const specialPrizeInput = document.getElementById('specialPrizeInput');
-  const allPrizesInput = document.getElementById('allPrizesInput');
+  const allPrizesInput = document.getElementById('twentySevenNumbers');
   const board = document.getElementById('twoDigitBoard');
   const container = document.getElementById('twoDigitBoardContainer');
   const lbl27Giai = document.getElementById('lbl27Giai');
@@ -784,7 +1444,7 @@ function updateTwoDigitBoard() {
     return;
   }
 
-  const prizes = allPrizesRaw.split(/[\s,]+/).filter(Boolean);
+  const prizes = allPrizesRaw.split(/[\s,;]+/).filter(Boolean);
   if (prizes.length === 0) {
     container.classList.add('hidden');
     return;
@@ -795,27 +1455,27 @@ function updateTwoDigitBoard() {
   const bacangDe = specialPrize.length >= 3 ? specialPrize.slice(-3) : specialPrize;
   
   if (lbl27Giai) {
-    lbl27Giai.innerHTML = `<span class="text-red-600 dark:text-red-400 font-bold">GIẢI ĐẶC BIỆT</span> <span class="text-red-500 font-black text-lg ml-1">${bacangDe}</span>`;
+    lbl27Giai.innerHTML = `<span class="red-text" style="text-transform: uppercase;">GIẢI ĐẶC BIỆT</span> <span style="font-weight: 900; font-size: 16px; margin-left: 5px; color: red;">${bacangDe}</span>`;
   }
 
-  // Extract last 2 digits and sort
+  // Lấy 2 số cuối và sắp xếp
   const digits = prizes.map(p => p.slice(-2));
   digits.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
   
   let html = "";
   digits.forEach((last2) => {
     const isDe = last2 === deNumber;
-    const bgClass = isDe 
-      ? 'bg-red-600 dark:bg-red-500 text-white font-extrabold px-2 py-0.5 rounded shadow' 
-      : 'bg-gray-200 dark:bg-dark-700 text-gray-800 dark:text-gray-200 px-2 py-0.5 rounded border border-gray-300 dark:border-gray-600';
+    const bgStyle = isDe 
+      ? 'background: red; color: white; font-weight: bold; padding: 2px 6px; border-radius: 3px; box-shadow: 1px 1px 3px rgba(0,0,0,0.2);' 
+      : 'background: #e2e8f0; color: #334155; padding: 2px 6px; border-radius: 3px; border: 1px solid #cbd5e1;';
       
-    html += `<span class="${bgClass}">${last2}</span>`;
+    html += `<span style="${bgStyle}">${last2}</span>`;
   });
   
   board.innerHTML = html;
 }
 
-// Crawler states
+// Bộ tải Crawler kết quả
 let currentSource = 'minhngoc';
 let fetchedPrizesData = null;
 
@@ -832,48 +1492,49 @@ function formatDateDDMMYYYY(dateString) {
 }
 
 async function triggerAutoFetch() {
-  const fetchBtnSpinner = document.getElementById('fetchBtnSpinner');
-  const fetchBtnText = document.getElementById('fetchBtnText');
   const btnFetchResults = document.getElementById('btnFetchResults');
   const autoResultStatus = document.getElementById('autoResultStatus');
   const resultDateInput = document.getElementById('resultDateInput');
   const specialPrizeInput = document.getElementById('specialPrizeInput');
-  const allPrizesInput = document.getElementById('allPrizesInput');
+  const allPrizesInput = document.getElementById('twentySevenNumbers');
+  const crawlerSource = document.getElementById('crawlerSource');
 
   if (!btnFetchResults) return;
 
-  if (fetchBtnSpinner) fetchBtnSpinner.classList.remove('hidden');
-  if (fetchBtnText) fetchBtnText.innerText = 'Đang tải...';
   btnFetchResults.disabled = true;
+  btnFetchResults.innerText = 'Đang tải...';
+  
   if (autoResultStatus) {
     autoResultStatus.innerText = 'Đang tải...';
-    autoResultStatus.className = 'text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20 dark:text-indigo-400 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/30';
-    autoResultStatus.classList.remove('hidden');
+    autoResultStatus.style.color = 'blue';
+    autoResultStatus.style.display = 'inline';
   }
 
   const targetDate = resultDateInput ? resultDateInput.value : '';
+  const selectedSource = crawlerSource ? crawlerSource.value : 'minhngoc';
+  currentSource = selectedSource;
 
   try {
     let data = null;
     let errors = [];
 
-    // Try selected source first
-    if (currentSource === 'minhngoc') {
+    // Thử nguồn đã chọn trước
+    if (selectedSource === 'minhngoc') {
       try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc: " + e.message); }
-    } else if (currentSource === 'xskt') {
+    } else if (selectedSource === 'xskt') {
       try { data = await fetchFromXSKT(targetDate); } catch (e) { errors.push("XSKT: " + e.message); }
     } else {
       try { data = await fetchFromMKetqua(targetDate); } catch (e) { errors.push("mketqua: " + e.message); }
     }
 
-    // Fallback chain
-    if (!data && currentSource !== 'minhngoc') {
+    // Cơ chế fallback nếu lỗi nguồn chính
+    if (!data && selectedSource !== 'minhngoc') {
       try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc (fallback): " + e.message); }
     }
-    if (!data && currentSource !== 'xskt') {
+    if (!data && selectedSource !== 'xskt') {
       try { data = await fetchFromXSKT(targetDate); } catch (e) { errors.push("XSKT (fallback): " + e.message); }
     }
-    if (!data && currentSource !== 'mketqua') {
+    if (!data && selectedSource !== 'mketqua') {
       try { data = await fetchFromMKetqua(targetDate); } catch (e) { errors.push("mketqua (fallback): " + e.message); }
     }
 
@@ -881,73 +1542,63 @@ async function triggerAutoFetch() {
       throw new Error(errors.join(" | "));
     }
 
-    // Visual sync source buttons
-    updateSourceButtons(data.sourceName);
+    // Cập nhật lại dropdown nguồn khớp với nguồn thực tế tải thành công
+    if (crawlerSource) {
+      if (data.sourceName === "Minh Ngọc") crawlerSource.value = 'minhngoc';
+      else if (data.sourceName === "XSKT.com.vn") crawlerSource.value = 'xskt';
+      else if (data.sourceName === "mketqua.net") crawlerSource.value = 'mketqua';
+    }
 
     fetchedPrizesData = data;
     const dayMonth = data.dateText.split('/').slice(0, 2).join('/');
     if (autoResultStatus) {
       autoResultStatus.innerText = `Tải Ok! ${dayMonth}`;
-      autoResultStatus.className = 'text-[10px] font-bold text-emerald-600 bg-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/30';
-      autoResultStatus.classList.remove('hidden');
+      autoResultStatus.style.color = 'green';
     }
     
     if (specialPrizeInput) specialPrizeInput.value = data.specialPrize;
     if (allPrizesInput) allPrizesInput.value = data.prizes.join(', ');
 
     updateTwoDigitBoard();
+    calculateSum();
 
   } catch (error) {
     console.error(error);
     if (autoResultStatus) {
-      autoResultStatus.innerText = `Lỗi!`;
-      autoResultStatus.className = 'text-[10px] font-bold text-rose-600 bg-rose-100 dark:bg-rose-950/20 dark:text-rose-400 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-900/30';
-      autoResultStatus.classList.remove('hidden');
+      autoResultStatus.innerText = `Lỗi tải kết quả!`;
+      autoResultStatus.style.color = 'red';
     }
   } finally {
-    if (fetchBtnSpinner) fetchBtnSpinner.classList.add('hidden');
-    if (fetchBtnText) fetchBtnText.innerText = 'Tải KQ';
     btnFetchResults.disabled = false;
-  }
-}
-
-function updateSourceButtons(sourceName) {
-  const btnMinhNgoc = document.getElementById('btnSourceMinhNgoc');
-  const btnXSKT = document.getElementById('btnSourceXSKT');
-  const btnMKetqua = document.getElementById('btnSourceMKetqua');
-  if (!btnMinhNgoc || !btnXSKT || !btnMKetqua) return;
-
-  const activeCls = 'px-2.5 py-1 rounded bg-primary text-white font-semibold border border-transparent';
-  const inactiveCls = 'px-2.5 py-1 rounded bg-gray-200 dark:bg-dark-700 text-gray-700 dark:text-gray-300 font-semibold border border-transparent';
-
-  btnMinhNgoc.className = inactiveCls;
-  btnXSKT.className = inactiveCls;
-  btnMKetqua.className = inactiveCls;
-
-  if (sourceName === "Minh Ngọc") {
-    currentSource = 'minhngoc';
-    btnMinhNgoc.className = activeCls;
-  } else if (sourceName === "XSKT.com.vn") {
-    currentSource = 'xskt';
-    btnXSKT.className = activeCls;
-  } else if (sourceName === "mketqua.net") {
-    currentSource = 'mketqua';
-    btnMKetqua.className = activeCls;
+    btnFetchResults.innerText = 'Tải KQ';
   }
 }
 
 async function fetchHtmlWithProxy(targetUrl) {
-  try {
-    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&cache=${(new Date()).getTime()}`);
-    if (!res.ok) throw new Error();
-    const json = await res.json();
-    if (json.contents) return json.contents;
-  } catch (e) {
-    console.warn("Proxy allorigins failed, trying corsproxy...");
+  const proxies = [
+    url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&cache=${(new Date()).getTime()}`,
+    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+    url => `https://thingproxy.freeboard.io/fetch/${url}`
+  ];
+
+  for (let i = 0; i < proxies.length; i++) {
+    try {
+      const proxyUrl = proxies[i](targetUrl);
+      const res = await fetch(proxyUrl);
+      if (!res.ok) continue;
+      
+      if (proxyUrl.includes("allorigins.win")) {
+        const json = await res.json();
+        if (json.contents) return json.contents;
+      } else {
+        return await res.text();
+      }
+    } catch (e) {
+      console.warn(`Proxy ${i + 1} thất bại:`, e);
+    }
   }
-  const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
-  if (!res.ok) throw new Error("Cả 2 dịch vụ proxy đều không tải được dữ liệu.");
-  return await res.text();
+  throw new Error("Tất cả các dịch vụ proxy đều không tải được dữ liệu.");
 }
 
 async function fetchFromMinhNgoc(dateStr) {
@@ -1041,7 +1692,7 @@ async function fetchFromMKetqua(dateStr) {
   };
 }
 
-// Initialize default values
+// Hàm khởi tạo mặc định 0 cho bảng tổng kết cũ
 function initializeDefaultValues() {
   for (let i = 1; i <= 4; i++) {
     const rEl = document.getElementById(`result${i}`);
@@ -1067,54 +1718,157 @@ function saveShortcuts() {
 }
 
 function loadShortcuts() {
-  const shortcutsData = localStorage.getItem("shortcutsData");
   const shortcutsArea = document.getElementById("shortcuts");
-  if (shortcutsData && shortcutsArea) {
-    shortcutsArea.value = shortcutsData;
+  if (!shortcutsArea) return;
+  
+  const cached = localStorage.getItem("shortcutsData");
+  if (cached) {
+    shortcutsArea.value = cached;
+  }
+  
+  fetch("https://raw.githubusercontent.com/doducdungvn/lucky/refs/heads/main/nhaptat.txt")
+    .then(response => {
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.text();
+    })
+    .then(data => {
+      if (data && data.trim() !== "") {
+        shortcutsArea.value = data;
+        localStorage.setItem("shortcutsData", data);
+      }
+    })
+    .catch(err => {
+      console.error("Error fetching shortcuts:", err);
+    });
+}
+
+function saveAppState() {
+  const numbers = document.getElementById('numbers');
+  const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+  const specialPrizeInput = document.getElementById('specialPrizeInput');
+  const autoFetchToggle = document.getElementById('autoFetchToggle');
+  const resultDateInput = document.getElementById('resultDateInput');
+  const crawlerSource = document.getElementById('crawlerSource');
+
+  if (numbers) localStorage.setItem('z8_combined_bet', numbers.value || '');
+  if (twentySevenNumbers) localStorage.setItem('z8_all_prizes', twentySevenNumbers.value || '');
+  if (specialPrizeInput) localStorage.setItem('z8_special_prize', specialPrizeInput.value || '');
+  if (autoFetchToggle) localStorage.setItem('z8_auto_fetch', autoFetchToggle.checked ? '1' : '0');
+  if (resultDateInput) localStorage.setItem('z8_result_date', resultDateInput.value || '');
+  if (crawlerSource) localStorage.setItem('z8_crawler_source', crawlerSource.value || 'minhngoc');
+}
+
+function loadAppState() {
+  const numbers = document.getElementById('numbers');
+  const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+  const specialPrizeInput = document.getElementById('specialPrizeInput');
+  const autoFetchToggle = document.getElementById('autoFetchToggle');
+  const resultDateInput = document.getElementById('resultDateInput');
+  const crawlerSource = document.getElementById('crawlerSource');
+
+  const savedBet = localStorage.getItem('z8_combined_bet');
+  const savedPrizes = localStorage.getItem('z8_all_prizes');
+  const savedSpecial = localStorage.getItem('z8_special_prize');
+  const savedAutoFetch = localStorage.getItem('z8_auto_fetch');
+  const savedDate = localStorage.getItem('z8_result_date');
+  const savedSource = localStorage.getItem('z8_crawler_source');
+
+  let hasData = false;
+
+  if (savedBet !== null && numbers) {
+    numbers.value = savedBet;
+    if (savedBet.trim() !== '') hasData = true;
+  }
+  if (savedPrizes !== null && twentySevenNumbers) {
+    twentySevenNumbers.value = savedPrizes;
+  }
+  if (savedSpecial !== null && specialPrizeInput) {
+    specialPrizeInput.value = savedSpecial;
+  }
+  if (savedAutoFetch !== null && autoFetchToggle) {
+    autoFetchToggle.checked = (savedAutoFetch === '1');
+  }
+  if (savedDate !== null && resultDateInput) {
+    resultDateInput.value = savedDate;
+  }
+  if (savedSource !== null && crawlerSource) {
+    crawlerSource.value = savedSource;
+  }
+
+  updateTwoDigitBoard();
+
+  if (hasData) {
+    calculateSum();
   }
 }
 
-// Calculation Engine
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// Bộ máy tính toán nâng cao
 function calculateSum() {
   saveShortcuts();
+  saveAppState();
 
-  const inputEl = document.getElementById("combinedBetInput") || document.getElementById("numbers");
-  if (!inputEl) return;
-  const inputString = inputEl.value;
+  const numbers = document.getElementById("numbers");
+  if (!numbers) return;
+  const inputString = numbers.value;
 
-  const specialPrizeEl = document.getElementById("specialPrizeInput") || document.getElementById("specialPrize");
-  const specialPrizeRaw = specialPrizeEl ? specialPrizeEl.value.trim() : "";
+  const twentySevenNumbers = document.getElementById("twentySevenNumbers");
+  const allPrizesRaw = twentySevenNumbers ? twentySevenNumbers.value.trim() : "";
+  const allPrizes = allPrizesRaw ? allPrizesRaw.split(/[\s,;]+/).filter(Boolean) : [];
+
+  const specialPrizeInput = document.getElementById("specialPrizeInput");
+  let specialPrizeRaw = specialPrizeInput ? specialPrizeInput.value.trim() : "";
+  if (!specialPrizeRaw && allPrizes.length > 0) {
+    specialPrizeRaw = allPrizes[0];
+  }
   const specialPrizeLast2 = specialPrizeRaw ? specialPrizeRaw.slice(-2) : "";
   const specialPrizeLast3 = specialPrizeRaw ? specialPrizeRaw.slice(-3) : "";
 
-  const allPrizesEl = document.getElementById("allPrizesInput") || document.getElementById("twentySevenNumbers");
-  const allPrizesRaw = allPrizesEl ? allPrizesEl.value.trim() : "";
-  const allPrizes = allPrizesRaw ? allPrizesRaw.split(/[\s,]+/).filter(Boolean) : [];
   const allPrizesLast2 = allPrizes.map(p => p.slice(-2));
   const allPrizesLast3 = allPrizes.filter(p => p.length >= 3).map(p => p.slice(-3));
 
-  const parseVal = (id, fallback) => {
-    const el = document.getElementById(id);
-    if (!el) return fallback;
-    const valStr = el.value || '';
-    const cleaned = valStr.toString().replace(/,/g, '.').trim();
-    const parsed = parseFloat(cleaned);
-    return isNaN(parsed) ? fallback : parsed;
+  const getRateVal = (type, key, fallback) => {
+    if (window.priceConfigData && window.priceConfigData[type] && window.priceConfigData[type][key] !== undefined) {
+      return window.priceConfigData[type][key];
+    }
+    return fallback;
   };
 
-  const deComm = parseVal('rateDeComm', 82);
-  const dePayout = parseVal('rateDePayout', 80);
-  const loCost = parseVal('rateLoCost', 23000);
-  const loPayout = parseVal('rateLoPayout', 80000);
-  const xienComm = parseVal('rateXienComm', 65);
-  const x2Payout = parseVal('rateXien2Payout', 15);
-  const x3Payout = parseVal('rateXien3Payout', 50);
-  const x4Payout = parseVal('rateXien4Payout', 120);
-  const baCangComm = parseVal('rate3CComm', 75);
-  const baCangPayout = parseVal('rate3CPayout', 400);
-  const baCangApMa = parseVal('rate3CApMa', 5);
-  const baCangLoCost = parseVal('rate3CLoCost', 75);
-  const baCangLoPayout = parseVal('rate3CLoPayout', 960);
+  const deComm = getRateVal('thau', 'rateDeComm', 82);
+  const dePayout = getRateVal('thau', 'rateDePayout', 80);
+  const loCost = getRateVal('thau', 'rateLoCost', 2165);
+  const loPayout = getRateVal('thau', 'rateLoPayout', 80);
+  const xienComm = getRateVal('thau', 'rateXienComm', 65);
+  const x2Payout = getRateVal('thau', 'rateXien2Payout', 11);
+  const x3Payout = getRateVal('thau', 'rateXien3Payout', 45);
+  const x4Payout = getRateVal('thau', 'rateXien4Payout', 140);
+  const baCangComm = getRateVal('thau', 'rate3CComm', 75);
+  const baCangPayout = getRateVal('thau', 'rate3CPayout', 400);
+  const baCangApMa = getRateVal('thau', 'rate3CApMa', 5);
+  const baCangLoCost = getRateVal('thau', 'rate3CLoCost', 75);
+  const baCangLoPayout = getRateVal('thau', 'rate3CLoPayout', 20);
+
+  const deComm_chuyen = getRateVal('chuyen', 'rateDeComm', 82);
+  const dePayout_chuyen = getRateVal('chuyen', 'rateDePayout', 80);
+  const loCost_chuyen = getRateVal('chuyen', 'rateLoCost', 2165);
+  const loPayout_chuyen = getRateVal('chuyen', 'rateLoPayout', 80);
+  const xienComm_chuyen = getRateVal('chuyen', 'rateXienComm', 65);
+  const x2Payout_chuyen = getRateVal('chuyen', 'rateXien2Payout', 11);
+  const x3Payout_chuyen = getRateVal('chuyen', 'rateXien3Payout', 45);
+  const x4Payout_chuyen = getRateVal('chuyen', 'rateXien4Payout', 140);
+  const baCangComm_chuyen = getRateVal('chuyen', 'rate3CComm', 75);
+  const baCangPayout_chuyen = getRateVal('chuyen', 'rate3CPayout', 400);
+  const baCangApMa_chuyen = getRateVal('chuyen', 'rate3CApMa', 5);
+  const baCangLoCost_chuyen = getRateVal('chuyen', 'rate3CLoCost', 75);
+  const baCangLoPayout_chuyen = getRateVal('chuyen', 'rate3CLoPayout', 20);
 
   const getLoCostFactor = (val) => {
     if (val < 100) return val;
@@ -1128,6 +1882,8 @@ function calculateSum() {
 
   const loCostFactor = getLoCostFactor(loCost);
   const loPayoutFactor = getLoPayoutFactor(loPayout);
+  const loCostFactor_chuyen = getLoCostFactor(loCost_chuyen);
+  const loPayoutFactor_chuyen = getLoPayoutFactor(loPayout_chuyen);
 
   const parsedBets = parseCombinedInput(inputString);
 
@@ -1138,16 +1894,17 @@ function calculateSum() {
   if (resultDiv) resultDiv.innerHTML = "";
   if (modifiedResultDiv) modifiedResultDiv.innerHTML = "";
   if (inputListDiv) inputListDiv.innerHTML = "";
+
   let deBetSum = 0;
   let deWinSum = 0;
   let loBetSum = 0;
   let loWinSum = 0;
   let xienBetSum = 0;
   let xienWinSum = 0;
+  let xienWinXac = 0;
   let baCangBetSum = 0;
   let baCangWinSum = 0;
 
-  // New variables for detailed calculations
   let baCangDeBetSum = 0;
   let baCangDeWinSum = 0;
   let baCangDeApMaWinSum = 0;
@@ -1220,6 +1977,7 @@ function calculateSum() {
     if (allHit) {
       const winRate = size === 2 ? x2Payout : (size === 3 ? x3Payout : x4Payout);
       xienWinSum += bet.amount * winRate;
+      xienWinXac += bet.amount;
     }
   });
 
@@ -1256,8 +2014,18 @@ function calculateSum() {
     }
   });
 
-  // Render detail in original entry order
+  // Render danh sách chi tiết
   parsedBets.rawOrder.forEach(bet => {
+    if (bet.type === 'invalid') {
+      if (inputListDiv) {
+        const li = document.createElement("li");
+        li.className = "matching-number";
+        li.textContent = `❌ Lỗi: ${bet.invalidText || bet.originalLine}`;
+        inputListDiv.appendChild(li);
+      }
+      return;
+    }
+
     let occurrences = 0;
     const num = bet.numbers[0];
     const typeLabel = bet.type === "de" ? "Đề" : (bet.type === "lo" ? "Lô" : (bet.type.startsWith("xien") ? `Xiên${bet.numbers.length}` : (bet.type === "bacang" ? "3C" : "3CLô")));
@@ -1281,7 +2049,7 @@ function calculateSum() {
     renderDetail(numStr, bet.amount, typeLabel, occurrences);
   });
 
-  // Render Kết quả column
+  // Render cột Kết quả
   const renderGroupResult = (title, sumsMap, isLoto = false) => {
     if (!resultDiv) return;
     const sorted = Object.entries(sumsMap).sort((a, b) => b[1] - a[1]);
@@ -1289,7 +2057,10 @@ function calculateSum() {
 
     const header = document.createElement("div");
     header.innerHTML = `<strong>${title}</strong>`;
-    header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
+    header.style.marginTop = '8px';
+    header.style.borderBottom = '1px solid #eee';
+    header.style.paddingBottom = '3px';
+    header.style.fontWeight = 'bold';
     resultDiv.appendChild(header);
 
     sorted.forEach(([key, value]) => {
@@ -1334,7 +2105,7 @@ function calculateSum() {
     });
   };
 
-  // 1. Calculations for Kết quả column
+  // Tính thầu
   const deVon = deBetSum * (deComm / 100);
   const deTrung = deWinSum * dePayout;
   const deNet = deVon - deTrung;
@@ -1351,7 +2122,6 @@ function calculateSum() {
   const baCangTrung = baCangDeWinSum * baCangPayout + baCangDeApMaWinSum * baCangApMa;
   const baCangNet = baCangVon - baCangTrung;
 
-  // 3 Càng Lô sums map
   const baCangLoSums = {};
   parsedBets.bacang_lo.forEach(bet => {
     const num = bet.numbers[0];
@@ -1365,83 +2135,20 @@ function calculateSum() {
   const totalTrung = deTrung + loTrung + xienTrung + baCangTrung + baCangLoTrung;
   const totalNet = totalVon - totalTrung;
 
-  // 2. Calculations for Chuyển column
-  const retainNumber = parseInt(document.getElementById("retainNumber")?.value) || 0;
-  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
-
-  const getLayoffValues = (sumsMap, getPayoutFn) => {
-    let costSum = 0;
-    let winSum = 0;
-    Object.entries(sumsMap).forEach(([key, value]) => {
-      let modifiedSum = retainType === "money" ? value - retainNumber : value - (value * (retainNumber / 100));
-      if (modifiedSum >= 1) {
-        modifiedSum = Math.trunc(modifiedSum);
-        costSum += modifiedSum;
-        winSum += getPayoutFn(key, modifiedSum);
-      }
-    });
-    return { costSum, winSum };
-  };
-
-  const deLayoff = getLayoffValues(deSums, (key, amt) => (key === specialPrizeLast2 ? amt * dePayout : 0));
-  const deVonChuyen = deLayoff.costSum * (deComm / 100);
-  const deTrungChuyen = deLayoff.winSum;
-
-  const loLayoff = getLayoffValues(loSums, (key, amt) => {
-    const occurrences = allPrizesLast2.filter(p => p === key).length;
-    return occurrences * amt * loPayoutFactor;
-  });
-  const loVonChuyen = loLayoff.costSum * loCostFactor;
-  const loTrungChuyen = loLayoff.winSum;
-
-  let xienVonChuyen = 0;
-  let xienTrungChuyen = 0;
-  xienBets.forEach(bet => {
-    let modifiedSum = retainType === "money" ? bet.amount - retainNumber : bet.amount - (bet.amount * (retainNumber / 100));
-    if (modifiedSum >= 1) {
-      modifiedSum = Math.trunc(modifiedSum);
-      xienVonChuyen += modifiedSum * (xienComm / 100);
-      const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
-      if (allHit) {
-        const size = bet.numbers.length;
-        const winRate = size === 2 ? x2Payout : (size === 3 ? x3Payout : x4Payout);
-        xienTrungChuyen += modifiedSum * winRate;
-      }
-    }
-  });
-
-  const baCangLayoff = getLayoffValues(baCangSums, (key, amt) => {
-    const match3 = key === specialPrizeLast3;
-    const match2 = key.slice(-2) === specialPrizeLast2;
-    if (match3) return amt * baCangPayout;
-    if (match2) return amt * baCangApMa;
-    return 0;
-  });
-  const baCangVonChuyen = baCangLayoff.costSum * (baCangComm / 100);
-  const baCangTrungChuyen = baCangLayoff.winSum;
-
-  const baCangLoLayoff = getLayoffValues(baCangLoSums, (key, amt) => {
-    const occurrences = allPrizesLast3.filter(p => p === key).length;
-    return occurrences * amt * baCangLoPayout;
-  });
-  const baCangLoVonChuyen = baCangLoLayoff.costSum * (baCangLoCost / 100);
-  const baCangLoTrungChuyen = baCangLoLayoff.winSum;
-
-  const totalVonChuyen = deVonChuyen + loVonChuyen + xienVonChuyen + baCangVonChuyen + baCangLoVonChuyen;
-  const totalTrungChuyen = deTrungChuyen + loTrungChuyen + xienTrungChuyen + baCangTrungChuyen + baCangLoTrungChuyen;
-
-  // 3. Render Kết quả list with formatHeaderMoney
   const formatHeaderMoney = (von, trung) => {
     return `(${Math.round(von).toLocaleString('vi-VN')} / ${Math.round(trung).toLocaleString('vi-VN')})`;
   };
 
-  renderGroupResult(`🔴 Đề ${formatHeaderMoney(deVon, deTrung)}`, deSums, false);
-  renderGroupResult(`🔵 Lô(đ) ${formatHeaderMoney(loVon, loTrung)} <span class="text-yellow-600 dark:text-yellow-400">[${Math.round(loBetSum)}đ / ${Math.round(loWinSum)}đ]</span>`, loSums, true);
+  renderGroupResult(`🔴 Đề ${formatHeaderMoney(deVon, deTrung)}`, deSums);
+  renderGroupResult(`🔵 Lô(đ) ${formatHeaderMoney(loVon, loTrung)} [${Math.round(loBetSum)}đ]`, loSums);
 
   if (xienBets.length > 0 && resultDiv) {
     const header = document.createElement("div");
     header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVon, xienTrung)}</strong>`;
-    header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
+    header.style.marginTop = '8px';
+    header.style.borderBottom = '1px solid #eee';
+    header.style.paddingBottom = '3px';
+    header.style.fontWeight = 'bold';
     resultDiv.appendChild(header);
     xienBets.forEach(bet => {
       const div = document.createElement("div");
@@ -1458,7 +2165,10 @@ function calculateSum() {
   if (Object.keys(baCangSums).length > 0 && resultDiv) {
     const header = document.createElement("div");
     header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVon, baCangTrung)}</strong>`;
-    header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
+    header.style.marginTop = '8px';
+    header.style.borderBottom = '1px solid #eee';
+    header.style.paddingBottom = '3px';
+    header.style.fontWeight = 'bold';
     resultDiv.appendChild(header);
     Object.entries(baCangSums).sort((a,b) => b[1]-a[1]).forEach(([key, value]) => {
       const div = document.createElement("div");
@@ -1477,25 +2187,175 @@ function calculateSum() {
   }
 
   if (Object.keys(baCangLoSums).length > 0 && resultDiv) {
-    renderGroupResult(`🟤 3cLô ${formatHeaderMoney(baCangLoVon, baCangLoTrung)}`, baCangLoSums, false);
+    renderGroupResult(`🟤 3cLô ${formatHeaderMoney(baCangLoVon, baCangLoTrung)}`, baCangLoSums);
   }
 
-  // 4. Render Chuyển (Layoff) lists
-  const renderGroupLayoff = (title, sumsMap, isLoto = false) => {
+  // Tính chuyển (Layoff)
+  const retainDe = parseFloat(document.getElementById("retainDe")?.value) || 0;
+  const retainLo = parseFloat(document.getElementById("retainLo")?.value) || 0;
+  const retain3c = parseFloat(document.getElementById("retain3c")?.value) || 0;
+  const retainX = parseFloat(document.getElementById("retainX")?.value) || 0;
+  const retain3cL = parseFloat(document.getElementById("retain3cL")?.value) || 0;
+  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+
+  const getCategoryRetainValue = (categoryKey) => {
+    if (categoryKey === 'de') return retainDe;
+    if (categoryKey === 'lo') return retainLo;
+    if (categoryKey === 'bacang') return retain3c;
+    if (categoryKey === 'xien') return retainX;
+    if (categoryKey === 'bacang_lo') return retain3cL;
+    return 0;
+  };
+
+  const getCategorySumsMap = (categoryKey) => {
+    if (categoryKey === 'de') return deSums;
+    if (categoryKey === 'lo') return loSums;
+    if (categoryKey === 'bacang') return baCangSums;
+    if (categoryKey === 'bacang_lo') return baCangLoSums;
+    if (categoryKey === 'xien') {
+      const map = {};
+      xienBets.forEach((bet, idx) => {
+        map[idx] = bet.amount;
+      });
+      return map;
+    }
+    return {};
+  };
+
+  const getCategoryTransferMap = (categoryKey) => {
+    if (balanceState.step === 0) {
+      const retainVal = getCategoryRetainValue(categoryKey);
+      const map = {};
+      const sumsMap = getCategorySumsMap(categoryKey);
+      Object.entries(sumsMap).forEach(([key, val]) => {
+        let excess = retainType === "money" ? val - retainVal : val - (val * (retainVal / 100));
+        excess = Math.max(0, Math.round(excess * 10) / 10);
+        if (excess >= 0.1) {
+          map[key] = excess;
+        }
+      });
+      return map;
+    } else {
+      if (categoryKey === 'de') return balanceState.lastDeTransfers || {};
+      if (categoryKey === 'lo') return balanceState.lastLoTransfers || {};
+      if (categoryKey === 'bacang') return balanceState.lastBaCangTransfers || {};
+      if (categoryKey === 'xien') return balanceState.lastXienTransfers || {};
+      if (categoryKey === 'bacang_lo') return balanceState.lastBaCangLoTransfers || {};
+      return {};
+    }
+  };
+
+  const getLayoffValues = (sumsMap, getPayoutFn, categoryKey) => {
+    let costSum = 0;
+    let winSum = 0;
+    const transferMap = getCategoryTransferMap(categoryKey);
+    Object.entries(sumsMap).forEach(([key, value]) => {
+      let modifiedSum = transferMap[key] || 0;
+      if (modifiedSum >= 0.1) {
+        costSum += modifiedSum;
+        winSum += getPayoutFn(key, modifiedSum);
+      }
+    });
+    return { costSum, winSum };
+  };
+
+  const deLayoff = getLayoffValues(deSums, (key, amt) => (key === specialPrizeLast2 ? amt * dePayout_chuyen : 0), 'de');
+  const deVonChuyen = deLayoff.costSum * (deComm_chuyen / 100);
+  const deTrungChuyen = deLayoff.winSum;
+
+  const loLayoff = getLayoffValues(loSums, (key, amt) => {
+    const occurrences = allPrizesLast2.filter(p => p === key).length;
+    return occurrences * amt * loPayoutFactor_chuyen;
+  }, 'lo');
+  const loVonChuyen = loLayoff.costSum * loCostFactor_chuyen;
+  const loTrungChuyen = loLayoff.winSum;
+
+  let xienVonChuyen = 0;
+  let xienTrungChuyen = 0;
+  let xienXacChuyen = 0;
+  let xienWinXacChuyen = 0;
+  const xienTransferMap = getCategoryTransferMap('xien');
+  xienBets.forEach((bet, idx) => {
+    let modifiedSum = xienTransferMap[idx] || 0;
+    if (modifiedSum >= 0.1) {
+      xienXacChuyen += modifiedSum;
+      xienVonChuyen += modifiedSum * (xienComm_chuyen / 100);
+      const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
+      if (allHit) {
+        const size = bet.numbers.length;
+        const winRate = size === 2 ? x2Payout_chuyen : (size === 3 ? x3Payout_chuyen : x4Payout_chuyen);
+        xienTrungChuyen += modifiedSum * winRate;
+        xienWinXacChuyen += modifiedSum;
+      }
+    }
+  });
+
+  const baCangLayoff = getLayoffValues(baCangSums, (key, amt) => {
+    const match3 = key === specialPrizeLast3;
+    const match2 = key.slice(-2) === specialPrizeLast2;
+    if (match3) return amt * baCangPayout_chuyen;
+    if (match2) return amt * baCangApMa_chuyen;
+    return 0;
+  }, 'bacang');
+  const baCangVonChuyen = baCangLayoff.costSum * (baCangComm_chuyen / 100);
+  const baCangTrungChuyen = baCangLayoff.winSum;
+
+  const baCangLoLayoff = getLayoffValues(baCangLoSums, (key, amt) => {
+    const occurrences = allPrizesLast3.filter(p => p === key).length;
+    return occurrences * amt * baCangLoPayout_chuyen;
+  }, 'bacang_lo');
+  const baCangLoVonChuyen = baCangLoLayoff.costSum * (baCangLoCost_chuyen / 100);
+  const baCangLoTrungChuyen = baCangLoLayoff.winSum;
+
+  const totalVonChuyen = deVonChuyen + loVonChuyen + xienVonChuyen + baCangVonChuyen + baCangLoVonChuyen;
+  const totalTrungChuyen = deTrungChuyen + loTrungChuyen + xienTrungChuyen + baCangTrungChuyen + baCangLoTrungChuyen;
+
+  const deTransferMap = getCategoryTransferMap('de');
+  const deWinSumChuyen = deSums[specialPrizeLast2] ? deTransferMap[specialPrizeLast2] || 0 : 0;
+
+  let loWinSumChuyen = 0;
+  const loTransferMap = getCategoryTransferMap('lo');
+  Object.entries(loSums).forEach(([num, val]) => {
+    const occurrences = allPrizesLast2.filter(p => p === num).length;
+    if (occurrences > 0) {
+      loWinSumChuyen += occurrences * (loTransferMap[num] || 0);
+    }
+  });
+
+  let baCangDeWinSumChuyen = 0;
+  let baCangDeApMaWinSumChuyen = 0;
+  const baCangTransferMap = getCategoryTransferMap('bacang');
+  Object.entries(baCangSums).forEach(([num, val]) => {
+    const match3 = num === specialPrizeLast3;
+    const match2 = num.slice(-2) === specialPrizeLast2;
+    const modVal = baCangTransferMap[num] || 0;
+    if (match3) {
+      baCangDeWinSumChuyen += modVal;
+    } else if (match2) {
+      baCangDeApMaWinSumChuyen += modVal;
+    }
+  });
+
+  let baCangLoWinSumChuyen = 0;
+  const baCangLoTransferMap = getCategoryTransferMap('bacang_lo');
+  Object.entries(baCangLoSums).forEach(([num, val]) => {
+    const occurrences = allPrizesLast3.filter(p => p === num).length;
+    if (occurrences > 0) {
+      baCangLoWinSumChuyen += occurrences * (baCangLoTransferMap[num] || 0);
+    }
+  });
+
+  // Render Chuyển (Layoff) lists
+  const renderGroupLayoff = (title, sumsMap, categoryKey) => {
     if (!modifiedResultDiv) return;
     const sorted = Object.entries(sumsMap);
     let groupHtml = "";
+    const transferMap = getCategoryTransferMap(categoryKey);
 
     sorted.forEach(([key, value]) => {
-      let modifiedSum;
-      if (retainType === "money") {
-        modifiedSum = value - retainNumber;
-      } else {
-        modifiedSum = value - (value * (retainNumber / 100));
-      }
-
-      if (modifiedSum >= 1) {
-        modifiedSum = Math.trunc(modifiedSum);
+      let modifiedSum = transferMap[key] || 0;
+      if (modifiedSum >= 0.1) {
+        let displayAmt = Number(modifiedSum.toFixed(1));
         let isWin = false;
         let hitText = "";
         
@@ -1526,9 +2386,9 @@ function calculateSum() {
 
         const suffix = title.includes("Lô(đ)") ? 'đ' : '';
         if (isWin) {
-          groupHtml += `<div class="matching-number">${key}x${modifiedSum}${suffix}${hitText}</div>`;
+          groupHtml += `<div class="matching-number">${key}x${displayAmt}${suffix}${hitText}</div>`;
         } else {
-          groupHtml += `<div>${key}x${modifiedSum}${suffix}</div>`;
+          groupHtml += `<div>${key}x${displayAmt}${suffix}</div>`;
         }
       }
     });
@@ -1536,313 +2396,825 @@ function calculateSum() {
     if (groupHtml) {
       const header = document.createElement("div");
       header.innerHTML = `<strong>${title}</strong>`;
-      header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
+      header.style.marginTop = '8px';
+      header.style.borderBottom = '1px solid #eee';
+      header.style.paddingBottom = '3px';
+      header.style.fontWeight = 'bold';
       modifiedResultDiv.appendChild(header);
-      
-      const listContainer = document.createElement("div");
-      listContainer.innerHTML = groupHtml;
-      modifiedResultDiv.appendChild(listContainer);
+
+      const content = document.createElement("div");
+      content.innerHTML = groupHtml;
+      modifiedResultDiv.appendChild(content);
     }
   };
 
-  const loLayoffPointsWin = loPayoutFactor > 0 ? Math.round(loLayoff.winSum / loPayoutFactor) : 0;
-  
-  renderGroupLayoff(`🔴 Đề ${formatHeaderMoney(deVonChuyen, deTrungChuyen)}`, deSums, false);
-  renderGroupLayoff(`🔵 Lô(đ) ${formatHeaderMoney(loVonChuyen, loTrungChuyen)} <span class="text-yellow-600 dark:text-yellow-400">[${Math.round(loLayoff.costSum)}đ / ${loLayoffPointsWin}đ]</span>`, loSums, true);
-  renderGroupLayoff(`🟤 3cLô ${formatHeaderMoney(baCangLoVonChuyen, baCangLoTrungChuyen)}`, baCangLoSums, false);
+  renderGroupLayoff(`🔴 Đề ${formatHeaderMoney(deVonChuyen, deTrungChuyen)}`, deSums, 'de');
+  renderGroupLayoff(`🔵 Lô(đ) ${formatHeaderMoney(loVonChuyen, loTrungChuyen)} [${Math.round(loLayoff.costSum)}đ]`, loSums, 'lo');
+  renderGroupLayoff(`🟤 3cLô ${formatHeaderMoney(baCangLoVonChuyen, baCangLoTrungChuyen)}`, baCangLoSums, 'bacang_lo');
 
   let xienLayoffHtml = "";
-  xienBets.forEach(bet => {
-    let modifiedSum = retainType === "money" ? bet.amount - retainNumber : bet.amount - (bet.amount * (retainNumber / 100));
-    if (modifiedSum >= 1) {
-      modifiedSum = Math.trunc(modifiedSum);
+  xienBets.forEach((bet, idx) => {
+    let modifiedSum = xienTransferMap[idx] || 0;
+    if (modifiedSum >= 0.1) {
+      let displayAmt = Number(modifiedSum.toFixed(1));
       const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
       if (allHit) {
-        xienLayoffHtml += `<div class="matching-number">${bet.numbers.join('-')}x${modifiedSum} (Trúng)</div>`;
+        xienLayoffHtml += `<div class="matching-number">${bet.numbers.join('-')}x${displayAmt} (Trúng)</div>`;
       } else {
-        xienLayoffHtml += `<div>${bet.numbers.join('-')}x${modifiedSum}</div>`;
+        xienLayoffHtml += `<div>${bet.numbers.join('-')}x${displayAmt}</div>`;
       }
     }
   });
   if (xienLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
     header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVonChuyen, xienTrungChuyen)}</strong>`;
-    header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
+    header.style.marginTop = '8px';
+    header.style.borderBottom = '1px solid #eee';
+    header.style.paddingBottom = '3px';
+    header.style.fontWeight = 'bold';
     modifiedResultDiv.appendChild(header);
-    const listContainer = document.createElement("div");
-    listContainer.innerHTML = xienLayoffHtml;
-    modifiedResultDiv.appendChild(listContainer);
+    const content = document.createElement("div");
+    content.innerHTML = xienLayoffHtml;
+    modifiedResultDiv.appendChild(content);
   }
 
   let baCangLayoffHtml = "";
   Object.entries(baCangSums).forEach(([key, value]) => {
-    let modifiedSum = retainType === "money" ? value - retainNumber : value - (value * (retainNumber / 100));
-    if (modifiedSum >= 1) {
-      modifiedSum = Math.trunc(modifiedSum);
+    let modifiedSum = baCangTransferMap[key] || 0;
+    if (modifiedSum >= 0.1) {
+      let displayAmt = Number(modifiedSum.toFixed(1));
       const match3 = key === specialPrizeLast3;
       const match2 = key.slice(-2) === specialPrizeLast2;
       if (match3) {
-        baCangLayoffHtml += `<div class="matching-number">${key}x${modifiedSum} (Trúng 3C)</div>`;
+        baCangLayoffHtml += `<div class="matching-number">${key}x${displayAmt} (Trúng 3C)</div>`;
       } else if (match2) {
-        baCangLayoffHtml += `<div class="matching-number">${key}x${modifiedSum} (Áp Má)</div>`;
+        baCangLayoffHtml += `<div class="matching-number">${key}x${displayAmt} (Áp Má)</div>`;
       } else {
-        baCangLayoffHtml += `<div>${key}x${modifiedSum}</div>`;
+        baCangLayoffHtml += `<div>${key}x${displayAmt}</div>`;
       }
     }
   });
   if (baCangLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVonChuyen, baCangTrungChuyen)}</strong>`;
-    header.className = "mt-2 border-b border-gray-100 dark:border-gray-700 pb-1 text-emerald-600 dark:text-emerald-500 text-xs";
+    header.innerHTML = `<strong>🟣 Bc ${formatHeaderMoney(baCangVonChuyen, baCangTrungChuyen)}</strong>`;
+    header.style.marginTop = '8px';
+    header.style.borderBottom = '1px solid #eee';
+    header.style.paddingBottom = '3px';
+    header.style.fontWeight = 'bold';
     modifiedResultDiv.appendChild(header);
-    const listContainer = document.createElement("div");
-    listContainer.innerHTML = baCangLayoffHtml;
-    modifiedResultDiv.appendChild(listContainer);
+    const content = document.createElement("div");
+    content.innerHTML = baCangLayoffHtml;
+    modifiedResultDiv.appendChild(content);
   }
 
-  const isNewLayout = document.getElementById("tblDeXac") !== null;
+  // Lưu trữ dữ liệu tính toán cho Thầu, Chuyển, Giữ lại vào biến toàn cục
+  const totalNetChuyen = totalVonChuyen - totalTrungChuyen;
+  const thauData = {
+    deXac: deBetSum, deVon, deTrung, deWinXac: deWinSum, deNet,
+    loXac: loBetSum, loVon, loTrung, loWinXac: loWinSum, loNet,
+    xienXac: xienBetSum, xienVon, xienTrung, xienWinXac, xienNet,
+    baCangXac: baCangDeBetSum, baCangVon, baCangTrung, baCangWinXac: (baCangDeWinSum + baCangDeApMaWinSum), baCangNet,
+    baCangLoXac: baCangLoBetSum, baCangLoVon, baCangLoTrung, baCangLoWinXac: baCangLoWinSum, baCangLoNet,
+    totalVon, totalTrung, totalNet
+  };
+  const chuyenData = {
+    deXac: deLayoff.costSum, deVon: deVonChuyen, deTrung: deTrungChuyen, deNet: (deVonChuyen - deTrungChuyen),
+    loXac: loLayoff.costSum, loVon: loVonChuyen, loTrung: loTrungChuyen, loNet: (loVonChuyen - loTrungChuyen),
+    xienXac: xienXacChuyen, xienVon: xienVonChuyen, xienTrung: xienTrungChuyen, xienNet: (xienVonChuyen - xienTrungChuyen),
+    baCangXac: baCangLayoff.costSum, baCangVon: baCangVonChuyen, baCangTrung: baCangTrungChuyen, baCangNet: (baCangVonChuyen - baCangTrungChuyen),
+    baCangLoXac: baCangLoLayoff.costSum, baCangLoVon: baCangLoVonChuyen, baCangLoTrung: baCangLoTrungChuyen, baCangLoNet: (baCangLoVonChuyen - baCangLoTrungChuyen),
+    totalVon: totalVonChuyen, totalTrung: totalTrungChuyen, totalNet: totalNetChuyen
+  };
+  const giulaiData = {
+    deXac: Math.max(0, thauData.deXac - chuyenData.deXac),
+    deVon: thauData.deVon - chuyenData.deVon,
+    deTrung: thauData.deTrung - chuyenData.deTrung,
+    deNet: thauData.deNet - chuyenData.deNet,
 
-  if (isNewLayout) {
-    // 2. Calculations
-    const deXac = deBetSum;
-    const loXac = loBetSum;
-    const xienXac = xienBetSum;
-    const baCangXac = baCangDeBetSum;
-    const baCangLoXac = baCangLoBetSum;
+    loXac: Math.max(0, thauData.loXac - chuyenData.loXac),
+    loVon: thauData.loVon - chuyenData.loVon,
+    loTrung: thauData.loTrung - chuyenData.loTrung,
+    loNet: thauData.loNet - chuyenData.loNet,
 
-    // 3. Update Table Cells
-    const setCell = (id, val, isFormat = true) => {
-      const el = document.getElementById(id);
-      if (el) {
-        if (isFormat) {
-          el.textContent = Math.round(val).toLocaleString('vi-VN');
-        } else {
-          el.textContent = val;
-        }
-      }
-    };
+    xienXac: Math.max(0, thauData.xienXac - chuyenData.xienXac),
+    xienVon: thauData.xienVon - chuyenData.xienVon,
+    xienTrung: thauData.xienTrung - chuyenData.xienTrung,
+    xienNet: thauData.xienNet - chuyenData.xienNet,
 
-    setCell("tblDeXac", deXac, false);
-    setCell("tblDeVon", deVon);
-    setCell("tblDeTrung", deTrung);
-    setCell("tblDeNet", deNet);
-    if (document.getElementById("tblDeNet")) {
-      document.getElementById("tblDeNet").className = deNet < 0 ? "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-emerald-600 dark:text-emerald-400" : "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-red-500 dark:text-red-400";
-    }
+    baCangXac: Math.max(0, thauData.baCangXac - chuyenData.baCangXac),
+    baCangVon: thauData.baCangVon - chuyenData.baCangVon,
+    baCangTrung: thauData.baCangTrung - chuyenData.baCangTrung,
+    baCangNet: thauData.baCangNet - chuyenData.baCangNet,
 
-    setCell("tblLoXac", loXac, false);
-    setCell("tblLoVon", loVon);
-    setCell("tblLoTrung", loTrung);
-    setCell("tblLoNet", loNet);
-    if (document.getElementById("tblLoNet")) {
-      document.getElementById("tblLoNet").className = loNet < 0 ? "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-emerald-600 dark:text-emerald-400" : "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-red-500 dark:text-red-400";
-    }
+    baCangLoXac: Math.max(0, thauData.baCangLoXac - chuyenData.baCangLoXac),
+    baCangLoVon: thauData.baCangLoVon - chuyenData.baCangLoVon,
+    baCangLoTrung: thauData.baCangLoTrung - chuyenData.baCangLoTrung,
+    baCangLoNet: thauData.baCangLoNet - chuyenData.baCangLoNet,
 
-    setCell("tblXienXac", xienXac, false);
-    setCell("tblXienVon", xienVon);
-    setCell("tblXienTrung", xienTrung);
-    setCell("tblXienNet", xienNet);
-    if (document.getElementById("tblXienNet")) {
-      document.getElementById("tblXienNet").className = xienNet < 0 ? "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-emerald-600 dark:text-emerald-400" : "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-red-500 dark:text-red-400";
-    }
+    totalVon: thauData.totalVon - chuyenData.totalVon,
+    totalTrung: thauData.totalTrung - chuyenData.totalTrung,
+    totalNet: thauData.totalNet - chuyenData.totalNet
+  };
 
-    setCell("tbl3CXac", baCangXac, false);
-    setCell("tbl3CVon", baCangVon);
-    setCell("tbl3CTrung", baCangTrung);
-    setCell("tbl3CNet", baCangNet);
-    if (document.getElementById("tbl3CNet")) {
-      document.getElementById("tbl3CNet").className = baCangNet < 0 ? "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-emerald-600 dark:text-emerald-400" : "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-red-500 dark:text-red-400";
-    }
+  window.lastReportData = {
+    thau: thauData,
+    chuyen: chuyenData,
+    giulai: giulaiData
+  };
 
-    setCell("tbl3CLXac", baCangLoXac, false);
-    setCell("tbl3CLVon", baCangLoVon);
-    setCell("tbl3CLTrung", baCangLoTrung);
-    setCell("tbl3CLNet", baCangLoNet);
-    if (document.getElementById("tbl3CLNet")) {
-      document.getElementById("tbl3CLNet").className = baCangLoNet < 0 ? "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-emerald-600 dark:text-emerald-400" : "p-2 border border-gray-200 dark:border-gray-700 text-right font-bold text-red-500 dark:text-red-400";
-    }
+  // Cập nhật các nhãn văn bản tổng hợp
+  const totalSumLabel = document.getElementById("totalSum");
+  const modifiedTotalSumLabel = document.getElementById("modifiedTotalSum");
+  if (totalSumLabel) {
+    totalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
+  }
+  if (modifiedTotalSumLabel) {
+    modifiedTotalSumLabel.textContent = `${Math.round(totalVonChuyen).toLocaleString("vi-VN")} / ${Math.round(totalTrungChuyen).toLocaleString("vi-VN")}`;
+  }
 
-    setCell("tblTotalVon", totalVon);
-    setCell("tblTotalTrung", totalTrung);
-    setCell("tblTotalNet", totalNet);
-    if (document.getElementById("tblTotalNet")) {
-      document.getElementById("tblTotalNet").className = totalNet < 0 ? "p-2 border border-gray-200 dark:border-gray-700 text-right font-black text-emerald-600 dark:text-emerald-400" : "p-2 border border-gray-200 dark:border-gray-700 text-right font-black text-red-500 dark:text-red-400";
-    }
+  // Đồng bộ với bảng ở cuối trang
+  updateSummaryTable();
+  updateCopyButtonLabel();
+}
 
-    // 4. Update Financial Figures card
-    setCell("summaryTotalCost", totalVon);
-    setCell("summaryTotalWinnings", totalTrung);
-    setCell("summaryNetValue", Math.abs(totalNet));
+function updateSummaryTable() {
+  const data = window.lastReportData;
+  if (!data) return;
 
-    const summaryNetLabel = document.getElementById("summaryNetLabel");
-    const summaryNetValue = document.getElementById("summaryNetValue");
-    if (summaryNetLabel && summaryNetValue) {
-      if (totalNet < 0) {
-        summaryNetLabel.innerText = "Chủ thầu bù";
-        summaryNetLabel.className = "text-xs font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5 uppercase tracking-wider";
-        summaryNetValue.className = "text-lg font-extrabold text-emerald-600 dark:text-emerald-400";
-      } else if (totalNet > 0) {
-        summaryNetLabel.innerText = "Đại lý Nộp";
-        summaryNetLabel.className = "text-xs font-bold text-red-500 dark:text-red-400 block mb-0.5 uppercase tracking-wider";
-        summaryNetValue.className = "text-lg font-extrabold text-red-500 dark:text-red-400";
-      } else {
-        summaryNetLabel.innerText = "Hòa vốn";
-        summaryNetLabel.className = "text-xs font-bold text-gray-500 block mb-0.5 uppercase tracking-wider";
-        summaryNetValue.className = "text-lg font-extrabold text-gray-500";
-      }
-    }
+  const activeTab = window.activeReportTab || 'thau';
+  let deCược = 0, deTiền = 0, deTiềnTrúng = 0, deTrúng = 0;
+  let loCược = 0, loTiền = 0, loTiềnTrúng = 0, loTrúng = 0;
+  let xienCược = 0, xienTiền = 0, xienTiềnTrúng = 0, xienTrúng = 0;
+  let cangCược = 0, cangTiền = 0, cangTiềnTrúng = 0, cangTrúng = 0;
 
-    // Save calculation result for report copy
-    window.lastCalculatedReport = {
-      date: fetchedPrizesData ? fetchedPrizesData.dateText : (new Date()).toLocaleDateString('vi-VN'),
-      deXac, deTrung,
-      loXac, loTrung,
-      xienXac, xienTrung,
-      baCangXac, baCangTrung,
-      baCangLoXac, baCangLoTrung,
-      totalVon, totalTrung, totalNet
-    };
+  if (activeTab === 'thau') {
+    deCược = data.thau.deXac;
+    deTiền = data.thau.deVon;
+    deTiềnTrúng = data.thau.deTrung;
+    deTrúng = data.thau.deWinXac;
 
-    // Update top header labels if present
-    const totalSumLabel = document.getElementById("totalSum");
-    const modifiedTotalSumLabel = document.getElementById("modifiedTotalSum");
-    if (totalSumLabel) {
-      totalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
-    }
-    if (modifiedTotalSumLabel) {
-      modifiedTotalSumLabel.textContent = `${Math.round(totalVonChuyen).toLocaleString("vi-VN")} / ${Math.round(totalTrungChuyen).toLocaleString("vi-VN")}`;
-    }
+    loCược = data.thau.loXac;
+    loTiền = data.thau.loVon;
+    loTiềnTrúng = data.thau.loTrung;
+    loTrúng = data.thau.loWinXac;
 
+    xienCược = data.thau.xienXac;
+    xienTiền = data.thau.xienVon;
+    xienTiềnTrúng = data.thau.xienTrung;
+    xienTrúng = data.thau.xienWinXac;
+
+    cangCược = data.thau.baCangXac + data.thau.baCangLoXac * 23;
+    cangTiền = data.thau.baCangVon + data.thau.baCangLoVon;
+    cangTiềnTrúng = data.thau.baCangTrung + data.thau.baCangLoTrung;
+    cangTrúng = data.thau.baCangWinXac * 400 + data.thau.baCangLoWinXac * 960; 
+  } else if (activeTab === 'chuyen') {
+    deCược = data.chuyen.deXac;
+    deTiền = data.chuyen.deVon;
+    deTiềnTrúng = data.chuyen.deTrung;
+    deTrúng = data.chuyen.deNet < 0 ? Math.abs(data.chuyen.deNet) : 0; 
+
+    loCược = data.chuyen.loXac;
+    loTiền = data.chuyen.loVon;
+    loTiềnTrúng = data.chuyen.loTrung;
+    loTrúng = data.chuyen.loNet < 0 ? Math.abs(data.chuyen.loNet) : 0;
+
+    xienCược = data.chuyen.xienXac;
+    xienTiền = data.chuyen.xienVon;
+    xienTiềnTrúng = data.chuyen.xienTrung;
+    xienTrúng = data.chuyen.xienNet < 0 ? Math.abs(data.chuyen.xienNet) : 0;
+
+    cangCược = data.chuyen.baCangXac + data.chuyen.baCangLoXac * 23;
+    cangTiền = data.chuyen.baCangVon + data.chuyen.baCangLoVon;
+    cangTiềnTrúng = data.chuyen.baCangTrung + data.chuyen.baCangLoTrung;
+    cangTrúng = (data.chuyen.baCangNet + data.chuyen.baCangLoNet) < 0 ? Math.abs(data.chuyen.baCangNet + data.chuyen.baCangLoNet) : 0;
+  } else if (activeTab === 'giulai') {
+    deCược = data.giulai.deXac;
+    deTiền = data.giulai.deVon;
+    deTiềnTrúng = data.giulai.deTrung;
+    deTrúng = data.giulai.deNet;
+
+    loCược = data.giulai.loXac;
+    loTiền = data.giulai.loVon;
+    loTiềnTrúng = data.giulai.loTrung;
+    loTrúng = data.giulai.loNet;
+
+    xienCược = data.giulai.xienXac;
+    xienTiền = data.giulai.xienVon;
+    xienTiềnTrúng = data.giulai.xienTrung;
+    xienTrúng = data.giulai.xienNet;
+
+    cangCược = data.giulai.baCangXac + data.giulai.baCangLoXac * 23;
+    cangTiền = data.giulai.baCangVon + data.giulai.baCangLoVon;
+    cangTiềnTrúng = data.giulai.baCangTrung + data.giulai.baCangLoTrung;
+    cangTrúng = data.giulai.baCangNet + data.giulai.baCangLoNet;
+  }
+
+  const input1 = document.getElementById("input1");
+  const input2 = document.getElementById("input2");
+  const input3 = document.getElementById("input3");
+  const input4 = document.getElementById("input4");
+
+  const result1 = document.getElementById("result1");
+  const result2 = document.getElementById("result2");
+  const result3 = document.getElementById("result3");
+  const result4 = document.getElementById("result4");
+
+  const bonusResult1 = document.getElementById("bonusResult1");
+  const bonusResult2 = document.getElementById("bonusResult2");
+  const bonusResult3 = document.getElementById("bonusResult3");
+  const bonusResult4 = document.getElementById("bonusResult4");
+
+  const bonus1 = document.getElementById("bonus1");
+  const bonus2 = document.getElementById("bonus2");
+  const bonus3 = document.getElementById("bonus3");
+  const bonus4 = document.getElementById("bonus4");
+
+  if (input1) input1.value = Math.round(deCược) || "0";
+  if (input2) input2.value = Math.round(loCược) || "0";
+  if (input3) input3.value = Math.round(xienCược) || "0";
+  if (input4) input4.value = Math.round(cangCược) || "0";
+
+  if (result1) result1.textContent = Math.round(deTiền) || "0";
+  if (result2) result2.textContent = Math.round(loTiền) || "0";
+  if (result3) result3.textContent = Math.round(xienTiền) || "0";
+  if (result4) result4.textContent = Math.round(cangTiền) || "0";
+
+  if (bonusResult1) bonusResult1.textContent = Math.round(deTiềnTrúng) || "0";
+  if (bonusResult2) bonusResult2.textContent = Math.round(loTiềnTrúng) || "0";
+  if (bonusResult3) bonusResult3.textContent = Math.round(xienTiềnTrúng) || "0";
+  if (bonusResult4) bonusResult4.textContent = Math.round(cangTiềnTrúng) || "0";
+
+  if (bonus1) bonus1.value = Math.round(deTrúng) || "0";
+  if (bonus2) bonus2.value = Math.round(loTrúng) || "0";
+  if (bonus3) bonus3.value = Math.round(xienTrúng) || "0";
+  if (bonus4) bonus4.value = Math.round(cangTrúng) || "0";
+
+  let totalVon = deTiền + loTiền + xienTiền + cangTiền;
+  let totalTrung = deTiềnTrúng + loTiềnTrúng + xienTiềnTrúng + cangTiềnTrúng;
+  let totalNet = totalVon - totalTrung;
+
+  const tEl = document.getElementById('total');
+  const btEl = document.getElementById('bonusTotal');
+  const fEl = document.getElementById('finalResult');
+
+  if (tEl) tEl.textContent = Math.round(totalVon);
+  if (btEl) btEl.textContent = Math.round(totalTrung);
+  if (fEl) fEl.textContent = Math.round(totalNet);
+}
+
+function updateCopyButtonLabel() {
+  const copyButton = document.getElementById('copyButton');
+  if (!copyButton) return;
+  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+  const displayStep = balanceState.step === 0 ? "" : " " + (balanceState.step + 1);
+  if (retainType === "percentage") {
+    copyButton.textContent = `% Chuyển${displayStep}`;
   } else {
-    // Old Layout Fallback
-    const input1 = document.getElementById("input1");
-    const input2 = document.getElementById("input2");
-    const input3 = document.getElementById("input3");
-    const input4 = document.getElementById("input4");
-
-    const bonus1 = document.getElementById("bonus1");
-    const bonus2 = document.getElementById("bonus2");
-    const bonus3 = document.getElementById("bonus3");
-    const bonus4 = document.getElementById("bonus4");
-
-    if (input1) input1.value = deBetSum || "0";
-    if (input2) input2.value = loBetSum || "0";
-    if (input3) input3.value = xienBetSum || "0";
-    if (input4) input4.value = Math.round(baCangDeBetSum + baCangLoBetSum * 23) || "0"; // using old logic fallback
-
-    if (bonus1) bonus1.value = deWinSum || "0";
-    if (bonus2) bonus2.value = loWinSum || "0";
-    if (bonus3) bonus3.value = Math.round(xienWinSum) || "0";
-    if (bonus4) bonus4.value = Math.round(baCangDeWinSum * 400 + baCangDeApMaWinSum * 5 + baCangLoWinSum * 960) || "0";
-
-    for (let i = 1; i <= 4; i++) {
-      calculateResult(i);
-    }
-
-    const totalSumLabel = document.getElementById("totalSum");
-    const modifiedTotalSumLabel = document.getElementById("modifiedTotalSum");
-
-    const totalSumText = document.getElementById("total")?.textContent || "0";
-    const totalWinningsText = document.getElementById("bonusTotal")?.textContent || "0";
-    const finalResultText = document.getElementById("finalResult")?.textContent || "0";
-
-    if (totalSumLabel) {
-      totalSumLabel.textContent = `${parseInt(totalSumText).toLocaleString("vi-VN")} / ${parseInt(totalWinningsText).toLocaleString("vi-VN")}`;
-    }
-    if (modifiedTotalSumLabel) {
-      modifiedTotalSumLabel.textContent = parseInt(finalResultText).toLocaleString("vi-VN");
-    }
+    copyButton.textContent = `Chuyển${displayStep}`;
   }
+}
 
-  const getBreakdownHtml = (de, lo, xien, bacang, bacang_lo, wins = null) => {
-    const formatWin = (winStr) => wins ? ` / <span class="text-emerald-600 dark:text-emerald-400">${winStr}</span>` : "";
-    return `
-      <div class="grid grid-cols-[45px_1fr] gap-x-2 text-[11px] text-gray-500 dark:text-gray-400 font-mono leading-relaxed">
-        <span class="text-left">Đề:</span>
-        <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${de} con${formatWin(wins?.de)}</span>
-        <span class="text-left">Lô:</span>
-        <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${lo} con${formatWin(wins?.lo)}</span>
-        <span class="text-left">Xiên:</span>
-        <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${xien} con${formatWin(wins?.xien)}</span>
-        <span class="text-left">3c:</span>
-        <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${bacang} con${formatWin(wins?.bacang)}</span>
-        <span class="text-left">3cLô:</span>
-        <span class="font-bold text-gray-700 dark:text-gray-300 text-left whitespace-nowrap">${bacang_lo} con${formatWin(wins?.bacang_lo)}</span>
-      </div>
-    `;
+window.activeReportTab = 'thau';
+window.lastReportData = null;
+
+function updateReportTabUI() {
+  const tabs = {
+    thau: document.getElementById('tabThau'),
+    chuyen: document.getElementById('tabChuyen'),
+    giulai: document.getElementById('tabGiulai')
   };
 
-  const getLayoffCount = (sumsMap) => {
-    return Object.values(sumsMap).filter(value => {
-      let modifiedSum = retainType === "money" ? value - retainNumber : value - (value * (retainNumber / 100));
-      return Math.trunc(modifiedSum) >= 1;
-    }).length;
+  Object.entries(tabs).forEach(([key, btn]) => {
+    if (!btn) return;
+    if (window.activeReportTab === key) {
+      btn.style.fontWeight = 'bold';
+      btn.style.border = '1px solid #007bff';
+      btn.style.background = '#007bff';
+      btn.style.color = 'white';
+    } else {
+      btn.style.fontWeight = 'normal';
+      btn.style.border = '1px solid #ccc';
+      btn.style.background = '#f0f0f0';
+      btn.style.color = '#333';
+    }
+  });
+}
+
+function handleCopyButtonClick() {
+  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+  const success = runBalancingStep(retainType === "percentage");
+  if (success) {
+    copyText();
+  }
+}
+
+function runBalancingStep(isPercent) {
+  const numbers = document.getElementById('numbers');
+  const inputString = numbers ? numbers.value : '';
+  const parsedBets = parseCombinedInput(inputString);
+
+  // Tính lại tổng cược hiện tại
+  const deSums = {};
+  parsedBets.de.forEach(bet => {
+    bet.numbers.forEach(num => {
+      deSums[num] = (deSums[num] || 0) + bet.amount;
+    });
+  });
+
+  const loSums = {};
+  parsedBets.lo.forEach(bet => {
+    bet.numbers.forEach(num => {
+      loSums[num] = (loSums[num] || 0) + bet.amount;
+    });
+  });
+
+  const baCangSums = {};
+  parsedBets.bacang.forEach(bet => {
+    const num = bet.numbers[0];
+    baCangSums[num] = (baCangSums[num] || 0) + bet.amount;
+  });
+
+  const baCangLoSums = {};
+  parsedBets.bacang_lo.forEach(bet => {
+    const num = bet.numbers[0];
+    baCangLoSums[num] = (baCangLoSums[num] || 0) + bet.amount;
+  });
+
+  const xienBets = [...parsedBets.xien2, ...parsedBets.xien3, ...parsedBets.xien4];
+
+  // Đọc các giá trị giữ lại
+  const retainDe = parseFloat(document.getElementById("retainDe")?.value) || 0;
+  const retainLo = parseFloat(document.getElementById("retainLo")?.value) || 0;
+  const retain3c = parseFloat(document.getElementById("retain3c")?.value) || 0;
+  const retainX = parseFloat(document.getElementById("retainX")?.value) || 0;
+  const retain3cL = parseFloat(document.getElementById("retain3cL")?.value) || 0;
+
+  const stepDeTransfers = {};
+  const stepLoTransfers = {};
+  const stepBaCangTransfers = {};
+  const stepBaCangLoTransfers = {};
+  const stepXienTransfers = {};
+
+  const processCategory = (totals, transfersMap, stepTransfersMap, limit, isPct) => {
+    Object.entries(totals).forEach(([key, total]) => {
+      const prevTransfer = transfersMap[key] || 0;
+      let excess = isPct ? (total * ((100 - limit) / 100)) - prevTransfer : total - prevTransfer - limit;
+      excess = Math.round(excess * 10) / 10;
+      if (excess >= 0.1) {
+        stepTransfersMap[key] = excess;
+      }
+    });
   };
 
-  const resDeCount = Object.keys(deSums).length;
-  const resLoCount = Object.keys(loSums).length;
-  const resXienCount = xienBets.length;
-  const res3CCount = Object.keys(baCangSums).length;
-  const res3CLCount = Object.keys(baCangLoSums).length;
+  processCategory(deSums, balanceState.deTransfers, stepDeTransfers, retainDe, isPercent);
+  processCategory(loSums, balanceState.loTransfers, stepLoTransfers, retainLo, isPercent);
+  processCategory(baCangSums, balanceState.baCangTransfers, stepBaCangTransfers, retain3c, isPercent);
+  processCategory(baCangLoSums, balanceState.baCangLoTransfers, stepBaCangLoTransfers, retain3cL, isPercent);
 
-  const layoffDeCount = getLayoffCount(deSums);
-  const layoffLoCount = getLayoffCount(loSums);
-  const layoffXienCount = xienBets.filter(bet => {
-    let modifiedSum = retainType === "money" ? bet.amount - retainNumber : bet.amount - (bet.amount * (retainNumber / 100));
-    return Math.trunc(modifiedSum) >= 1;
-  }).length;
-  const layoff3CCount = getLayoffCount(baCangSums);
-  const layoff3CLCount = getLayoffCount(baCangLoSums);
-
-  const inpDeCount = parsedBets.de.length;
-  const inpLoCount = parsedBets.lo.length;
-  const inpXienCount = parsedBets.xien2.length + parsedBets.xien3.length + parsedBets.xien4.length;
-  const inp3CCount = parsedBets.bacang.length;
-  const inp3CLCount = parsedBets.bacang_lo.length;
-
-  const numResultsDiv = document.getElementById("numResults");
-  if (numResultsDiv) {
-    if (numResultsDiv.tagName.toLowerCase() === "div") {
-      numResultsDiv.innerHTML = getBreakdownHtml(resDeCount, resLoCount, resXienCount, res3CCount, res3CLCount);
-    } else {
-      numResultsDiv.textContent = `${totalUniquePairs} con`;
+  xienBets.forEach((bet, idx) => {
+    const prevTransfer = balanceState.xienTransfers[idx] || 0;
+    let excess = isPercent ? (bet.amount * ((100 - retainX) / 100)) - prevTransfer : bet.amount - prevTransfer - retainX;
+    excess = Math.round(excess * 10) / 10;
+    if (excess >= 0.1) {
+      stepXienTransfers[idx] = excess;
     }
+  });
+
+  const hasNewTransfers = 
+    Object.keys(stepDeTransfers).length > 0 ||
+    Object.keys(stepLoTransfers).length > 0 ||
+    Object.keys(stepBaCangTransfers).length > 0 ||
+    Object.keys(stepBaCangLoTransfers).length > 0 ||
+    Object.keys(stepXienTransfers).length > 0;
+
+  if (!hasNewTransfers) {
+    const copyButton = document.getElementById('copyButton');
+    if (copyButton) {
+      const displayStep = balanceState.step === 0 ? "" : " " + (balanceState.step + 1);
+      const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+      const prefix = retainType === "percentage" ? "% " : "";
+      copyButton.innerHTML = `${prefix}Chuyển${displayStep} <span style="color: red; font-weight: bold; margin-left: 5px;">Hết</span>`;
+    }
+    return false;
   }
 
-  const modifiedNumResultsDiv = document.getElementById("modifiedNumResults");
-  if (modifiedNumResultsDiv) {
-    if (modifiedNumResultsDiv.tagName.toLowerCase() === "div") {
-      modifiedNumResultsDiv.innerHTML = getBreakdownHtml(layoffDeCount, layoffLoCount, layoffXienCount, layoff3CCount, layoff3CLCount);
-    } else {
-      let layoffTotal = layoffDeCount + layoffLoCount + layoffXienCount + layoff3CCount + layoff3CLCount;
-      modifiedNumResultsDiv.textContent = `${layoffTotal} con`;
-    }
+  if (!balanceState.lastDeTransfers) balanceState.lastDeTransfers = {};
+  if (!balanceState.lastLoTransfers) balanceState.lastLoTransfers = {};
+  if (!balanceState.lastBaCangTransfers) balanceState.lastBaCangTransfers = {};
+  if (!balanceState.lastXienTransfers) balanceState.lastXienTransfers = {};
+  if (!balanceState.lastBaCangLoTransfers) balanceState.lastBaCangLoTransfers = {};
+
+  const applyTransfers = (stepMap, lastMap, cumulativeMap) => {
+    for (let key in lastMap) delete lastMap[key];
+    Object.entries(stepMap).forEach(([key, val]) => {
+      lastMap[key] = val;
+      cumulativeMap[key] = (cumulativeMap[key] || 0) + val;
+    });
+  };
+
+  applyTransfers(stepDeTransfers, balanceState.lastDeTransfers, balanceState.deTransfers);
+  applyTransfers(stepLoTransfers, balanceState.lastLoTransfers, balanceState.loTransfers);
+  applyTransfers(stepBaCangTransfers, balanceState.lastBaCangTransfers, balanceState.baCangTransfers);
+  applyTransfers(stepBaCangLoTransfers, balanceState.lastBaCangLoTransfers, balanceState.baCangLoTransfers);
+  
+  for (let key in balanceState.lastXienTransfers) delete balanceState.lastXienTransfers[key];
+  Object.entries(stepXienTransfers).forEach(([idx, val]) => {
+    balanceState.lastXienTransfers[idx] = val;
+    balanceState.xienTransfers[idx] = (balanceState.xienTransfers[idx] || 0) + val;
+  });
+
+  if (balanceState.step === 0) {
+    balanceState.step = 1;
+  } else {
+    balanceState.step++;
   }
 
-  // Input lists count and total
-  const inputListCountSpan = document.getElementById("inputListCount");
-  const inputListTotalSpan = document.getElementById("inputListTotal");
-  if (inputListCountSpan) {
-    if (inputListCountSpan.tagName.toLowerCase() === "div") {
-      let winsStr = null;
-      if (allPrizesLast2.length > 0) {
-        winsStr = {
-          de: Math.round(deTrung).toLocaleString('vi-VN'),
-          lo: Math.round(loWinSum).toLocaleString('vi-VN') + "đ",
-          xien: Math.round(xienTrung).toLocaleString('vi-VN'),
-          bacang: Math.round(baCangTrung).toLocaleString('vi-VN'),
-          bacang_lo: Math.round(baCangLoTrung).toLocaleString('vi-VN')
+  const counterLabel = document.getElementById('balanceCounterLabel');
+  if (counterLabel) counterLabel.textContent = `Số Lần Đã Cân Chuyển = ${balanceState.step}`;
+
+  calculateSum();
+  return true;
+}
+
+function resetBalancing() {
+  balanceState.step = 0;
+  balanceState.deTransfers = {};
+  balanceState.loTransfers = {};
+  balanceState.baCangTransfers = {};
+  balanceState.xienTransfers = {};
+  balanceState.baCangLoTransfers = {};
+  balanceState.lastDeTransfers = {};
+  balanceState.lastLoTransfers = {};
+  balanceState.lastBaCangTransfers = {};
+  balanceState.lastXienTransfers = {};
+  balanceState.lastBaCangLoTransfers = {};
+
+  balanceState.deSums = {};
+  balanceState.loSums = {};
+  balanceState.baCangSums = {};
+  balanceState.baCangLoSums = {};
+  balanceState.xienBets = [];
+
+  const counterLabel = document.getElementById('balanceCounterLabel');
+  if (counterLabel) counterLabel.textContent = 'Số Lần Đã Cân Chuyển = 0';
+
+  calculateSum();
+}
+
+// Cấu hình giá
+const RATES_STORAGE_KEY = 'lucky_wheel_rates';
+const DEFAULT_RATES = {
+  rateDeComm: 82,
+  rateDePayout: 80,
+  rateLoCost: 2165,
+  rateLoPayout: 80,
+  rateXienComm: 65,
+  rateXien2Payout: 11,
+  rateXien3Payout: 45,
+  rateXien4Payout: 140,
+  rate3CComm: 75,
+  rate3CPayout: 400,
+  rate3CApMa: 5,
+  rate3CLoCost: 75,
+  rate3CLoPayout: 20
+};
+
+window.activeConfigTab = 'thau';
+window.priceConfigData = {
+  thau: Object.assign({}, DEFAULT_RATES),
+  chuyen: Object.assign({}, DEFAULT_RATES)
+};
+
+function updateConfigTabUI() {
+  const btnThau = document.getElementById('configTabThau');
+  const btnChuyen = document.getElementById('configTabChuyen');
+  if (!btnThau || !btnChuyen) return;
+
+  if (window.activeConfigTab === 'chuyen') {
+    btnChuyen.className = 'config-tab active';
+    btnThau.className = 'config-tab';
+  } else {
+    btnThau.className = 'config-tab active';
+    btnChuyen.className = 'config-tab';
+  }
+}
+
+function fillConfigInputs() {
+  const currentRates = window.priceConfigData[window.activeConfigTab] || DEFAULT_RATES;
+  Object.keys(DEFAULT_RATES).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const val = currentRates[id];
+      el.value = (val !== undefined && val !== null) ? val.toString() : '';
+    }
+  });
+}
+
+function saveCurrentConfigInputs() {
+  const currentRates = window.priceConfigData[window.activeConfigTab];
+  if (!currentRates) return;
+  Object.keys(DEFAULT_RATES).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const valStr = el.value || '';
+      const valCleaned = valStr.toString().replace(/,/g, '.').trim();
+      const valParsed = parseFloat(valCleaned);
+      currentRates[id] = isNaN(valParsed) ? DEFAULT_RATES[id] : valParsed;
+    }
+  });
+}
+
+function loadRates() {
+  const saved = localStorage.getItem(RATES_STORAGE_KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.thau && parsed.chuyen) {
+        window.priceConfigData = parsed;
+      } else {
+        if (parsed.rateLoCost > 10000) parsed.rateLoCost = 2165;
+        if (parsed.rateLoPayout > 1000) parsed.rateLoPayout = 80;
+        if (parsed.rateXien2Payout === 15) parsed.rateXien2Payout = 11;
+        if (parsed.rateXien3Payout === 50) parsed.rateXien3Payout = 45;
+        if (parsed.rateXien4Payout === 120) parsed.rateXien4Payout = 140;
+        if (parsed.rate3CLoCost > 100) parsed.rate3CLoCost = 75;
+        if (parsed.rate3CLoPayout > 100) parsed.rate3CLoPayout = 20;
+
+        window.priceConfigData = {
+          thau: Object.assign({}, DEFAULT_RATES, parsed),
+          chuyen: Object.assign({}, DEFAULT_RATES, parsed)
         };
       }
-      inputListCountSpan.innerHTML = getBreakdownHtml(inpDeCount, inpLoCount, inpXienCount, inp3CCount, inp3CLCount, winsStr);
-    } else {
-      inputListCountSpan.textContent = `${totalBetCount} con`;
+    } catch (e) {
+      console.error("Error parsing saved rates", e);
+    }
+  } else {
+    window.priceConfigData = {
+      thau: Object.assign({}, DEFAULT_RATES),
+      chuyen: Object.assign({}, DEFAULT_RATES)
+    };
+  }
+
+  window.activeConfigTab = 'thau';
+  updateConfigTabUI();
+  fillConfigInputs();
+}
+
+function saveRates() {
+  saveCurrentConfigInputs();
+  localStorage.setItem(RATES_STORAGE_KEY, JSON.stringify(window.priceConfigData));
+}
+
+// Chuẩn hóa 27 giải xổ số MB
+function normalizeTwentySevenNumbers() {
+  const el = document.getElementById("twentySevenNumbers");
+  if (!el) return;
+  const raw = el.value.trim();
+  if (!raw) return;
+
+  const dbMatch = raw.match(/(?:đặc\s+biệt|db|đb)[\s\r\n\t]+(\d+)/i);
+  if (dbMatch) {
+    const dbValue = dbMatch[1];
+    const dbInput = document.getElementById("specialPrizeInput");
+    if (dbInput) {
+      dbInput.value = dbValue;
     }
   }
-  if (inputListTotalSpan) inputListTotalSpan.textContent = totalBetValue.toLocaleString("vi-VN");
-  const inputTotalSumEl = document.getElementById("inputTotalSum");
-  if (inputTotalSumEl) {
-    inputTotalSumEl.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
+
+  const tokens = raw.split(/[\s,;\t\n\r.\-+*]+/).map(n => n.trim());
+  const numbers = tokens.filter(n => n.length >= 2 && n.length <= 5 && /^\d+$/.test(n));
+  el.value = numbers.join(', ');
+  updateTwoDigitBoard();
+}
+
+// Sao chép nội dung
+function copyText() {
+  let textToCopy = document.getElementById("modifiedResult").innerText;
+  textToCopy = textToCopy.replace(/^(?:🔴|🔵|🟤|🟢|🟣)\s*(Đề|Lô\(đ\)|3cLô|Xiên|3C|Bc)\s*\(.*?$/gm, "$1");
+  textToCopy = textToCopy.replace(/^Lô\(đ\)$/gm, "Lô");
+  textToCopy = textToCopy.replace(/^3C$/gm, "Bc");
+  copyToClipboard(textToCopy, "Đã sao chép kết quả Chuyển thành công!");
+}
+
+function copyInputList() {
+  const inputListContent = document.getElementById("inputList").innerText;
+  copyToClipboard(inputListContent, "Đã sao chép chi tiết Input thành công!");
+}
+
+function copyToClipboard(text, successMessage) {
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert(successMessage))
+      .catch(err => {
+        console.error("Lỗi sao chép: ", err);
+        alert("Sao chép thất bại. Vui lòng thử lại.");
+      });
+  } else {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+      const successful = document.execCommand("copy");
+      if (successful) {
+        alert(successMessage);
+      } else {
+        throw new Error("Sao chép không thành công");
+      }
+    } catch (err) {
+      console.error("Lỗi sao chép: ", err);
+      alert("Sao chép thất bại. Vui lòng thử lại.");
+    } finally {
+      document.body.removeChild(textArea);
+    }
+  }
+}
+
+// Hàm dọn ô nhập khi focus/blur
+function clearDefaultValue(inputField) {
+  if (inputField.value === "0") {
+    inputField.value = "";
+  }
+}
+
+function restoreDefaultValue(inputField) {
+  if (inputField.value === "") {
+    inputField.value = "0";
+  }
+}
+
+// Cài đặt các sự kiện lắng nghe
+function setupEventListeners() {
+  const calcBtn = document.getElementById('calculateButton');
+  if (calcBtn) {
+    calcBtn.addEventListener('click', calculateSum);
+  }
+  
+  const normBtn = document.getElementById('normalizeButton');
+  if (normBtn) {
+    normBtn.addEventListener('click', normalizeTwentySevenNumbers);
+  }
+
+  const cpBtn = document.getElementById('copyButton');
+  if (cpBtn) {
+    cpBtn.addEventListener('click', handleCopyButtonClick);
+  }
+
+  const cpInputBtn = document.getElementById('copyInputListButton');
+  if (cpInputBtn) {
+    cpInputBtn.addEventListener('click', copyInputList);
+  }
+
+  // Tự động chuẩn hóa 27 giải khi mất focus
+  const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+  if (twentySevenNumbers) {
+    twentySevenNumbers.addEventListener('blur', normalizeTwentySevenNumbers);
+    twentySevenNumbers.addEventListener('input', saveAppState);
+  }
+
+  const specialPrizeInput = document.getElementById('specialPrizeInput');
+  if (specialPrizeInput) {
+    specialPrizeInput.addEventListener('input', updateTwoDigitBoard);
+    specialPrizeInput.addEventListener('input', saveAppState);
+  }
+
+  const resultDateInput = document.getElementById('resultDateInput');
+  if (resultDateInput) {
+    const localDate = new Date(Date.now() - (new Date().getTimezoneOffset()*60*1000)).toISOString().split('T')[0];
+    resultDateInput.value = localDate;
+    resultDateInput.addEventListener('change', saveAppState);
+  }
+
+  const autoFetchToggle = document.getElementById('autoFetchToggle');
+  if (autoFetchToggle) {
+    autoFetchToggle.addEventListener('change', (e) => {
+      saveAppState();
+      if (e.target.checked) {
+        triggerAutoFetch();
+      } else {
+        const specialPrizeInput = document.getElementById('specialPrizeInput');
+        const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+        if (specialPrizeInput) specialPrizeInput.value = "";
+        if (twentySevenNumbers) twentySevenNumbers.value = "";
+        fetchedPrizesData = null;
+        updateTwoDigitBoard();
+        calculateSum();
+      }
+    });
+  }
+
+  const btnFetchResults = document.getElementById('btnFetchResults');
+  if (btnFetchResults) {
+    btnFetchResults.addEventListener('click', triggerAutoFetch);
+  }
+
+  const crawlerSource = document.getElementById('crawlerSource');
+  if (crawlerSource) {
+    crawlerSource.addEventListener('change', saveAppState);
+  }
+
+  // Các sự kiện thay đổi giới hạn giữ lại
+  const retainInputs = ['retainDe', 'retainLo', 'retain3c', 'retainX', 'retain3cL'];
+  retainInputs.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+      input.addEventListener('focus', () => clearDefaultValue(input));
+      input.addEventListener('blur', () => {
+        if (input.value === "") input.value = "0";
+      });
+      input.addEventListener('input', calculateSum);
+    }
+  });
+
+  const btnResetBalance = document.getElementById('btnResetBalance');
+  if (btnResetBalance) {
+    btnResetBalance.addEventListener('click', resetBalancing);
+  }
+
+  document.querySelectorAll('input[name="retainType"]').forEach(radio => {
+    radio.addEventListener('change', calculateSum);
+  });
+
+  // Modal cấu hình giá
+  const btnPriceConfig = document.getElementById('btnPriceConfig');
+  const modalPriceConfig = document.getElementById('modalPriceConfig');
+  const btnClosePriceConfig = document.getElementById('btnClosePriceConfig');
+  const btnClosePriceConfigBtn = document.getElementById('btnClosePriceConfigBtn');
+  const btnResetRates = document.getElementById('btnResetRates');
+
+  if (btnPriceConfig && modalPriceConfig) {
+    btnPriceConfig.addEventListener('click', () => {
+      loadRates();
+      modalPriceConfig.classList.remove('hidden');
+    });
+
+    const configTabThau = document.getElementById('configTabThau');
+    const configTabChuyen = document.getElementById('configTabChuyen');
+    if (configTabThau && configTabChuyen) {
+      configTabThau.addEventListener('click', () => {
+        saveCurrentConfigInputs();
+        window.activeConfigTab = 'thau';
+        updateConfigTabUI();
+        fillConfigInputs();
+      });
+      configTabChuyen.addEventListener('click', () => {
+        saveCurrentConfigInputs();
+        window.activeConfigTab = 'chuyen';
+        updateConfigTabUI();
+        fillConfigInputs();
+      });
+    }
+
+    const closeModal = () => {
+      saveRates();
+      modalPriceConfig.classList.add('hidden');
+      calculateSum();
+    };
+
+    if (btnClosePriceConfig) btnClosePriceConfig.addEventListener('click', closeModal);
+    if (btnClosePriceConfigBtn) btnClosePriceConfigBtn.addEventListener('click', closeModal);
+
+    modalPriceConfig.addEventListener('click', (e) => {
+      if (e.target === modalPriceConfig) {
+        closeModal();
+      }
+    });
+  }
+
+  if (btnResetRates) {
+    btnResetRates.addEventListener('click', () => {
+      if (confirm("Khôi phục mặc định các cấu hình giá?")) {
+        localStorage.removeItem(RATES_STORAGE_KEY);
+        loadRates();
+        calculateSum();
+      }
+    });
+  }
+
+  // Sự kiện nhấp tab báo cáo ở cuối trang
+  const tabThau = document.getElementById('tabThau');
+  const tabChuyen = document.getElementById('tabChuyen');
+  const tabGiulai = document.getElementById('tabGiulai');
+  
+  if (tabThau && tabChuyen && tabGiulai) {
+    tabThau.addEventListener('click', () => {
+      window.activeReportTab = 'thau';
+      updateReportTabUI();
+      updateSummaryTable();
+    });
+    tabChuyen.addEventListener('click', () => {
+      window.activeReportTab = 'chuyen';
+      updateReportTabUI();
+      updateSummaryTable();
+    });
+    tabGiulai.addEventListener('click', () => {
+      window.activeReportTab = 'giulai';
+      updateReportTabUI();
+      updateSummaryTable();
+    });
   }
 }
 
@@ -1855,21 +3227,13 @@ function calculateResult(row) {
   let bonusResult = 0;
 
   if (row === 2) {
-    // For Lô, percentage is price per point, e.g. 21.7 (which is 21.7k)
-    // Cost = points * cost_per_point
     result = Math.round(input * percentage);
-    // Payout = winning points * 80
     bonusResult = Math.round(bonus * 80);
   } else if (row === 1) {
-    // For Đề, percentage is commission, e.g. 82%
-    // Cost = input * 82%
     result = Math.round(input * percentage / 100);
-    // Payout = winning amount * 80
     bonusResult = Math.round(bonus * 80);
   } else if (row === 3 || row === 4) {
-    // For Xiên and Ba Càng, percentage is commission
     result = Math.round(input * percentage / 100);
-    // Payout is calculated automatically and set as bonus value in thousands
     bonusResult = bonus;
   }
 
@@ -1907,681 +3271,29 @@ function calculateFinalResult() {
 
   const total = tEl ? (parseInt(tEl.textContent) || 0) : 0;
   const bonusTotal = btEl ? (parseInt(btEl.textContent) || 0) : 0;
-  const finalResult = total - bonusTotal;
-
-  if (fEl) fEl.textContent = finalResult;
-}
-
-function normalizeTwentySevenNumbers() {
-  const el = document.getElementById("allPrizesInput") || document.getElementById("twentySevenNumbers");
-  if (!el) return;
-  const raw = el.value.trim();
-  if (!raw) return;
-
-  // Extract special prize if present (e.g. Đặc biệt\n31854 or db 31854)
-  const dbMatch = raw.match(/(?:đặc\s+biệt|db|đb)[\s\r\n\t]+(\d+)/i);
-  if (dbMatch) {
-    const dbValue = dbMatch[1];
-    const dbInput = document.getElementById("specialPrizeInput") || document.getElementById("specialPrize");
-    if (dbInput) {
-      dbInput.value = dbValue;
-    }
-  }
-
-  const tokens = raw.split(/[\s,;\t\n\r.\-+*]+/).map(n => n.trim());
-  const numbers = tokens.filter(n => n.length >= 2 && n.length <= 5 && /^\d+$/.test(n));
-  el.value = numbers.join(', ');
-  updateTwoDigitBoard();
-}
-
-function copyText() {
-  let textToCopy = document.getElementById("modifiedResult").innerText;
-  textToCopy = textToCopy.replace(/^(?:🔴|🔵|🟤|🟢|🟣)\s*(Đề|Lô\(đ\)|3cLô|Xiên|3C)\s*\(.*?$/gm, "$1");
-  textToCopy = textToCopy.replace(/^Lô\(đ\)$/gm, "Lô");
-  copyToClipboard(textToCopy, "Đã sao chép kết quả thành công!");
-}
-
-function copyInputList() {
-  const inputListContent = document.getElementById("inputList").innerText;
-  copyToClipboard(inputListContent, "Đã sao chép input thành công!");
-}
-
-function copyToClipboard(text, successMessage) {
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text)
-      .then(() => alert(successMessage))
-      .catch(err => {
-        console.error("Lỗi sao chép: ", err);
-        alert("Sao chép thất bại. Vui lòng thử lại.");
-      });
-  } else {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      const successful = document.execCommand("copy");
-      if (successful) {
-        alert(successMessage);
-      } else {
-        throw new Error("Sao chép không thành công");
-      }
-    } catch (err) {
-      console.error("Lỗi sao chép: ", err);
-      alert("Sao chép thất bại. Vui lòng thử lại.");
-    } finally {
-      document.body.removeChild(textArea);
-    }
-  }
-}
-
-function clearDefaultValue(inputField) {
-  if (inputField.value === "0") {
-    inputField.value = "";
-  }
-}
-
-function restoreDefaultValue(inputField) {
-  if (inputField.value === "") {
-    inputField.value = "0";
-    const rowNumber = parseInt(inputField.id.replace("input", "").replace("bonus", "").replace("percentage", ""));
-    if (!isNaN(rowNumber)) {
-      calculateResult(rowNumber);
-    }
-  }
-}
-
-function toggleDarkMode() {
-  document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-}
-
-function checkDarkModePreference() {
-  if (localStorage.getItem('theme') === 'dark' || 
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-  }
-}
-
-const RATES_STORAGE_KEY = 'lucky_wheel_rates';
-const DEFAULT_RATES = {
-  rateDeComm: 82,
-  rateDePayout: 80,
-  rateLoCost: 2165,
-  rateLoPayout: 80,
-  rateXienComm: 65,
-  rateXien2Payout: 11,
-  rateXien3Payout: 45,
-  rateXien4Payout: 140,
-  rate3CComm: 75,
-  rate3CPayout: 400,
-  rate3CApMa: 5,
-  rate3CLoCost: 75,
-  rate3CLoPayout: 20
-};
-
-function loadRates() {
-  const saved = localStorage.getItem(RATES_STORAGE_KEY);
-  let rates = DEFAULT_RATES;
-  if (saved) {
-    try {
-      let parsed = JSON.parse(saved);
-      // Migrate old Lô point rates to new defaults
-      if (parsed.rateLoCost > 10000) {
-        parsed.rateLoCost = 2165; // migrate to 2165
-      }
-      if (parsed.rateLoPayout > 1000) {
-        parsed.rateLoPayout = 80; // migrate to 80
-      }
-      // Migrate old Xiên rates to new defaults
-      if (parsed.rateXien2Payout === 15) {
-        parsed.rateXien2Payout = 11;
-      }
-      if (parsed.rateXien3Payout === 50) {
-        parsed.rateXien3Payout = 45;
-      }
-      if (parsed.rateXien4Payout === 120) {
-        parsed.rateXien4Payout = 140;
-      }
-      // Migrate old 3C Lô point rates to percentage rates
-      if (parsed.rate3CLoCost > 100) {
-        parsed.rate3CLoCost = 75; // migrate to 75%
-      }
-      if (parsed.rate3CLoPayout > 100) {
-        parsed.rate3CLoPayout = 20; // migrate to 1 ăn 20
-      }
-      rates = Object.assign({}, DEFAULT_RATES, parsed);
-    } catch (e) {
-      console.error("Error parsing saved rates", e);
-    }
-  }
-  Object.entries(rates).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.value = (val !== undefined && val !== null) ? val.toString() : '';
-    }
-  });
-}
-
-function saveRates() {
-  const rates = {};
-  Object.keys(DEFAULT_RATES).forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      const valStr = el.value || '';
-      const valCleaned = valStr.toString().replace(/,/g, '.').trim();
-      const valParsed = parseFloat(valCleaned);
-      rates[id] = isNaN(valParsed) ? DEFAULT_RATES[id] : valParsed;
-    }
-  });
-  localStorage.setItem(RATES_STORAGE_KEY, JSON.stringify(rates));
-}
-
-// Setup Event Listeners
-function setupEventListeners() {
-  const calcBtn = document.getElementById('calculateButton');
-  if (calcBtn) {
-    calcBtn.addEventListener('click', calculateSum);
-  }
-  
-  const normBtn = document.getElementById('normalizeButton');
-  if (normBtn) {
-    normBtn.addEventListener('click', normalizeTwentySevenNumbers);
-  }
-
-  const cpBtn = document.getElementById('copyButton');
-  if (cpBtn) {
-    cpBtn.addEventListener('click', copyText);
-  }
-
-  const cpInputBtn = document.getElementById('copyInputListButton');
-  if (cpInputBtn) {
-    cpInputBtn.addEventListener('click', copyInputList);
-  }
-
-  const toggleExtraPanels = document.getElementById('toggleExtraPanels');
-  const lotteryResultsPanel = document.getElementById('lotteryResultsPanel');
-  const shortcutsPanel = document.getElementById('shortcutsPanel');
-  if (toggleExtraPanels && lotteryResultsPanel && shortcutsPanel) {
-    toggleExtraPanels.addEventListener('change', function() {
-      if (this.checked) {
-        lotteryResultsPanel.classList.remove('hidden');
-        shortcutsPanel.classList.remove('hidden');
-      } else {
-        lotteryResultsPanel.classList.add('hidden');
-        shortcutsPanel.classList.add('hidden');
-      }
-    });
-  }
-
-  // Auto-normalize allPrizesInput on blur
-  const allPrizesInput = document.getElementById('allPrizesInput');
-  if (allPrizesInput) {
-    allPrizesInput.addEventListener('blur', normalizeTwentySevenNumbers);
-  }
-
-  const specialPrizeInput = document.getElementById('specialPrizeInput');
-  if (specialPrizeInput) {
-    specialPrizeInput.addEventListener('input', updateTwoDigitBoard);
-  }
-
-  // Date and Source selectors for crawler
-  const resultDateInput = document.getElementById('resultDateInput');
-  if (resultDateInput) {
-    // Default date YYYY-MM-DD
-    const localDate = new Date(Date.now() - (new Date().getTimezoneOffset()*60*1000)).toISOString().split('T')[0];
-    resultDateInput.value = localDate;
-  }
-
-  const autoFetchToggle = document.getElementById('autoFetchToggle');
-  if (autoFetchToggle) {
-    autoFetchToggle.addEventListener('change', (e) => {
-      const btnFetchResults = document.getElementById('btnFetchResults');
-      const autoResultStatus = document.getElementById('autoResultStatus');
-      
-      if (e.target.checked) {
-        if (btnFetchResults) btnFetchResults.classList.remove('hidden');
-        if (autoResultStatus) autoResultStatus.classList.remove('hidden');
-        triggerAutoFetch();
-      } else {
-        if (btnFetchResults) btnFetchResults.classList.add('hidden');
-        if (autoResultStatus) autoResultStatus.classList.add('hidden');
-      }
-    });
-  }
-
-  const btnFetchResults = document.getElementById('btnFetchResults');
-  if (btnFetchResults) {
-    btnFetchResults.addEventListener('click', triggerAutoFetch);
-  }
-
-  const btnSourceMinhNgoc = document.getElementById('btnSourceMinhNgoc');
-  if (btnSourceMinhNgoc) btnSourceMinhNgoc.addEventListener('click', () => updateSourceButtons("Minh Ngọc"));
-
-  const btnSourceXSKT = document.getElementById('btnSourceXSKT');
-  if (btnSourceXSKT) btnSourceXSKT.addEventListener('click', () => updateSourceButtons("XSKT.com.vn"));
-
-  const btnSourceMKetqua = document.getElementById('btnSourceMKetqua');
-  if (btnSourceMKetqua) btnSourceMKetqua.addEventListener('click', () => updateSourceButtons("mketqua.net"));
-
-  // Retain number & type listeners
-  const retainNumber = document.getElementById('retainNumber');
-  if (retainNumber) {
-    retainNumber.addEventListener('focus', () => clearDefaultValue(retainNumber));
-    retainNumber.addEventListener('blur', () => {
-      if (retainNumber.value === "") retainNumber.value = "0";
-    });
-    retainNumber.addEventListener('input', calculateSum);
-  }
-
-  document.querySelectorAll('input[name="retainType"]').forEach(radio => {
-    radio.addEventListener('change', calculateSum);
-  });
-
-  // Summary Table listeners
-  for (let i = 1; i <= 4; i++) {
-    const input = document.getElementById(`input${i}`);
-    const bonus = document.getElementById(`bonus${i}`);
-    const percentage = document.getElementById(`percentage${i}`);
-    
-    if (input) {
-      input.addEventListener('focus', () => clearDefaultValue(input));
-      input.addEventListener('blur', () => restoreDefaultValue(input));
-      input.addEventListener('input', () => calculateResult(i));
-    }
-    
-    if (bonus) {
-      bonus.addEventListener('focus', () => clearDefaultValue(bonus));
-      bonus.addEventListener('blur', () => restoreDefaultValue(bonus));
-      bonus.addEventListener('input', () => calculateResult(i));
-    }
-    
-    if (percentage) {
-      percentage.addEventListener('focus', () => clearDefaultValue(percentage));
-      percentage.addEventListener('blur', () => restoreDefaultValue(percentage));
-      percentage.addEventListener('input', () => calculateResult(i));
-    }
-  }
-
-  // Dark mode
-  const modeToggle = document.getElementById('darkModeToggle');
-  if (modeToggle) {
-    modeToggle.addEventListener('click', toggleDarkMode);
-  }
-
-  // Modal Price Config listeners
-  const btnPriceConfig = document.getElementById('btnPriceConfig');
-  const modalPriceConfig = document.getElementById('modalPriceConfig');
-  const btnClosePriceConfig = document.getElementById('btnClosePriceConfig');
-  const btnClosePriceConfigBtn = document.getElementById('btnClosePriceConfigBtn');
-  const btnResetRates = document.getElementById('btnResetRates');
-
-  if (btnPriceConfig && modalPriceConfig) {
-    btnPriceConfig.addEventListener('click', () => {
-      loadRates();
-      modalPriceConfig.classList.remove('hidden');
-    });
-
-    const closeModal = () => {
-      saveRates();
-      modalPriceConfig.classList.add('hidden');
-      calculateSum(); // recalculate automatically on close!
-    };
-
-    if (btnClosePriceConfig) btnClosePriceConfig.addEventListener('click', closeModal);
-    if (btnClosePriceConfigBtn) btnClosePriceConfigBtn.addEventListener('click', closeModal);
-
-    modalPriceConfig.addEventListener('click', (e) => {
-      if (e.target === modalPriceConfig) {
-        closeModal();
-      }
-    });
-  }
-
-  if (btnResetRates) {
-    btnResetRates.addEventListener('click', () => {
-      if (confirm("Bạn có chắc chắn muốn khôi phục giá trị cấu hình mặc định không?")) {
-        localStorage.removeItem(RATES_STORAGE_KEY);
-        loadRates();
-        calculateSum();
-      }
-    });
-  }
-
-  // Copy report listener
-  const btnCopyTextReport = document.getElementById("btnCopyTextReport");
-  if (btnCopyTextReport) {
-    btnCopyTextReport.addEventListener("click", () => {
-      const data = window.lastCalculatedReport;
-      if (!data) {
-        alert("Vui lòng thực hiện tính toán báo cáo trước!");
-        return;
-      }
-
-      const formatMoneyK = (val) => {
-        return Math.round(val).toLocaleString('vi-VN');
-      };
-
-      const rawDate = data.date;
-      const dayMonthText = rawDate.split('/').slice(0, 2).join('/'); // "29/06"
-
-      const headerText = `BÁO CÁO - ${dayMonthText}`;
-
-      const deStr = `Đề: ${formatMoneyK(data.deXac)} / ${formatMoneyK(data.deTrung)}`;
-      const loStr = `Lô: ${data.loXac} / ${data.loTrung}`;
-      const xienStr = `Xiên: ${formatMoneyK(data.xienXac)} / ${formatMoneyK(data.xienTrung)}`;
-      const baCangStr = `3c: ${formatMoneyK(data.baCangXac)} / ${formatMoneyK(data.baCangTrung)}`;
-      const baCangLoStr = `3c Lô: ${formatMoneyK(data.baCangLoXac)} / ${formatMoneyK(data.baCangLoTrung)}`;
-      
-      const netLabelText = data.totalNet < 0 ? "LẤY VỀ" : "NỘP";
-      const netValK = formatMoneyK(Math.abs(data.totalNet));
-
-      const reportText = `${headerText}\n` +
-        `${deStr}\n` +
-        `${loStr}\n` +
-        `${xienStr}\n` +
-        `${baCangStr}\n` +
-        `${baCangLoStr}\n` +
-        `${netLabelText}: ${netValK}`;
-
-      navigator.clipboard.writeText(reportText).then(() => {
-        alert("Đã copy báo cáo vào clipboard!");
-      }).catch(err => {
-        console.error("Lỗi copy báo cáo:", err);
-        // Fallback using prompt
-        window.prompt("Copy báo cáo tại đây:", reportText);
-      });
-    });
-  }
+  if (fEl) fEl.textContent = total - bonusTotal;
 }
 
 // DOM loaded hooks
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById('calculateButton')) {
-    // Populate default percentages if they are 0 or empty
-    for (let i = 1; i <= 4; i++) {
-      const p = document.getElementById(`percentage${i}`);
-      if (p && (p.value === "0" || p.value === "")) {
-        if (i === 1) p.value = "82";
-        if (i === 2) p.value = "21.7";
-        if (i === 3) p.value = "65";
-        if (i === 4) p.value = "75";
-      }
+  // Nạp phần trăm mặc định nếu rỗng
+  for (let i = 1; i <= 4; i++) {
+    const p = document.getElementById(`percentage${i}`);
+    if (p && (p.value === "0" || p.value === "")) {
+      if (i === 1) p.value = "82";
+      if (i === 2) p.value = "21.7";
+      if (i === 3) p.value = "65";
+      if (i === 4) p.value = "75";
     }
-
-    loadRates(); // Load price configurations on page load!
-    initializeDefaultValues();
-    loadShortcuts();
-    setupEventListeners();
-    checkDarkModePreference();
-
-    // Auto-fetch results on page load is disabled by default
-    // triggerAutoFetch();
   }
+
+  loadRates();
+  initializeDefaultValues();
+  loadShortcuts();
+  setupEventListeners();
+  loadAppState();
 });
-
-// Helpers for ex.html compatibility
-function updateRowNumbers() {
-  const rows = document.querySelectorAll('tbody tr');
-  rows.forEach((row, index) => {
-    const numberCell = row.querySelector('.row-number');
-    if (numberCell) numberCell.textContent = index + 1;
-  });
-}
-
-function calculateNSum() {
-  const rows = document.querySelectorAll('tbody tr');
-  let sum = 0;
-  rows.forEach((row) => {
-    const input = row.querySelector('.col1');
-    if (input) {
-      const inputValue = parseFloat(input.value.replace(',', '.')) || 0;
-      sum += inputValue;
-    }
-  });
-  const formattedSum = sum.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 3
-  });
-  const totalCell = document.getElementById('totalCol1');
-  if (totalCell) totalCell.textContent = formattedSum;
-}
-
-function handleKeyDown(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    const currentInput = event.target;
-    const currentValue = currentInput.value.trim();
-    if (currentValue !== '') {
-      const currentRow = currentInput.closest('tr');
-      const isLastRow = currentRow === document.querySelector('tbody tr:last-child');
-      if (isLastRow) {
-        addNewRow();
-        setTimeout(() => {
-          const newRowInput = document.querySelector('tbody tr:last-child .col1');
-          if (newRowInput) newRowInput.focus();
-        }, 0);
-      } else {
-        const nextRow = currentRow.nextElementSibling;
-        if (nextRow) {
-          const nextInput = nextRow.querySelector('.col1');
-          if (nextInput) nextInput.focus();
-        }
-      }
-    }
-  }
-}
-
-function addNewRow() {
-  const tableBody = document.querySelector('tbody');
-  if (!tableBody) return;
-  const newRow = document.createElement('tr');
-
-  const numberCell = document.createElement('td');
-  numberCell.className = 'row-number p-2 border border-gray-300 text-center';
-  numberCell.textContent = tableBody.children.length + 1;
-  newRow.appendChild(numberCell);
-
-  const newCell = document.createElement('td');
-  newCell.className = 'p-2 border border-gray-300';
-  const newInput = document.createElement('input');
-  newInput.type = 'number';
-  newInput.className = 'col1 w-full p-1 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500';
-  newInput.oninput = function () {
-    calculateNSum();
-  };
-  newInput.onkeydown = function (event) {
-    handleKeyDown(event);
-  };
-  newCell.appendChild(newInput);
-  newRow.appendChild(newCell);
-  tableBody.appendChild(newRow);
-
-  updateRowNumbers();
-}
-
-if (document.querySelector('tbody')) {
-  document.addEventListener('DOMContentLoaded', function() {
-    const firstInput = document.querySelector('tbody tr:first-child .col1');
-    if (firstInput) {
-      firstInput.focus();
-    }
-  });
-}
-
-function resetTable() {
-  const tableBody = document.querySelector('tbody');
-  if (!tableBody) return;
-  while (tableBody.children.length > 1) {
-    tableBody.removeChild(tableBody.lastChild);
-  }
-  const firstInput = tableBody.querySelector('.col1');
-  if (firstInput) {
-    firstInput.value = '';
-    firstInput.focus();
-  }
-  const totalCol1 = document.getElementById('totalCol1');
-  if (totalCol1) totalCol1.textContent = '0';
-}
 </script>
+  </body>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const shortcutsArea = document.getElementById('shortcuts');
-      const STORAGE_KEY = 'lucky_wheel_shortcuts';
-      const DATA_URL = 'https://raw.githubusercontent.com/doducdungvn/doducdungvn.github.io/refs/heads/main/nhaptat.txt';
-
-      // Nếu không tìm thấy ô nhập tắt thì dừng
-      if (!shortcutsArea) return;
-
-      // Hàm lưu vào LocalStorage
-      const saveToStorage = () => {
-        localStorage.setItem(STORAGE_KEY, shortcutsArea.value);
-      };
-
-      // 1. Tải dữ liệu từ LocalStorage ra trước
-      const savedData = localStorage.getItem(STORAGE_KEY);
-      if (savedData !== null) {
-        shortcutsArea.value = savedData;
-      }
-
-      // 2. Chỉ tải từ URL nếu ô nhập liệu TRỐNG (lần đầu hoặc đã xóa hết)
-      if (!shortcutsArea.value.trim()) {
-        fetch(DATA_URL)
-          .then(response => {
-            if (!response.ok) throw new Error('Kết nối thất bại');
-            return response.text();
-          })
-          .then(text => {
-            shortcutsArea.value = text;
-            saveToStorage(); // Lưu luôn dữ liệu mặc định vào storage
-          })
-          .catch(error => {
-            console.error('Lỗi tải dữ liệu nhập tắt mặc định:', error);
-            shortcutsArea.placeholder = "Không thể tải dữ liệu mặc định. Vui lòng kiểm tra kết nối.";
-          });
-      }
-
-  </script>
-
-  <!-- Modal Cấu hình giá (Ported from thau_lode.html) -->
-  <div id="modalPriceConfig" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/60 backdrop-blur-sm p-4">
-    <div class="bg-white dark:bg-dark-800 w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl rounded-xl border border-gray-200 dark:border-gray-700">
-      <!-- Modal Header -->
-      <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-dark-900">
-        <h3 class="text-sm font-bold text-primary dark:text-indigo-400 flex items-center gap-2 uppercase tracking-wider">
-          ⚙️ Cấu Hình Giá & Hoa Hồng
-        </h3>
-        <button id="btnClosePriceConfig" class="text-gray-400 hover:text-gray-200 text-lg font-bold transition-all p-1">
-          &times;
-        </button>
-      </div>
-      
-      <!-- Modal Body -->
-      <div class="p-5 overflow-y-auto space-y-4">
-        <div class="flex justify-end mb-1">
-          <button id="btnResetRates" class="text-xs text-primary dark:text-indigo-400 hover:underline">
-            Khôi phục mặc định
-          </button>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Số Đề settings -->
-          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🔴 Số Đề</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
-                <input type="text" id="rateDeComm" value="82" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[11px] text-gray-500 mb-1">Thưởng (1 ăn...)</label>
-                <input type="text" id="rateDePayout" value="80" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-            </div>
-          </div>
-
-          <!-- Đánh Lô settings -->
-          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🔵 Đánh Lô</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-[11px] text-gray-500 mb-1">Vốn 1 điểm (đ)</label>
-                <input type="text" id="rateLoCost" value="2165" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[11px] text-gray-500 mb-1">Thưởng 1 điểm (đ)</label>
-                <input type="text" id="rateLoPayout" value="80" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-            </div>
-          </div>
-
-          <!-- Lô Xiên settings -->
-          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🟢 Lô Xiên (Xiên 2, 3, 4)</h3>
-            <div class="grid grid-cols-4 gap-2 mb-2">
-              <div class="col-span-4">
-                <label class="block text-[11px] text-gray-500 mb-1">Giá gốc (%)</label>
-                <input type="text" id="rateXienComm" value="65" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 2 (1 ăn...)</label>
-                <input type="text" id="rateXien2Payout" value="11" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 3 (1 ăn...)</label>
-                <input type="text" id="rateXien3Payout" value="45" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Xiên 4 (1 ăn...)</label>
-                <input type="text" id="rateXien4Payout" value="140" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-            </div>
-          </div>
-
-          <!-- 3 Càng settings -->
-          <div class="bg-gray-50 dark:bg-dark-900 p-3 rounded-lg border border-gray-200 dark:border-gray-800">
-            <h3 class="text-xs font-bold text-primary dark:text-indigo-400 mb-2 uppercase tracking-wider">🟣 Ba Càng Đề & Lô</h3>
-            <div class="grid grid-cols-2 gap-3 mb-2">
-              <div>
-                <label class="block text-[11px] text-gray-500 mb-1">3C Đề Giá gốc (%)</label>
-                <input type="text" id="rate3CComm" value="75" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[11px] text-gray-500 mb-1">3C Đề (1 ăn...)</label>
-                <input type="text" id="rate3CPayout" value="400" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-              <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">Áp Má (1 ăn...)</label>
-                <input type="text" id="rate3CApMa" value="5" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô Giá gốc (%)</label>
-                <input type="text" id="rate3CLoCost" value="75" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-              <div>
-                <label class="block text-[9px] text-gray-500 mb-0.5 text-center">3C Lô (1 ăn...)</label>
-                <input type="text" id="rate3CLoPayout" value="20" class="w-full border border-gray-300 dark:border-gray-600 rounded p-1.5 text-xs text-center bg-white dark:bg-dark-700 font-bold">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Modal Footer -->
-      <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end bg-gray-50 dark:bg-dark-900">
-        <button id="btnClosePriceConfigBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-5 rounded-md text-xs font-bold">
-          Xác nhận
-        </button>
-      </div>
-    </div>
-  </div>
-</body>
 </html>
-
