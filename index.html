@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>☆ Z™ ☆</title>
+  <title>☆ Lucky Wheel ☆</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style>
 :root {
@@ -372,6 +372,38 @@ td input[type="text"] {
     min-height: auto;
   }
 }
+.scroll-btn-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 99;
+}
+
+.scroll-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.scroll-btn:hover {
+  opacity: 1;
+  background-color: var(--primary-hover);
+}
 </style>
   
 </head>
@@ -382,17 +414,18 @@ td input[type="text"] {
       <!-- Cột bên trái: Nhập liệu và cấu hình -->
       <div class="left-column">
         <div class="input-section">
-          <label for="numbers">Nhập số:</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label for="numbers" style="font-weight: 600; font-size: 14px;">Nhập số:</label>
+            <button id="btnClearBetInput" style="background-color: #dc3545; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Xóa trắng</button>
+          </div>
           <textarea id="numbers" rows="6" placeholder="Nhập tin cược tại đây..."></textarea>
         </div>
 
         <div class="input-section">
           <div class="button-group">
-            <button id="normalizeButton">Chuẩn hóa 27</button>
             <button id="calculateButton">Tính tổng</button>
             <button id="copyButton">Sao chép Chuyển</button>
             <button id="copyInputListButton">Sao chép Input</button>
-            <button id="btnPriceConfig">Cấu hình giá</button>
           </div>
           <div class="control-row">
             <label style="font-weight: bold;">Giữ lại: </label>
@@ -413,21 +446,28 @@ td input[type="text"] {
         </div>
         
         <div class="input-section">
-          <label for="twentySevenNumbers">27 giải:</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label for="twentySevenNumbers" style="font-weight: 600; font-size: 14px;">27 giải:</label>
+            <button id="normalizeButton" style="background-color: #6c757d; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Chuẩn hóa 27</button>
+          </div>
           <textarea id="twentySevenNumbers" rows="3" placeholder="Kết quả 27 giải..."></textarea>
           <div class="crawler-controls">
             <label><input type="checkbox" id="autoFetchToggle"> Tự động tải KQ</label>
             <span style="color: #ccc;">|</span>
             <span>Ngày: <input type="date" id="resultDateInput"></span>
             <span style="color: #ccc;">|</span>
-            <span>Nguồn: 
-              <select id="crawlerSource">
+            <span style="display: inline-flex; align-items: center; gap: 4px;">
+              Nguồn: 
+              <button type="button" id="btnSourceMinhNgoc" style="padding: 2px 6px; font-size: 11px; border: none; border-radius: 4px; color: white; cursor: pointer;">Minh Ngọc</button>
+              <button type="button" id="btnSourceXSKT" style="padding: 2px 6px; font-size: 11px; border: none; border-radius: 4px; color: white; cursor: pointer;">XSKT</button>
+              <button type="button" id="btnSourceMKetqua" style="padding: 2px 6px; font-size: 11px; border: none; border-radius: 4px; color: white; cursor: pointer;">mketqua</button>
+              <select id="crawlerSource" class="hidden">
                 <option value="minhngoc">Minh Ngọc</option>
                 <option value="xskt">XSKT.com.vn</option>
                 <option value="mketqua">mketqua.net</option>
               </select>
             </span>
-            <button id="btnFetchResults" style="padding: 2px 8px; font-size: 12px;">Tải KQ</button>
+            <button id="btnFetchResults" style="padding: 2px 8px; font-size: 12px; margin-left: auto;">Tải KQ</button>
             <span id="autoResultStatus" style="font-size: 11px; font-weight: bold; display: none;"></span>
           </div>
           <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
@@ -441,37 +481,62 @@ td input[type="text"] {
         </div>
 
         <div class="input-section">
-          <label for="shortcuts"><a href="nhaptat.html">Nhập tắt:</a></label>
-          <textarea name="shortcuts" rows="3" id="shortcuts" placeholder="Cấu hình phím tắt..."></textarea>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <label style="font-weight: 600; font-size: 14px;"><a href="nhaptat.html" style="color: inherit; text-decoration: none;">Nhập tắt:</a></label>
+            <button id="btnToggleShortcuts" style="padding: 2px 8px; font-size: 11px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Hiện</button>
+          </div>
+          <textarea name="shortcuts" rows="3" id="shortcuts" class="hidden" placeholder="Cấu hình phím tắt..."></textarea>
           <p style="font-size: 11px; margin: 4px 0 0 0; text-align: right;"><a href="dothuong.html">copyright</a> © by <a href="ex.html">Angle</a></p>
         </div>
       </div>
 
       <!-- Cột bên phải: Hiển thị kết quả tính toán -->
       <div class="right-column">
-        <div class="results-top">
-          <h3><u>Tất cả:</u></h3>
-          <div id="totalSum2" style="font-weight: bold; font-size: 16px; color: #007bff; margin-bottom: 4px;"></div>
-          <div id="numResults" style="font-size: 12px; color: #666;"></div>
-        </div>
-
         <div class="results-grid">
+          <!-- Kết quả Card -->
           <div class="result-section">
-            <h3>Kết quả:</h3>
-            <div id="totalSum" class="red-text" style="font-weight: bold; margin-bottom: 8px;"></div>
-            <div id="result" style="font-size: 13px;"></div>
+            <h3 onclick="toggleCardDetail('result')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
+              <span>Kết quả:</span>
+              <button id="toggleBtn-result" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
+            </h3>
+            <div style="font-size: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
+              <div><strong>Trúng:</strong> <span id="numResults">0 con</span></div>
+              <div><strong>Tổng:</strong> <span id="totalSum" class="red-text" style="font-weight: bold;">0</span></div>
+            </div>
+            <div id="wrapper-result" style="flex: 1; overflow-y: auto;">
+              <div id="result" style="font-size: 13px;"></div>
+            </div>
           </div>
           
+          <!-- Chuyển Card -->
           <div class="result-section">
-            <h3>Chuyển:</h3>
-            <div id="modifiedTotalSum" class="red-text" style="font-weight: bold; margin-bottom: 8px;"></div>
-            <div id="modifiedResult" style="font-size: 13px;"></div>
-            <div id="totalSum3" style="font-size: 11px; margin-top: 8px; color: #666;"></div>
+            <h3 onclick="toggleCardDetail('modifiedResult')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
+              <span>Chuyển:</span>
+              <button id="toggleBtn-modifiedResult" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
+            </h3>
+            <div style="font-size: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
+              <div><strong>Chuyển:</strong> <span id="modifiedNumResults">0 con</span></div>
+              <div><strong>Tổng Chuyển:</strong> <span id="modifiedTotalSum" class="red-text" style="font-weight: bold;">0</span></div>
+            </div>
+            <div id="wrapper-modifiedResult" style="flex: 1; overflow-y: auto;">
+              <div id="modifiedResult" style="font-size: 13px;"></div>
+              <div id="totalSum3" style="font-size: 11px; margin-top: 8px; color: #666;"></div>
+            </div>
           </div>
 
+          <!-- Chi tiết Card -->
           <div class="result-section">
-            <h3>Chi tiết:</h3>
-            <ul id="inputList" class="details-list"></ul>
+            <h3 onclick="toggleCardDetail('inputList')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
+              <span>Chi tiết:</span>
+              <button id="toggleBtn-inputList" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
+            </h3>
+            <div style="font-size: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
+              <div><strong>Theo Input:</strong> <span id="inputListCount">0 con</span></div>
+              <div><strong>Tổng Nhập:</strong> <span id="inputTotalSum" class="red-text" style="font-weight: bold;">0</span></div>
+            </div>
+            <div id="wrapper-inputList" style="flex: 1; overflow-y: auto;">
+              <ul id="inputList" class="details-list"></ul>
+            </div>
           </div>
         </div>
       </div>
@@ -479,11 +544,18 @@ td input[type="text"] {
 
     <!-- Phần báo cáo ở dưới cùng -->
     <div class="bottom-layout">
-      <div style="font-size: 14px; user-select: none; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-        <span style="font-weight: bold;">Xem báo cáo:</span>
-        <button id="tabThau" style="padding: 4px 12px; font-weight: bold; border-radius: 4px;">📊 Thầu</button>
-        <button id="tabChuyen" style="padding: 4px 12px; border-radius: 4px;">🔄 Chuyển</button>
-        <button id="tabGiulai" style="padding: 4px 12px; border-radius: 4px;">🔒 Giữ lại</button>
+      <div style="font-size: 14px; user-select: none; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 650px; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="font-weight: bold;">Xem báo cáo:</span>
+          <button id="tabThau" style="padding: 4px 12px; font-weight: bold; border-radius: 4px;">📊 Thầu</button>
+          <button id="tabChuyen" style="padding: 4px 12px; border-radius: 4px;">🔄 Chuyển</button>
+          <button id="tabGiulai" class="hidden" style="padding: 4px 12px; border-radius: 4px;">🔒 Giữ lại</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button id="btnCopyTextReport" style="padding: 4px 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">📋 Copy báo cáo</button>
+          <button id="btnSummaryReport" style="padding: 4px 12px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">📊 Toggle Giữ lại</button>
+          <button id="btnPriceConfig" style="padding: 4px 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">⚙️ Cấu hình giá</button>
+        </div>
       </div>
     <table width="611" border="1">
       <tr>
@@ -1512,22 +1584,30 @@ async function triggerAutoFetch() {
 
   const targetDate = resultDateInput ? resultDateInput.value : '';
   const selectedSource = crawlerSource ? crawlerSource.value : 'minhngoc';
-  currentSource = selectedSource;
 
   try {
     let data = null;
     let errors = [];
 
-    // Thử nguồn đã chọn trước
-    if (selectedSource === 'minhngoc') {
-      try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc: " + e.message); }
-    } else if (selectedSource === 'xskt') {
-      try { data = await fetchFromXSKT(targetDate); } catch (e) { errors.push("XSKT: " + e.message); }
-    } else {
-      try { data = await fetchFromMKetqua(targetDate); } catch (e) { errors.push("mketqua: " + e.message); }
+    // Luôn thử tải từ kho dữ liệu lịch sử GitHub trước (không cần proxy, cực nhanh)
+    try {
+      data = await fetchFromGitHubXSMB(targetDate);
+    } catch (e) {
+      errors.push("GitHub: " + e.message);
     }
 
-    // Cơ chế fallback nếu lỗi nguồn chính
+    // Nếu GitHub không có hoặc lỗi, thử nguồn live đã chọn
+    if (!data) {
+      if (selectedSource === 'minhngoc') {
+        try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc: " + e.message); }
+      } else if (selectedSource === 'xskt') {
+        try { data = await fetchFromXSKT(targetDate); } catch (e) { errors.push("XSKT: " + e.message); }
+      } else {
+        try { data = await fetchFromMKetqua(targetDate); } catch (e) { errors.push("mketqua: " + e.message); }
+      }
+    }
+
+    // Cơ chế fallback tiếp theo nếu nguồn live đã chọn cũng lỗi
     if (!data && selectedSource !== 'minhngoc') {
       try { data = await fetchFromMinhNgoc(targetDate); } catch (e) { errors.push("Minh Ngọc (fallback): " + e.message); }
     }
@@ -1542,17 +1622,13 @@ async function triggerAutoFetch() {
       throw new Error(errors.join(" | "));
     }
 
-    // Cập nhật lại dropdown nguồn khớp với nguồn thực tế tải thành công
-    if (crawlerSource) {
-      if (data.sourceName === "Minh Ngọc") crawlerSource.value = 'minhngoc';
-      else if (data.sourceName === "XSKT.com.vn") crawlerSource.value = 'xskt';
-      else if (data.sourceName === "mketqua.net") crawlerSource.value = 'mketqua';
-    }
+    // Cập nhật lại giao diện nút nguồn và select
+    updateSourceButtonsUI(data.sourceName);
 
     fetchedPrizesData = data;
     const dayMonth = data.dateText.split('/').slice(0, 2).join('/');
     if (autoResultStatus) {
-      autoResultStatus.innerText = `Tải Ok! ${dayMonth}`;
+      autoResultStatus.innerText = `Tải Ok! ${dayMonth} (${data.sourceName})`;
       autoResultStatus.style.color = 'green';
     }
     
@@ -1574,31 +1650,84 @@ async function triggerAutoFetch() {
   }
 }
 
-async function fetchHtmlWithProxy(targetUrl) {
-  const proxies = [
-    url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&cache=${(new Date()).getTime()}`,
-    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-    url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-    url => `https://thingproxy.freeboard.io/fetch/${url}`
-  ];
-
-  for (let i = 0; i < proxies.length; i++) {
-    try {
-      const proxyUrl = proxies[i](targetUrl);
-      const res = await fetch(proxyUrl);
-      if (!res.ok) continue;
-      
-      if (proxyUrl.includes("allorigins.win")) {
-        const json = await res.json();
-        if (json.contents) return json.contents;
-      } else {
-        return await res.text();
-      }
-    } catch (e) {
-      console.warn(`Proxy ${i + 1} thất bại:`, e);
-    }
+async function fetchFromGitHubXSMB(dateStr) {
+  if (!dateStr) {
+    const d = new Date(Date.now() - (new Date().getTimezoneOffset()*60*1000));
+    dateStr = d.toISOString().split('T')[0];
   }
-  throw new Error("Tất cả các dịch vụ proxy đều không tải được dữ liệu.");
+  
+  const res = await fetch("https://raw.githubusercontent.com/khiemdoan/vietnam-lottery-xsmb-analysis/main/data/xsmb.json");
+  if (!res.ok) throw new Error("Kết nối kho dữ liệu GitHub thất bại.");
+  const data = await res.json();
+  
+  const record = data.find(item => item.date.startsWith(dateStr));
+  if (!record) {
+    throw new Error(`Không tìm thấy kết quả ngày ${dateStr} trên kho GitHub.`);
+  }
+  
+  const prizesKeys = [
+    'special', 'prize1', 
+    'prize2_1', 'prize2_2',
+    'prize3_1', 'prize3_2', 'prize3_3', 'prize3_4', 'prize3_5', 'prize3_6',
+    'prize4_1', 'prize4_2', 'prize4_3', 'prize4_4',
+    'prize5_1', 'prize5_2', 'prize5_3', 'prize5_4', 'prize5_5', 'prize5_6',
+    'prize6_1', 'prize6_2', 'prize6_3',
+    'prize7_1', 'prize7_2', 'prize7_3', 'prize7_4'
+  ];
+  
+  function padPrize(val, key) {
+    let len = 5;
+    if (key.startsWith('prize4') || key.startsWith('prize5')) {
+      len = 4;
+    } else if (key.startsWith('prize6')) {
+      len = 3;
+    } else if (key.startsWith('prize7')) {
+      len = 2;
+    }
+    return String(val).padStart(len, '0');
+  }
+  
+  const prizes = prizesKeys.map(key => padPrize(record[key], key));
+  const dateObj = new Date(record.date);
+  const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')}/${String(dateObj.getMonth() + 1).padStart(2, '0')}/${dateObj.getFullYear()}`;
+  
+  return {
+    sourceName: "GitHub Data",
+    dateText: formattedDate,
+    specialPrize: prizes[0],
+    prizes: prizes
+  };
+}
+
+async function fetchHtmlWithProxy(targetUrl) {
+  // Thử corsproxy.io trước vì nó nhanh nhất trên localhost
+  try {
+    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+    if (res.ok) return await res.text();
+  } catch (e) {
+    console.warn("Proxy corsproxy failed, trying allorigins...");
+  }
+
+  // Thử allorigins.win JSON wrapper
+  try {
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&cache=${(new Date()).getTime()}`);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.contents) return json.contents;
+    }
+  } catch (e) {
+    console.warn("Proxy allorigins JSON failed, trying allorigins raw...");
+  }
+
+  // Thử allorigins.win raw endpoint
+  try {
+    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`);
+    if (res.ok) return await res.text();
+  } catch (e) {
+    console.warn("Proxy allorigins raw failed.");
+  }
+
+  throw new Error("Không thể tải dữ liệu qua bất kỳ proxy nào.");
 }
 
 async function fetchFromMinhNgoc(dateStr) {
@@ -1787,12 +1916,25 @@ function loadAppState() {
   }
   if (savedAutoFetch !== null && autoFetchToggle) {
     autoFetchToggle.checked = (savedAutoFetch === '1');
+    const normalizeBtn = document.getElementById('normalizeButton');
+    if (autoFetchToggle.checked) {
+      if (twentySevenNumbers) twentySevenNumbers.classList.add('hidden');
+      if (normalizeBtn) normalizeBtn.classList.add('hidden');
+    } else {
+      if (twentySevenNumbers) twentySevenNumbers.classList.remove('hidden');
+      if (normalizeBtn) normalizeBtn.classList.remove('hidden');
+    }
   }
   if (savedDate !== null && resultDateInput) {
     resultDateInput.value = savedDate;
   }
   if (savedSource !== null && crawlerSource) {
     crawlerSource.value = savedSource;
+    if (savedSource === 'minhngoc') updateSourceButtonsUI("Minh Ngọc");
+    else if (savedSource === 'xskt') updateSourceButtonsUI("XSKT.com.vn");
+    else if (savedSource === 'mketqua') updateSourceButtonsUI("mketqua.net");
+  } else {
+    updateSourceButtonsUI("Minh Ngọc");
   }
 
   updateTwoDigitBoard();
@@ -2542,6 +2684,37 @@ function updateSummaryTable() {
   if (!data) return;
 
   const activeTab = window.activeReportTab || 'thau';
+  const configType = (activeTab === 'chuyen') ? 'chuyen' : 'thau';
+
+  const getRateVal = (type, key, fallback) => {
+    if (window.priceConfigData && window.priceConfigData[type] && window.priceConfigData[type][key] !== undefined) {
+      return window.priceConfigData[type][key];
+    }
+    return fallback;
+  };
+
+  const deComm = getRateVal(configType, 'rateDeComm', 82);
+  const loCost = getRateVal(configType, 'rateLoCost', 2165);
+  const xienComm = getRateVal(configType, 'rateXienComm', 65);
+  const baCangComm = getRateVal(configType, 'rate3CComm', 75);
+
+  const getLoCostFactor = (val) => {
+    if (val < 100) return val;
+    if (val < 10000) return val / 100;
+    return val / 1000;
+  };
+  const loCostPoint = getLoCostFactor(loCost);
+
+  const p1 = document.getElementById('percentage1');
+  const p2 = document.getElementById('percentage2');
+  const p3 = document.getElementById('percentage3');
+  const p4 = document.getElementById('percentage4');
+
+  if (p1) p1.value = deComm;
+  if (p2) p2.value = loCostPoint;
+  if (p3) p3.value = xienComm;
+  if (p4) p4.value = baCangComm;
+
   let deCược = 0, deTiền = 0, deTiềnTrúng = 0, deTrúng = 0;
   let loCược = 0, loTiền = 0, loTiềnTrúng = 0, loTrúng = 0;
   let xienCược = 0, xienTiền = 0, xienTiềnTrúng = 0, xienTrúng = 0;
@@ -3092,13 +3265,20 @@ function setupEventListeners() {
   if (autoFetchToggle) {
     autoFetchToggle.addEventListener('change', (e) => {
       saveAppState();
+      const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+      const normalizeBtn = document.getElementById('normalizeButton');
       if (e.target.checked) {
         triggerAutoFetch();
+        if (twentySevenNumbers) twentySevenNumbers.classList.add('hidden');
+        if (normalizeBtn) normalizeBtn.classList.add('hidden');
       } else {
         const specialPrizeInput = document.getElementById('specialPrizeInput');
-        const twentySevenNumbers = document.getElementById('twentySevenNumbers');
         if (specialPrizeInput) specialPrizeInput.value = "";
-        if (twentySevenNumbers) twentySevenNumbers.value = "";
+        if (twentySevenNumbers) {
+          twentySevenNumbers.value = "";
+          twentySevenNumbers.classList.remove('hidden');
+        }
+        if (normalizeBtn) normalizeBtn.classList.remove('hidden');
         fetchedPrizesData = null;
         updateTwoDigitBoard();
         calculateSum();
@@ -3216,6 +3396,203 @@ function setupEventListeners() {
       updateSummaryTable();
     });
   }
+
+  // Lắng nghe nút Xóa trắng
+  const btnClearBetInput = document.getElementById('btnClearBetInput');
+  if (btnClearBetInput) {
+    btnClearBetInput.addEventListener('click', () => {
+      const numbers = document.getElementById('numbers');
+      if (numbers) {
+        numbers.value = "";
+        localStorage.removeItem('z8_numbers');
+        calculateSum();
+      }
+    });
+  }
+
+  // Lắng nghe nút ẩn hiện Nhập tắt
+  const btnToggleShortcuts = document.getElementById('btnToggleShortcuts');
+  if (btnToggleShortcuts) {
+    btnToggleShortcuts.addEventListener('click', () => {
+      const shortcuts = document.getElementById('shortcuts');
+      if (shortcuts) {
+        const isHidden = shortcuts.classList.contains('hidden');
+        if (isHidden) {
+          shortcuts.classList.remove('hidden');
+          btnToggleShortcuts.textContent = 'Ẩn';
+        } else {
+          shortcuts.classList.add('hidden');
+          btnToggleShortcuts.textContent = 'Hiện';
+        }
+      }
+    });
+  }
+
+  // Lắng nghe nút chọn nguồn
+  const btnSourceMinhNgoc = document.getElementById('btnSourceMinhNgoc');
+  if (btnSourceMinhNgoc) {
+    btnSourceMinhNgoc.addEventListener('click', () => {
+      updateSourceButtonsUI("Minh Ngọc");
+      saveAppState();
+    });
+  }
+  const btnSourceXSKT = document.getElementById('btnSourceXSKT');
+  if (btnSourceXSKT) {
+    btnSourceXSKT.addEventListener('click', () => {
+      updateSourceButtonsUI("XSKT.com.vn");
+      saveAppState();
+    });
+  }
+  const btnSourceMKetqua = document.getElementById('btnSourceMKetqua');
+  if (btnSourceMKetqua) {
+    btnSourceMKetqua.addEventListener('click', () => {
+      updateSourceButtonsUI("mketqua.net");
+      saveAppState();
+    });
+  }
+
+  // Lắng nghe Copy báo cáo và Toggle Giữ lại
+  const btnCopyTextReport = document.getElementById("btnCopyTextReport");
+  if (btnCopyTextReport) {
+    btnCopyTextReport.addEventListener("click", () => {
+      const data = window.lastReportData;
+      if (!data) {
+        alert("Vui lòng thực hiện tính toán báo cáo trước!");
+        return;
+      }
+
+      const formatMoneyK = (val) => {
+        return Math.round(val).toLocaleString('vi-VN');
+      };
+
+      const rawDate = (resultDateInput && resultDateInput.value) ? formatDateDDMMYYYY(resultDateInput.value) : (new Date()).toLocaleDateString('vi-VN');
+      const dayMonthText = rawDate.split('/').slice(0, 2).join('/');
+
+      let reportText = "";
+      if (window.activeReportTab === 'chuyen') {
+        const headerText = `BÁO CÁO CHUYỂN - ${dayMonthText}`;
+        const deStr = `Đề: ${formatMoneyK(data.chuyen.deXac)} / ${formatMoneyK(data.chuyen.deTrung)}`;
+        const loStr = `Lô: ${data.chuyen.loXac} / ${data.chuyen.loTrung}`;
+        const xienStr = `Xiên: ${formatMoneyK(data.chuyen.xienXac)} / ${formatMoneyK(data.chuyen.xienTrung)}`;
+        const baCangStr = `3c: ${formatMoneyK(data.chuyen.baCangXac)} / ${formatMoneyK(data.chuyen.baCangTrung)}`;
+        const baCangLoStr = `3c Lô: ${formatMoneyK(data.chuyen.baCangLoXac)} / ${formatMoneyK(data.chuyen.baCangLoTrung)}`;
+        
+        const netLabelText = data.chuyen.totalNet < 0 ? "LẤY VỀ" : "NỘP";
+        const netValK = formatMoneyK(Math.abs(data.chuyen.totalNet));
+
+        reportText = `${headerText}\n` +
+          `${deStr}\n` +
+          `${loStr}\n` +
+          `${xienStr}\n` +
+          `${baCangStr}\n` +
+          `${baCangLoStr}\n` +
+          `${netLabelText}: ${netValK}`;
+      } else if (window.activeReportTab === 'giulai') {
+        const headerText = `BÁO CÁO GIỮ LẠI - ${dayMonthText}`;
+        const deStr = `Đề: ${formatMoneyK(data.giulai.deXac)} / ${formatMoneyK(data.giulai.deTrung)}`;
+        const loStr = `Lô: ${data.giulai.loXac} / ${data.giulai.loTrung}`;
+        const xienStr = `Xiên: ${formatMoneyK(data.giulai.xienXac)} / ${formatMoneyK(data.giulai.xienTrung)}`;
+        const baCangStr = `3c: ${formatMoneyK(data.giulai.baCangXac)} / ${formatMoneyK(data.giulai.baCangTrung)}`;
+        const baCangLoStr = `3c Lô: ${formatMoneyK(data.giulai.baCangLoXac)} / ${formatMoneyK(data.giulai.baCangLoTrung)}`;
+        
+        const netLabelText = data.giulai.totalNet < 0 ? "LỖ" : "LỜI";
+        const netValK = formatMoneyK(Math.abs(data.giulai.totalNet));
+
+        reportText = `${headerText}\n` +
+          `${deStr}\n` +
+          `${loStr}\n` +
+          `${xienStr}\n` +
+          `${baCangStr}\n` +
+          `${baCangLoStr}\n` +
+          `${netLabelText}: ${netValK}`;
+      } else {
+        const headerText = `BÁO CÁO THẦU - ${dayMonthText}`;
+        const deStr = `Đề: ${formatMoneyK(data.thau.deXac)} / ${formatMoneyK(data.thau.deTrung)}`;
+        const loStr = `Lô: ${data.thau.loXac} / ${data.thau.loTrung}`;
+        const xienStr = `Xiên: ${formatMoneyK(data.thau.xienXac)} / ${formatMoneyK(data.thau.xienTrung)}`;
+        const baCangStr = `3c: ${formatMoneyK(data.thau.baCangXac)} / ${formatMoneyK(data.thau.baCangTrung)}`;
+        const baCangLoStr = `3c Lô: ${formatMoneyK(data.thau.baCangLoXac)} / ${formatMoneyK(data.thau.baCangLoTrung)}`;
+        
+        const netLabelText = data.thau.totalNet < 0 ? "LẤY VỀ" : "NỘP";
+        const netValK = formatMoneyK(Math.abs(data.thau.totalNet));
+
+        reportText = `${headerText}\n` +
+          `${deStr}\n` +
+          `${loStr}\n` +
+          `${xienStr}\n` +
+          `${baCangStr}\n` +
+          `${baCangLoStr}\n` +
+          `${netLabelText}: ${netValK}`;
+      }
+
+      navigator.clipboard.writeText(reportText).then(() => {
+        alert("Đã copy báo cáo vào clipboard!");
+      }).catch(err => {
+        console.error("Lỗi copy báo cáo:", err);
+        window.prompt("Copy báo cáo tại đây:", reportText);
+      });
+    });
+  }
+
+  const btnSummaryReport = document.getElementById('btnSummaryReport');
+  if (btnSummaryReport && tabGiulai) {
+    btnSummaryReport.addEventListener('click', () => {
+      const isHidden = tabGiulai.classList.contains('hidden');
+      if (isHidden) {
+        tabGiulai.classList.remove('hidden');
+        window.activeReportTab = 'giulai';
+      } else {
+        tabGiulai.classList.add('hidden');
+        if (window.activeReportTab === 'giulai') {
+          window.activeReportTab = 'thau';
+        }
+      }
+      updateReportTabUI();
+      updateSummaryTable();
+    });
+  }
+}
+
+function updateSourceButtonsUI(sourceName) {
+  const btnSourceMinhNgoc = document.getElementById('btnSourceMinhNgoc');
+  const btnXSKT = document.getElementById('btnSourceXSKT');
+  const btnMKetqua = document.getElementById('btnSourceMKetqua');
+  const crawlerSource = document.getElementById('crawlerSource');
+  if (!btnSourceMinhNgoc || !btnXSKT || !btnMKetqua || !crawlerSource) return;
+
+  const activeColor = '#007bff';
+  const inactiveColor = '#6c757d';
+
+  btnSourceMinhNgoc.style.backgroundColor = inactiveColor;
+  btnXSKT.style.backgroundColor = inactiveColor;
+  btnMKetqua.style.backgroundColor = inactiveColor;
+
+  if (sourceName === "Minh Ngọc") {
+    crawlerSource.value = 'minhngoc';
+    btnSourceMinhNgoc.style.backgroundColor = activeColor;
+  } else if (sourceName === "XSKT.com.vn") {
+    crawlerSource.value = 'xskt';
+    btnXSKT.style.backgroundColor = activeColor;
+  } else if (sourceName === "mketqua.net") {
+    crawlerSource.value = 'mketqua';
+    btnMKetqua.style.backgroundColor = activeColor;
+  }
+}
+
+function toggleCardDetail(id) {
+  const wrapper = document.getElementById('wrapper-' + id);
+  const btn = document.getElementById('toggleBtn-' + id);
+  if (!wrapper || !btn) return;
+  
+  if (wrapper.style.display === 'none' || wrapper.classList.contains('hidden')) {
+    wrapper.style.display = 'block';
+    wrapper.classList.remove('hidden');
+    btn.textContent = 'Ẩn';
+  } else {
+    wrapper.style.display = 'none';
+    wrapper.classList.add('hidden');
+    btn.textContent = 'Hiện';
+  }
 }
 
 function calculateResult(row) {
@@ -3294,6 +3671,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAppState();
 });
 </script>
-  </body>
-
+    <div class="scroll-btn-container">
+    <button class="scroll-btn" id="btnScrollTop" title="Cuộn lên đầu trang">▲</button>
+    <button class="scroll-btn" id="btnScrollBottom" title="Cuộn xuống cuối trang">▼</button>
+  </div>
+  <script>
+    document.getElementById('btnScrollTop').addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    document.getElementById('btnScrollBottom').addEventListener('click', function() {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    });
+  </script>
+</body>
 </html>
