@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>☆ Z™ ☆</title>
+  <title>☆ Z8™ ☆</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style>
 :root {
@@ -257,6 +257,20 @@ td input[type="text"] {
 .hidden {
   display: none !important;
 }
+#excludeInput:empty:before {
+  content: "Ví dụ nhập loại trừ:\AĐề 56, dau2\ALô 54,12\A3c 564.231";
+  color: #f43f5e;
+  opacity: 0.6;
+  white-space: pre-wrap;
+}
+.highlight-green {
+  color: #16a34a !important;
+  font-weight: bold !important;
+  background-color: #f0fdf4 !important;
+  padding: 0 4px;
+  border-radius: 4px;
+  border: 1px solid #bbf7d0;
+}
 
 /* Modal configuration */
 .modal {
@@ -414,11 +428,20 @@ td input[type="text"] {
       <!-- Cột bên trái: Nhập liệu và cấu hình -->
       <div class="left-column">
         <div class="input-section">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <label for="numbers" style="font-weight: 600; font-size: 14px;">Nhập số:</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; select-none;">
+            <div style="display: flex; gap: 10px;">
+              <span id="tabInputMain" style="font-weight: 600; font-size: 14px; cursor: pointer; border-bottom: 2px solid #007bff; color: #007bff; padding-bottom: 2px;">Nhập số</span>
+              <span id="tabInputExclude" style="font-weight: 600; font-size: 14px; cursor: pointer; border-bottom: 2px solid transparent; color: #64748b; padding-bottom: 2px;">Loại trừ</span>
+            </div>
             <button id="btnClearBetInput" style="background-color: #dc3545; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Xóa trắng</button>
           </div>
           <textarea id="numbers" rows="6" placeholder="Nhập tin cược tại đây..."></textarea>
+          <div 
+            id="excludeInput" 
+            contenteditable="true"
+            class="hidden"
+            style="width: 100%; height: 250px; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 14px; padding: 8px; border: 1px solid #fca5a5; background-color: #fff1f2; border-radius: 4px; overflow-y: auto; whitespace-pre-wrap; word-break: break-all; outline: none;"
+          ></div>
         </div>
 
         <div class="input-section">
@@ -433,7 +456,7 @@ td input[type="text"] {
             <span>Lô <input type="text" id="retainLo" value="0"></span>
             <span>3c <input type="text" id="retain3c" value="0"></span>
             <span>X <input type="text" id="retainX" value="0"></span>
-            <span>3cL <input type="text" id="retain3cL" value="0"></span>
+            <span class="hidden">3cL <input type="text" id="retain3cL" value="0"></span>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
               <label><input type="radio" name="retainType" id="retainTypeMoney" value="money" checked> Tiền</label>
               <label><input type="radio" name="retainType" id="retainTypePercentage" value="percentage"> %</label>
@@ -697,11 +720,11 @@ td input[type="text"] {
               <span style="font-size: 10px; display: block;">Áp Má</span>
               <input type="text" id="rate3CApMa" value="5" style="width: 50px;">
             </div>
-            <div style="flex: 1; text-align: center;">
+            <div style="flex: 1; text-align: center; display: none;">
               <span style="font-size: 10px; display: block;">3C Lô Gốc (%)</span>
               <input type="text" id="rate3CLoCost" value="75" style="width: 50px;">
             </div>
-            <div style="flex: 1; text-align: center;">
+            <div style="flex: 1; text-align: center; display: none;">
               <span style="font-size: 10px; display: block;">3C Lô (1 ăn...)</span>
               <input type="text" id="rate3CLoPayout" value="20" style="width: 50px;">
             </div>
@@ -993,7 +1016,7 @@ function parseNumbersFromBetString(numbersString, betType) {
           numbers.push(seg.substring(1, 3));
         }
       }
-    } else if (betType === 'bacang' || betType === 'bacang_lo') {
+    } else if (betType === 'bacang') {
       if (seg.length === 3) {
         numbers.push(seg);
       }
@@ -1016,7 +1039,7 @@ function verifyNonGroupText(text, currentCat) {
     }
     
     const norm = normalizeBetLine(trimmed);
-    const spaceMatch = norm.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s+xien|de|lo|xien|x|x2|x3|x4|3cang|3c|3clo|3cl|d|l|c|bc|cang|3\s+cang)$/i);
+    const spaceMatch = norm.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s+xien|de|lo|xien|x|x2|x3|x4|3cang|3c|d|l|c|bc|cang|3\s+cang)$/i);
     if (spaceMatch) {
       const rawType = spaceMatch[1].toLowerCase();
       const typeRegex = {
@@ -1024,8 +1047,7 @@ function verifyNonGroupText(text, currentCat) {
         lo: /^(lo|l)$/i,
         xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
         xien: /^(lo\s+xien|xien|x|x2|x3|x4)$/i,
-        bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i,
-        bacang_lo: /^(3clo|3cl)$/i
+        bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i
       };
       let newCat = '';
       if (typeRegex.de.test(rawType)) newCat = 'de';
@@ -1033,7 +1055,6 @@ function verifyNonGroupText(text, currentCat) {
       else if (typeRegex.xienquay.test(rawType)) newCat = 'xienquay';
       else if (typeRegex.xien.test(rawType)) newCat = 'xien';
       else if (typeRegex.bacang.test(rawType)) newCat = 'bacang';
-      else if (typeRegex.bacang_lo.test(rawType)) newCat = 'bacang_lo';
       
       if (newCat) {
         activeCat = newCat;
@@ -1084,8 +1105,7 @@ function verifyGroupText(groupText, currentCat) {
     lo: /^(lo|lô|l)$/i,
     xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
     xien: /^(xien|xiên|x)$/i,
-    bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i,
-    bacang_lo: /^(3clo|3cl)$/i
+    bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i
   };
 
   function isTokenValid(seg, cat, prefix) {
@@ -1104,7 +1124,7 @@ function verifyGroupText(groupText, currentCat) {
     return parsedNums.length > 0;
   }
 
-  const tokenRegex = /(\s+|[.,;/\-\+=\*x]+|(?:dau\s+dit|đầu\s+đít|dau\s+duoi|đầu\s+đuôi|đau\s+đit|đau\s+đít|dd|đđ)\s*\d(?![0-9])|(?:kep\s+lech|kép\s+lệch)|(?:dau|đầu|đau|đàu|dit|đít|đit|duoi|đuôi|cham|chạm|tong|tổng|bo|bộ|he|hệ|d|đ|t)\s*\d{1,2}(?![0-9])|[a-zA-Z0-9'’‘＇`\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036f]+|.)/gi;
+  const tokenRegex = /(\s+|[.,;/\-\+=\*x]+|(?:dau\s+dit|đầu\s+đít|dau\s+duoi|đầu\s+đuôi|đau\s+đit|đau\s+đít|dd|đđ)\s*\d(?![0-9])|(?:kep\s+lech|kép\s+lệch)|(?:dau|đầu|đau|đàu|dit|đít|đit|duoi|đuôi|cham|chạm|tong|tổng|bo|bộ|he|hệ|d|đ|t)\s*\d{1,2}(?![0-9])|[a-zA-Z0-9'’89'’‘＇`\u00C0-\u024F\u1E00-\u1EFF\u0300-\u036f]+|.)/gi;
   const tokens = numbersPart.match(tokenRegex) || [];
   let html = "";
   let validTokensCount = 0;
@@ -1128,7 +1148,6 @@ function verifyGroupText(groupText, currentCat) {
       else if (typeRegex.xienquay.test(normTokenForCat)) newCat = 'xienquay';
       else if (typeRegex.xien.test(normTokenForCat)) newCat = 'xien';
       else if (typeRegex.bacang.test(normTokenForCat)) newCat = 'bacang';
-      else if (typeRegex.bacang_lo.test(normTokenForCat)) newCat = 'bacang_lo';
 
       if (newCat) {
         activeCat = newCat;
@@ -1269,11 +1288,199 @@ function normalizeBetLine(line) {
   return normalized;
 }
 
+function parseExclusions(excludeString) {
+  const lines = excludeString.split('\n');
+  const excluded = {
+    de: new Set(),
+    lo: new Set(),
+    bacang: new Set(),
+    xien: new Set()
+  };
+
+  const typeRegex = {
+    de: /^(de|d|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề)$/i,
+    lo: /^(lo|lô|l)$/i,
+    xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
+    xien: /^(xien|xiên|x|x2|x3|x4)$/i,
+    bacang: /^(3cang|3c|c|bc|cang|3\s*cang)$/i
+  };
+
+  let activeCategory = '';
+
+  lines.forEach(line => {
+    let originalLine = line.trim();
+    if (!originalLine) return;
+
+    let trimmed = normalizeBetLine(originalLine);
+
+    let lineType = '';
+    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s*xien|de|lo|xien|x|x2|x3|x4|3cang|3c|d|l|c|bc|cang|3\s*cang)(?:\s+(.*))?$/i);
+    if (spaceMatch) {
+      const rawType = spaceMatch[1].toLowerCase();
+      if (typeRegex.de.test(rawType)) lineType = 'de';
+      else if (typeRegex.lo.test(rawType)) lineType = 'lo';
+      else if (typeRegex.xienquay.test(rawType)) lineType = 'xienquay';
+      else if (typeRegex.xien.test(rawType)) lineType = 'xien';
+      else if (typeRegex.bacang.test(rawType)) lineType = 'bacang';
+
+      if (lineType) {
+        activeCategory = lineType;
+        trimmed = spaceMatch[2] ? spaceMatch[2].trim() : '';
+      }
+    }
+
+    if (!lineType) lineType = activeCategory;
+    if (!lineType) return;
+
+    const resolved = resolveShorthands(trimmed);
+    const segments = resolved.split(/[.,\-\s]+/).filter(s => s.length > 0);
+    segments.forEach(seg => {
+      if (!/^\d+$/.test(seg)) return;
+      const targetType = (lineType === 'xienquay' || lineType === 'xien') ? 'xien' : lineType;
+      const nums = parseNumbersFromBetString(seg, targetType);
+      nums.forEach(num => {
+        if (targetType === 'xien') {
+          excluded.xien.add(num);
+        } else {
+          excluded[targetType].add(num);
+        }
+      });
+    });
+  });
+
+  return excluded;
+}
+
+function getExclusions() {
+  const excludeInput = document.getElementById('excludeInput');
+  if (!excludeInput) return null;
+  const excludeString = excludeInput.innerText || '';
+  return parseExclusions(excludeString);
+}
+
+function isExcluded(categoryKey, key, betNumbers = null) {
+  const excl = getExclusions();
+  if (!excl) return false;
+
+  if (categoryKey === 'de') {
+    return excl.de.has(key);
+  }
+  if (categoryKey === 'lo') {
+    return excl.lo.has(key);
+  }
+  if (categoryKey === 'bacang') {
+    return excl.bacang.has(key);
+  }
+  if (categoryKey === 'xien') {
+    if (betNumbers) {
+      return betNumbers.some(num => excl.xien.has(num) || excl.lo.has(num));
+    }
+  }
+  return false;
+}
+
+function formatExcludeLineWithHighlights(line, currentCat) {
+  const tokens = line.match(/\s+|[^\s]+/g) || [];
+  let activeCat = currentCat;
+  let html = "";
+
+  const typeRegex = {
+    de: /^(de|d|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề)$/i,
+    lo: /^(lo|lô|l)$/i,
+    xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
+    xien: /^(xien|xiên|x|x2|x3|x4)$/i,
+    bacang: /^(3cang|3c|c|bc|cang|3\s*cang)$/i
+  };
+
+  const shortcutsInput = document.getElementById("shortcuts")?.value || "";
+  const shortcutsArray = shortcutsInput.split("\n");
+  const customShortcuts = {};
+  for (let i = 0; i < shortcutsArray.length; i++) {
+    const shortcutParts = shortcutsArray[i].split("=");
+    const shortcutName = shortcutParts[0]?.trim().toLowerCase();
+    const shortcutValue = shortcutParts[1]?.trim();
+    if (shortcutName && shortcutValue) {
+      const keys = shortcutName.split(",");
+      keys.forEach(k => {
+        const cleanedKey = k.trim();
+        if (cleanedKey) {
+          customShortcuts[cleanedKey] = shortcutValue;
+        }
+      });
+    }
+  }
+
+  tokens.forEach(token => {
+    const trimmed = token.trim();
+    if (!trimmed) {
+      html += escapeHtml(token);
+      return;
+    }
+
+    // Check if it's a category
+    const norm = normalizeBetLine(trimmed);
+    const spaceMatch = norm.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s*xien|de|lo|xien|x|x2|x3|x4|3cang|3c|d|l|c|bc|cang|3\s*cang)$/i);
+    if (spaceMatch) {
+      const rawType = spaceMatch[1].toLowerCase();
+      let newCat = '';
+      if (typeRegex.de.test(rawType)) newCat = 'de';
+      else if (typeRegex.lo.test(rawType)) newCat = 'lo';
+      else if (typeRegex.xienquay.test(rawType)) newCat = 'xienquay';
+      else if (typeRegex.xien.test(rawType)) newCat = 'xien';
+      else if (typeRegex.bacang.test(rawType)) newCat = 'bacang';
+
+      if (newCat) {
+        activeCat = newCat;
+        html += escapeHtml(token);
+        return;
+      }
+    }
+
+    // Split by non-alphanumeric separators to check each sub-token
+    const subTokens = trimmed.split(/[.,\-\s]+/);
+    let allValid = true;
+
+    for (let i = 0; i < subTokens.length; i++) {
+      const sub = subTokens[i].trim();
+      if (!sub) continue;
+
+      const normSub = normalizeShorthandToken(sub);
+
+      if (customShortcuts[sub.toLowerCase()]) continue;
+      if (customShortcuts[normSub]) continue;
+      if (shorthands[normSub]) continue;
+
+      if (!activeCat) {
+        allValid = false;
+        break;
+      }
+      const cat = activeCat;
+      const resolved = resolveShorthands(sub);
+      const parsedNums = parseNumbersFromBetString(resolved, cat);
+      if (parsedNums.length === 0) {
+        allValid = false;
+        break;
+      }
+    }
+
+    if (allValid) {
+      html += escapeHtml(token);
+    } else {
+      html += `<span class="highlight-green">${escapeHtml(token)}</span>`;
+    }
+  });
+
+  return {
+    html: html,
+    newCategory: activeCat
+  };
+}
+
 function parseCombinedInput(inputString) {
   let processedInput = inputString.replace(/[’‘ʼ＇`]/g, "'");
-  const keywordRegex = /(^|[\s,;])(xienquay|xquay|xienq|3cang|3càng|3\s+càng|3\s+cang|quay|xien|xiên|3cl|xq|de|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề|lo|lô|3c|bc|càng|cang|d|đ|l|c|q|x)(\d)/gi;
+  const keywordRegex = /(^|[\s,;])(xienquay|xquay|xienq|3cang|3càng|3\s+càng|3\s+cang|quay|xien|xiên|xq|de|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề|lo|lô|3c|bc|càng|cang|d|đ|l|c|q|x)(\d)/gi;
   processedInput = processedInput.replace(keywordRegex, "$1$2 $3");
-  const sameLinePattern = /[\s,;]+(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề|lô|lo|l|xiên|xien|x2|x3|x4)(?=[\s.,;\-\d]|$)|[\s,;]+(3càng|3cang|3\s+càng|3\s+cang|3c|3clô|3clo|3cl|bc|càng|cang)(?=[\s.,;\-\d]|$)|[\s,;]+(d|đ|l|c)(?=[\s.,;\-\d]|$)(?=\s+[a-z0-9'’‘＇`])/gi;
+  const sameLinePattern = /[\s,;]+(xienquay|xq|xienq|quay|q|xquay|lô\s+xiên|lo\s+xien|đề|de|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề|lô|lo|l|xiên|xien|x2|x3|x4)(?=[\s.,;\-\d]|$)|[\s,;]+(3càng|3cang|3\s+càng|3\s+cang|3c|bc|càng|cang)(?=[\s.,;\-\d]|$)|[\s,;]+(d|đ|l|c)(?=[\s.,;\-\d]|$)(?=\s+[a-z0-9'’‘＇`])/gi;
   processedInput = processedInput.replace(sameLinePattern, (match) => {
     return "\n" + match.replace(/^[\s,;]+/g, '').trim();
   });
@@ -1298,8 +1505,7 @@ function parseCombinedInput(inputString) {
     lo: /^(lo|l)$/i,
     xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
     xien: /^(lo\s+xien|xien|x|x2|x3|x4)$/i,
-    bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i,
-    bacang_lo: /^(3clo|3cl)$/i
+    bacang: /^(3cang|3c|c|bc|cang|3\s+cang)$/i
   };
 
   let activeCategory = 'de';
@@ -1311,7 +1517,7 @@ function parseCombinedInput(inputString) {
     let trimmed = normalizeBetLine(originalLine);
 
     let lineType = '';
-    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s+xien|de|lo|xien|x|x2|x3|x4|3cang|3c|3clo|3cl|d|l|c|bc|cang|3\s+cang)(?:\s+(.*))?$/i);
+    const spaceMatch = trimmed.match(/^(xienquay|xq|xienq|quay|q|xquay|lo\s+xien|de|lo|xien|x|x2|x3|x4|3cang|3c|d|l|c|bc|cang|3\s+cang)(?:\s+(.*))?$/i);
     if (spaceMatch) {
       const rawType = spaceMatch[1].toLowerCase();
       if (typeRegex.de.test(rawType)) lineType = 'de';
@@ -1319,7 +1525,6 @@ function parseCombinedInput(inputString) {
       else if (typeRegex.xienquay.test(rawType)) lineType = 'xienquay';
       else if (typeRegex.xien.test(rawType)) lineType = 'xien';
       else if (typeRegex.bacang.test(rawType)) lineType = 'bacang';
-      else if (typeRegex.bacang_lo.test(rawType)) lineType = 'bacang_lo';
 
       if (lineType) {
         activeCategory = lineType;
@@ -1878,6 +2083,7 @@ function saveAppState() {
   const autoFetchToggle = document.getElementById('autoFetchToggle');
   const resultDateInput = document.getElementById('resultDateInput');
   const crawlerSource = document.getElementById('crawlerSource');
+  const excludeInput = document.getElementById('excludeInput');
 
   if (numbers) localStorage.setItem('z8_combined_bet', numbers.value || '');
   if (twentySevenNumbers) localStorage.setItem('z8_all_prizes', twentySevenNumbers.value || '');
@@ -1885,6 +2091,7 @@ function saveAppState() {
   if (autoFetchToggle) localStorage.setItem('z8_auto_fetch', autoFetchToggle.checked ? '1' : '0');
   if (resultDateInput) localStorage.setItem('z8_result_date', resultDateInput.value || '');
   if (crawlerSource) localStorage.setItem('z8_crawler_source', crawlerSource.value || 'minhngoc');
+  if (excludeInput) localStorage.setItem('z8_exclude_input', excludeInput.innerText || '');
 }
 
 function loadAppState() {
@@ -1894,6 +2101,7 @@ function loadAppState() {
   const autoFetchToggle = document.getElementById('autoFetchToggle');
   const resultDateInput = document.getElementById('resultDateInput');
   const crawlerSource = document.getElementById('crawlerSource');
+  const excludeInput = document.getElementById('excludeInput');
 
   const savedBet = localStorage.getItem('z8_combined_bet');
   const savedPrizes = localStorage.getItem('z8_all_prizes');
@@ -1901,6 +2109,7 @@ function loadAppState() {
   const savedAutoFetch = localStorage.getItem('z8_auto_fetch');
   const savedDate = localStorage.getItem('z8_result_date');
   const savedSource = localStorage.getItem('z8_crawler_source');
+  const savedExclude = localStorage.getItem('z8_exclude_input');
 
   let hasData = false;
 
@@ -1914,10 +2123,14 @@ function loadAppState() {
   if (savedSpecial !== null && specialPrizeInput) {
     specialPrizeInput.value = savedSpecial;
   }
-  if (savedAutoFetch !== null && autoFetchToggle) {
-    autoFetchToggle.checked = (savedAutoFetch === '1');
+  if (savedExclude !== null && excludeInput) {
+    excludeInput.innerText = savedExclude;
+  }
+  if (autoFetchToggle) {
+    const isChecked = savedAutoFetch === '1'; // defaults to false
+    autoFetchToggle.checked = isChecked;
     const normalizeBtn = document.getElementById('normalizeButton');
-    if (autoFetchToggle.checked) {
+    if (isChecked) {
       if (twentySevenNumbers) twentySevenNumbers.classList.add('hidden');
       if (normalizeBtn) normalizeBtn.classList.add('hidden');
     } else {
@@ -2370,7 +2583,13 @@ function calculateSum() {
       const map = {};
       const sumsMap = getCategorySumsMap(categoryKey);
       Object.entries(sumsMap).forEach(([key, val]) => {
-        let excess = retainType === "money" ? val - retainVal : val - (val * (retainVal / 100));
+        let excess;
+        const isExcl = isExcluded(categoryKey, key, categoryKey === 'xien' ? xienBets[key]?.numbers : null);
+        if (isExcl) {
+          excess = val;
+        } else {
+          excess = retainType === "money" ? val - retainVal : val - (val * (retainVal / 100));
+        }
         excess = Math.max(0, Math.round(excess * 10) / 10);
         if (excess >= 0.1) {
           map[key] = excess;
@@ -2928,10 +3147,16 @@ function runBalancingStep(isPercent) {
   const stepBaCangLoTransfers = {};
   const stepXienTransfers = {};
 
-  const processCategory = (totals, transfersMap, stepTransfersMap, limit, isPct) => {
+  const processCategory = (totals, transfersMap, stepTransfersMap, limit, isPct, categoryKey) => {
     Object.entries(totals).forEach(([key, total]) => {
+      const isExcl = isExcluded(categoryKey, key);
       const prevTransfer = transfersMap[key] || 0;
-      let excess = isPct ? (total * ((100 - limit) / 100)) - prevTransfer : total - prevTransfer - limit;
+      let excess;
+      if (isExcl) {
+        excess = total - prevTransfer;
+      } else {
+        excess = isPct ? (total * ((100 - limit) / 100)) - prevTransfer : total - prevTransfer - limit;
+      }
       excess = Math.round(excess * 10) / 10;
       if (excess >= 0.1) {
         stepTransfersMap[key] = excess;
@@ -2939,14 +3164,20 @@ function runBalancingStep(isPercent) {
     });
   };
 
-  processCategory(deSums, balanceState.deTransfers, stepDeTransfers, retainDe, isPercent);
-  processCategory(loSums, balanceState.loTransfers, stepLoTransfers, retainLo, isPercent);
-  processCategory(baCangSums, balanceState.baCangTransfers, stepBaCangTransfers, retain3c, isPercent);
-  processCategory(baCangLoSums, balanceState.baCangLoTransfers, stepBaCangLoTransfers, retain3cL, isPercent);
+  processCategory(deSums, balanceState.deTransfers, stepDeTransfers, retainDe, isPercent, 'de');
+  processCategory(loSums, balanceState.loTransfers, stepLoTransfers, retainLo, isPercent, 'lo');
+  processCategory(baCangSums, balanceState.baCangTransfers, stepBaCangTransfers, retain3c, isPercent, 'bacang');
+  processCategory(baCangLoSums, balanceState.baCangLoTransfers, stepBaCangLoTransfers, retain3cL, isPercent, 'bacang_lo');
 
   xienBets.forEach((bet, idx) => {
+    const isExcl = isExcluded('xien', idx, bet.numbers);
     const prevTransfer = balanceState.xienTransfers[idx] || 0;
-    let excess = isPercent ? (bet.amount * ((100 - retainX) / 100)) - prevTransfer : bet.amount - prevTransfer - retainX;
+    let excess;
+    if (isExcl) {
+      excess = bet.amount - prevTransfer;
+    } else {
+      excess = isPercent ? (bet.amount * ((100 - retainX) / 100)) - prevTransfer : bet.amount - prevTransfer - retainX;
+    }
     excess = Math.round(excess * 10) / 10;
     if (excess >= 0.1) {
       stepXienTransfers[idx] = excess;
@@ -3402,11 +3633,120 @@ function setupEventListeners() {
   if (btnClearBetInput) {
     btnClearBetInput.addEventListener('click', () => {
       const numbers = document.getElementById('numbers');
-      if (numbers) {
+      const excludeInput = document.getElementById('excludeInput');
+      if (numbers && !numbers.classList.contains('hidden')) {
         numbers.value = "";
         localStorage.removeItem('z8_numbers');
         calculateSum();
+        saveAppState();
+      } else if (excludeInput) {
+        excludeInput.innerText = "";
+        excludeInput.innerHTML = "";
+        calculateSum();
+        saveAppState();
       }
+    });
+  }
+
+  // Tab switching for input card
+  const tabInputMain = document.getElementById('tabInputMain');
+  const tabInputExclude = document.getElementById('tabInputExclude');
+  const numbersTextarea = document.getElementById('numbers');
+  const excludeInputDiv = document.getElementById('excludeInput');
+
+  if (tabInputMain && tabInputExclude) {
+    tabInputMain.addEventListener('click', () => {
+      tabInputMain.style.borderBottomColor = '#007bff';
+      tabInputMain.style.color = '#007bff';
+      tabInputExclude.style.borderBottomColor = 'transparent';
+      tabInputExclude.style.color = '#64748b';
+      numbersTextarea.classList.remove('hidden');
+      excludeInputDiv.classList.add('hidden');
+    });
+
+    tabInputExclude.addEventListener('click', () => {
+      tabInputExclude.style.borderBottomColor = '#007bff';
+      tabInputExclude.style.color = '#007bff';
+      tabInputMain.style.borderBottomColor = 'transparent';
+      tabInputMain.style.color = '#64748b';
+      numbersTextarea.classList.add('hidden');
+      excludeInputDiv.classList.remove('hidden');
+    });
+  }
+
+  // Highlight and Caret recovery for excludeInput
+  let excludeHighlightTimeout = null;
+  if (excludeInputDiv) {
+    excludeInputDiv.addEventListener('input', function() {
+      calculateSum();
+      saveAppState();
+      if (excludeHighlightTimeout) clearTimeout(excludeHighlightTimeout);
+      excludeHighlightTimeout = setTimeout(() => {
+        const sel = window.getSelection();
+        let range = null;
+        let hasMarker = false;
+        let markerTextNode = null;
+        
+        if (sel && sel.rangeCount > 0 && document.activeElement === excludeInputDiv) {
+          range = sel.getRangeAt(0);
+          if (excludeInputDiv.contains(range.startContainer)) {
+            markerTextNode = document.createTextNode("__CARET_MARKER__");
+            try {
+              range.insertNode(markerTextNode);
+              hasMarker = true;
+            } catch (e) {
+              console.warn("Could not insert caret marker node", e);
+            }
+          }
+        }
+
+        const inputString = excludeInputDiv.innerText;
+
+        if (hasMarker && markerTextNode && markerTextNode.parentNode) {
+          markerTextNode.parentNode.removeChild(markerTextNode);
+        }
+
+        const originalLines = inputString.split('\n');
+        let currentCat = '';
+        let editorHtml = originalLines.map(line => {
+          if (line.trim() === "") {
+            return "";
+          }
+          const res = formatExcludeLineWithHighlights(line, currentCat);
+          currentCat = res.newCategory;
+          return res.html;
+        }).join('\n');
+
+        let editorHtmlWithMarker = editorHtml;
+        if (hasMarker) {
+          editorHtmlWithMarker = editorHtml.replace(/__CARET_MARKER__/g, '<span id="caret-marker"></span>');
+        }
+
+        const currentHtmlClean = excludeInputDiv.innerHTML.replace(/<span id="caret-marker"><\/span>/g, '').replace(/__CARET_MARKER__/g, '');
+        const editorHtmlClean = editorHtml.replace(/__CARET_MARKER__/g, '');
+
+        if (currentHtmlClean !== editorHtmlClean) {
+          excludeInputDiv.innerHTML = editorHtmlWithMarker;
+
+          if (hasMarker) {
+            const markerNode = document.getElementById('caret-marker');
+            if (markerNode) {
+              const newRange = document.createRange();
+              const textNode = document.createTextNode("");
+              markerNode.parentNode.replaceChild(textNode, markerNode);
+              newRange.setStart(textNode, 0);
+              newRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(newRange);
+            }
+          }
+        } else if (hasMarker) {
+          const markerNode = document.getElementById('caret-marker');
+          if (markerNode) {
+            markerNode.parentNode.removeChild(markerNode);
+          }
+        }
+      }, 50);
     });
   }
 
