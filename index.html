@@ -522,9 +522,13 @@ td input[type="text"] {
               <span>Kết quả:</span>
               <button id="toggleBtn-result" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
             </h3>
-            <div style="font-size: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
-              <div><strong>Trúng:</strong> <span id="numResults">0 con</span></div>
-              <div><strong>Tổng:</strong> <span id="totalSum" class="red-text" style="font-weight: bold;">0</span></div>
+            <div style="font-size: 12px; margin-bottom: 8px;">
+              <div id="numResults" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-bottom: 4px;">
+                <div style="color: #94a3b8; font-size: 12px; font-weight: 600;">0 con</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; display: flex; justify-content: space-between;">
+                <strong>Tổng:</strong> <span id="totalSum" class="red-text" style="font-weight: bold;">0</span>
+              </div>
             </div>
             <div id="wrapper-result" style="flex: 1; overflow-y: auto;">
               <div id="result" style="font-size: 13px;"></div>
@@ -534,12 +538,16 @@ td input[type="text"] {
           <!-- Chuyển Card -->
           <div class="result-section">
             <h3 onclick="toggleCardDetail('modifiedResult')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
-              <span>Chuyển:</span>
+              <span id="transferHeaderTitle">Chuyển 1:</span>
               <button id="toggleBtn-modifiedResult" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
             </h3>
-            <div style="font-size: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
-              <div><strong>Chuyển:</strong> <span id="modifiedNumResults">0 con</span></div>
-              <div><strong>Tổng Chuyển:</strong> <span id="modifiedTotalSum" class="red-text" style="font-weight: bold;">0</span></div>
+            <div style="font-size: 12px; margin-bottom: 8px;">
+              <div id="modifiedNumResults" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-bottom: 4px;">
+                <div style="color: #94a3b8; font-size: 12px; font-weight: 600;">0 con</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; display: flex; justify-content: space-between;">
+                <strong>Tổng:</strong> <span id="modifiedTotalSum" class="red-text" style="font-weight: bold;">0</span>
+              </div>
             </div>
             <div id="wrapper-modifiedResult" style="flex: 1; overflow-y: auto;">
               <div id="modifiedResult" style="font-size: 13px;"></div>
@@ -553,9 +561,13 @@ td input[type="text"] {
               <span>Chi tiết:</span>
               <button id="toggleBtn-inputList" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
             </h3>
-            <div style="font-size: 12px; margin-bottom: 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px;">
-              <div><strong>Theo Input:</strong> <span id="inputListCount">0 con</span></div>
-              <div><strong>Tổng Nhập:</strong> <span id="inputTotalSum" class="red-text" style="font-weight: bold;">0</span></div>
+            <div style="font-size: 12px; margin-bottom: 8px;">
+              <div id="inputListCount" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-bottom: 4px;">
+                <div style="color: #94a3b8; font-size: 12px; font-weight: 600;">0 con</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; display: flex; justify-content: space-between;">
+                <strong>Tổng:</strong> <span id="inputTotalSum" class="red-text" style="font-weight: bold;">0</span>
+              </div>
             </div>
             <div id="wrapper-inputList" style="flex: 1; overflow-y: auto;">
               <ul id="inputList" class="details-list"></ul>
@@ -2167,7 +2179,17 @@ function escapeHtml(text) {
 }
 
 // Bộ máy tính toán nâng cao
-function calculateSum() {
+function calculateSum(isFromRunBalancing = false) {
+  if (isFromRunBalancing !== true) {
+    balanceState.isPendingCalculated = true;
+  }
+
+  const transferHeaderTitle = document.getElementById('transferHeaderTitle');
+  if (transferHeaderTitle) {
+    let headerStep = balanceState.isPendingCalculated ? balanceState.step + 1 : (balanceState.step === 0 ? 1 : balanceState.step);
+    transferHeaderTitle.textContent = `Chuyển ${headerStep}:`;
+  }
+
   saveShortcuts();
   saveAppState();
 
@@ -2883,14 +2905,92 @@ function calculateSum() {
     giulai: giulaiData
   };
 
+  const getBreakdownHtml = (de, lo, xien, bacang, wins = null) => {
+    const formatWin = (winStr) => wins ? ` / <span style="color: #16a34a; font-weight: bold;">${winStr}</span>` : "";
+
+    const items = [];
+    if (de > 0) {
+      items.push(`<div style="display: flex; justify-content: space-between; align-items: center;"><span style="color: #e11d48; font-weight: bold;">Đề:</span><span style="font-weight: bold;">${de} con${formatWin(wins?.de)}</span></div>`);
+    }
+    if (lo > 0) {
+      items.push(`<div style="display: flex; justify-content: space-between; align-items: center;"><span style="color: #2563eb; font-weight: bold;">Lô:</span><span style="font-weight: bold;">${lo} con${formatWin(wins?.lo)}</span></div>`);
+    }
+    if (xien > 0) {
+      items.push(`<div style="display: flex; justify-content: space-between; align-items: center;"><span style="color: #059669; font-weight: bold;">Xiên:</span><span style="font-weight: bold;">${xien} con${formatWin(wins?.xien)}</span></div>`);
+    }
+    if (bacang > 0) {
+      items.push(`<div style="display: flex; justify-content: space-between; align-items: center;"><span style="color: #7c3aed; font-weight: bold;">3C:</span><span style="font-weight: bold;">${bacang} con${formatWin(wins?.bacang)}</span></div>`);
+    }
+
+    if (items.length === 0) {
+      return `<div style="color: #94a3b8; font-size: 12px; font-weight: 600;">0 con</div>`;
+    }
+
+    const gridTemplateCols = items.length === 1 ? '1fr' : '1fr 1fr';
+
+    return `
+      <div style="display: grid; grid-template-columns: ${gridTemplateCols}; gap: 2px 8px; font-size: 11px; font-family: monospace;">
+        ${items.join('')}
+      </div>
+    `;
+  };
+
+  const resDeCount = Object.keys(deSums).length;
+  const resLoCount = Object.keys(loSums).length;
+  const resXienCount = xienBets.length;
+  const res3CCount = Object.keys(baCangSums).length;
+
+  const deMap = getCategoryTransferMap('de');
+  const loMap = getCategoryTransferMap('lo');
+  const xienMap = getCategoryTransferMap('xien');
+  const baCangMap = getCategoryTransferMap('bacang');
+
+  const layoffDeCount = Object.keys(deSums).filter(key => (deMap[key] || 0) >= 0.1).length;
+  const layoffLoCount = Object.keys(loSums).filter(key => (loMap[key] || 0) >= 0.1).length;
+  const layoffXienCount = xienBets.filter((bet, idx) => (xienMap[idx] || 0) >= 0.1).length;
+  const layoff3CCount = Object.keys(baCangSums).filter(key => (baCangMap[key] || 0) >= 0.1).length;
+
+  const inpDeCount = parsedBets.de.length;
+  const inpLoCount = parsedBets.lo.length;
+  const inpXienCount = parsedBets.xien2.length + parsedBets.xien3.length + parsedBets.xien4.length;
+  const inp3CCount = parsedBets.bacang.length;
+
+  const numResultsDiv = document.getElementById("numResults");
+  if (numResultsDiv) {
+    numResultsDiv.innerHTML = getBreakdownHtml(resDeCount, resLoCount, resXienCount, res3CCount);
+  }
+
+  const modifiedNumResultsDiv = document.getElementById("modifiedNumResults");
+  if (modifiedNumResultsDiv) {
+    modifiedNumResultsDiv.innerHTML = getBreakdownHtml(layoffDeCount, layoffLoCount, layoffXienCount, layoff3CCount);
+  }
+
+  const inputListCountSpan = document.getElementById("inputListCount");
+  if (inputListCountSpan) {
+    let winsStr = null;
+    if (allPrizesLast2.length > 0) {
+      winsStr = {
+        de: Math.round(deTrung).toLocaleString('vi-VN'),
+        lo: Math.round(loWinSum).toLocaleString('vi-VN') + "đ",
+        xien: Math.round(xienTrung).toLocaleString('vi-VN'),
+        bacang: Math.round(baCangTrung).toLocaleString('vi-VN')
+      };
+    }
+    inputListCountSpan.innerHTML = getBreakdownHtml(inpDeCount, inpLoCount, inpXienCount, inp3CCount, winsStr);
+  }
+
   // Cập nhật các nhãn văn bản tổng hợp
   const totalSumLabel = document.getElementById("totalSum");
   const modifiedTotalSumLabel = document.getElementById("modifiedTotalSum");
+  const inputTotalSumLabel = document.getElementById("inputTotalSum");
   if (totalSumLabel) {
     totalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
   }
   if (modifiedTotalSumLabel) {
     modifiedTotalSumLabel.textContent = `${Math.round(totalVonChuyen).toLocaleString("vi-VN")} / ${Math.round(totalTrungChuyen).toLocaleString("vi-VN")}`;
+  }
+  if (inputTotalSumLabel) {
+    inputTotalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
   }
 
   // Đồng bộ với bảng ở cuối trang
@@ -3066,41 +3166,9 @@ function updateCopyButtonLabel() {
   }
 }
 
-window.activeReportTab = 'thau';
-window.lastReportData = null;
-
-function updateReportTabUI() {
-  const tabs = {
-    thau: document.getElementById('tabThau'),
-    chuyen: document.getElementById('tabChuyen'),
-    giulai: document.getElementById('tabGiulai')
-  };
-
-  Object.entries(tabs).forEach(([key, btn]) => {
-    if (!btn) return;
-    if (window.activeReportTab === key) {
-      btn.style.fontWeight = 'bold';
-      btn.style.border = '1px solid #007bff';
-      btn.style.background = '#007bff';
-      btn.style.color = 'white';
-    } else {
-      btn.style.fontWeight = 'normal';
-      btn.style.border = '1px solid #ccc';
-      btn.style.background = '#f0f0f0';
-      btn.style.color = '#333';
-    }
-  });
-}
-
-function handleCopyButtonClick() {
-  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
-  const success = runBalancingStep(retainType === "percentage");
-  if (success) {
-    copyText();
-  }
-}
-
 function runBalancingStep(isPercent) {
+  calculateSum(false);
+
   const numbers = document.getElementById('numbers');
   const inputString = numbers ? numbers.value : '';
   const parsedBets = parseCombinedInput(inputString);
@@ -3227,16 +3295,13 @@ function runBalancingStep(isPercent) {
     balanceState.xienTransfers[idx] = (balanceState.xienTransfers[idx] || 0) + val;
   });
 
-  if (balanceState.step === 0) {
-    balanceState.step = 1;
-  } else {
-    balanceState.step++;
-  }
+  balanceState.step++;
+  balanceState.isPendingCalculated = false;
 
   const counterLabel = document.getElementById('balanceCounterLabel');
   if (counterLabel) counterLabel.textContent = `Số Lần Đã Cân Chuyển = ${balanceState.step}`;
 
-  calculateSum();
+  calculateSum(true);
   return true;
 }
 
@@ -3391,9 +3456,39 @@ function normalizeTwentySevenNumbers() {
   updateTwoDigitBoard();
 }
 
+function getUncollapsedInnerText(containerId) {
+  const containerElement = document.getElementById(containerId);
+  if (!containerElement) return "";
+  
+  const clone = containerElement.cloneNode(true);
+  
+  clone.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+  clone.querySelectorAll('*').forEach(el => {
+    if (el.style) {
+      el.style.display = '';
+      el.style.visibility = 'visible';
+    }
+  });
+
+  clone.style.position = 'fixed';
+  clone.style.top = '0px';
+  clone.style.left = '-9999px';
+  clone.style.width = '500px';
+  clone.style.height = 'auto';
+  clone.style.opacity = '0';
+  clone.style.pointerEvents = 'none';
+
+  document.body.appendChild(clone);
+
+  const text = clone.innerText;
+  document.body.removeChild(clone);
+
+  return text;
+}
+
 // Sao chép nội dung
 function copyText() {
-  let textToCopy = document.getElementById("modifiedResult").innerText;
+  let textToCopy = getUncollapsedInnerText("modifiedResult");
   textToCopy = textToCopy.replace(/^(?:🔴|🔵|🟤|🟢|🟣)\s*(Đề|Lô\(đ\)|3cLô|Xiên|3C|Bc)\s*\(.*?$/gm, "$1");
   textToCopy = textToCopy.replace(/^Lô\(đ\)$/gm, "Lô");
   textToCopy = textToCopy.replace(/^3C$/gm, "Bc");
@@ -3401,7 +3496,7 @@ function copyText() {
 }
 
 function copyInputList() {
-  const inputListContent = document.getElementById("inputList").innerText;
+  const inputListContent = getUncollapsedInnerText("inputList");
   copyToClipboard(inputListContent, "Đã sao chép chi tiết Input thành công!");
 }
 
@@ -3450,11 +3545,23 @@ function restoreDefaultValue(inputField) {
   }
 }
 
+function handleCopyButtonClick() {
+  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+  const isPercent = retainType === "percentage";
+  
+  if (balanceState.isPendingCalculated) {
+    calculateSum(false);
+  }
+
+  runBalancingStep(isPercent);
+  copyText();
+}
+
 // Cài đặt các sự kiện lắng nghe
 function setupEventListeners() {
   const calcBtn = document.getElementById('calculateButton');
   if (calcBtn) {
-    calcBtn.addEventListener('click', calculateSum);
+    calcBtn.addEventListener('click', () => calculateSum());
   }
   
   const normBtn = document.getElementById('normalizeButton');
@@ -3536,7 +3643,7 @@ function setupEventListeners() {
       input.addEventListener('blur', () => {
         if (input.value === "") input.value = "0";
       });
-      input.addEventListener('input', calculateSum);
+      input.addEventListener('input', () => calculateSum());
     }
   });
 
@@ -3546,7 +3653,7 @@ function setupEventListeners() {
   }
 
   document.querySelectorAll('input[name="retainType"]').forEach(radio => {
-    radio.addEventListener('change', calculateSum);
+    radio.addEventListener('change', () => calculateSum());
   });
 
   // Modal cấu hình giá
@@ -3662,6 +3769,7 @@ function setupEventListeners() {
       tabInputExclude.style.color = '#64748b';
       numbersTextarea.classList.remove('hidden');
       excludeInputDiv.classList.add('hidden');
+      if (btnClearBetInput) btnClearBetInput.textContent = "Xóa cược";
     });
 
     tabInputExclude.addEventListener('click', () => {
@@ -3671,6 +3779,7 @@ function setupEventListeners() {
       tabInputMain.style.color = '#64748b';
       numbersTextarea.classList.add('hidden');
       excludeInputDiv.classList.remove('hidden');
+      if (btnClearBetInput) btnClearBetInput.textContent = "Xóa lọc";
     });
   }
 
