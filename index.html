@@ -257,6 +257,12 @@ td input[type="text"] {
 .hidden {
   display: none !important;
 }
+#numbers:empty:before {
+  content: "Nhập tin cược tại đây...";
+  color: #94a3b8;
+  opacity: 0.6;
+  white-space: pre-wrap;
+}
 #excludeInput:empty:before {
   content: "Ví dụ nhập loại trừ:\AĐề 56, dau2\ALô 54,12\A3c 564.231";
   color: #f43f5e;
@@ -435,13 +441,24 @@ td input[type="text"] {
             </div>
             <button id="btnClearBetInput" style="background-color: #dc3545; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Xóa trắng</button>
           </div>
-          <textarea id="numbers" rows="6" placeholder="Nhập tin cược tại đây..."></textarea>
           <div 
-            id="excludeInput" 
-            contenteditable="true"
-            class="hidden"
-            style="width: 100%; height: 250px; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 14px; padding: 8px; border: 1px solid #fca5a5; background-color: #fff1f2; border-radius: 4px; overflow-y: auto; whitespace-pre-wrap; word-break: break-all; outline: none;"
+            id="numbers" 
+            contenteditable="true" 
+            style="width: 100%; min-height: 140px; max-height: 250px; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; border-radius: 4px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; outline: none;"
           ></div>
+          <div id="excludeContainer" class="hidden" style="display: flex; gap: 8px; width: 100%;">
+            <div 
+              id="excludeInput" 
+              contenteditable="true"
+              style="flex: 1 1 50%; min-width: 0; height: 250px; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 8px; border: 1px solid #fca5a5; background-color: #fff1f2; border-radius: 4px; overflow-y: auto; whitespace-pre-wrap; word-break: break-all; outline: none;"
+            ></div>
+            <div 
+              id="excludeSummaryDisplay" 
+              style="flex: 1 1 50%; min-width: 0; height: 250px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; padding: 8px; border: 1px solid #fecdd3; background-color: #ffffff; border-radius: 4px; overflow-y: auto;"
+            >
+              <!-- Dynamically populated excluded summary by category -->
+            </div>
+          </div>
         </div>
 
         <div class="input-section">
@@ -1391,20 +1408,105 @@ function isExcluded(categoryKey, key, betNumbers = null) {
   return false;
 }
 
-function formatExcludeLineWithHighlights(line, currentCat) {
-  const tokens = line.match(/\s+|[^\s]+/g) || [];
-  let activeCat = currentCat;
-  let html = "";
+function updateExcludeDisplay() {
+  const displayEl = document.getElementById('excludeSummaryDisplay');
+  if (!displayEl) return;
 
-  const typeRegex = {
-    de: /^(de|d|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề)$/i,
-    lo: /^(lo|lô|l)$/i,
-    xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
-    xien: /^(xien|xiên|x|x2|x3|x4)$/i,
-    bacang: /^(3cang|3c|c|bc|cang|3\s*cang)$/i
-  };
+  const excl = getExclusions();
+  if (!excl) {
+    displayEl.innerHTML = '';
+    return;
+  }
 
+  const deList = Array.from(excl.de).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const loList = Array.from(excl.lo).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const bacangList = Array.from(excl.bacang).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+  const xienList = Array.from(excl.xien).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  const totalCount = deList.length + loList.length + bacangList.length + xienList.length;
+
+  if (totalCount === 0) {
+    displayEl.innerHTML = `
+      <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; text-align: center; padding: 20px; box-sizing: border-box;">
+        <div style="font-size: 24px; opacity: 0.5; margin-bottom: 8px;">🚫</div>
+        <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 4px;">Chưa có dữ liệu loại trừ</div>
+        <div style="font-size: 11px; color: #94a3b8; line-height: 1.4;">Nhập thể loại & danh sách con ở ô bên trái.<br/>Ví dụ: <code style="color: #e11d48; background: #ffe4e6; padding: 1px 4px; border-radius: 3px;">Đề 56, dau2</code></div>
+      </div>
+    `;
+    return;
+  }
+
+  let html = `
+    <div style="font-weight: bold; font-size: 12px; color: #be123c; border-bottom: 1px solid #fecdd3; padding-bottom: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+      <span>🚫 Các con bị loại trừ</span>
+      <span style="font-size: 11px; background: #ffe4e6; color: #be123c; padding: 2px 6px; border-radius: 4px; font-weight: 800; border: 1px solid #fca5a5;">Tổng ${totalCount} con</span>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+  `;
+
+  if (deList.length > 0) {
+    html += `
+      <div style="background: #fff1f2; padding: 6px 8px; border-radius: 6px; border: 1px solid #fecdd3;">
+        <div style="font-weight: bold; color: #334155; margin-bottom: 4px; display: flex; justify-content: space-between; font-size: 11px;">
+          <span>🔴 Đề loại trừ:</span>
+          <span style="color: #e11d48; font-weight: bold;">${deList.length} con</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 11px; font-family: monospace;">
+          ${deList.map(num => `<span style="padding: 1px 5px; background: #ffffff; color: #be123c; border: 1px solid #fca5a5; border-radius: 3px; font-weight: bold;">${num}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (loList.length > 0) {
+    html += `
+      <div style="background: #eff6ff; padding: 6px 8px; border-radius: 6px; border: 1px solid #bfdbfe;">
+        <div style="font-weight: bold; color: #334155; margin-bottom: 4px; display: flex; justify-content: space-between; font-size: 11px;">
+          <span>🔵 Lô loại trừ:</span>
+          <span style="color: #2563eb; font-weight: bold;">${loList.length} con</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 11px; font-family: monospace;">
+          ${loList.map(num => `<span style="padding: 1px 5px; background: #ffffff; color: #1d4ed8; border: 1px solid #93c5fd; border-radius: 3px; font-weight: bold;">${num}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (bacangList.length > 0) {
+    html += `
+      <div style="background: #faf5ff; padding: 6px 8px; border-radius: 6px; border: 1px solid #e9d5ff;">
+        <div style="font-weight: bold; color: #334155; margin-bottom: 4px; display: flex; justify-content: space-between; font-size: 11px;">
+          <span>🟣 3 Càng loại trừ:</span>
+          <span style="color: #9333ea; font-weight: bold;">${bacangList.length} con</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 11px; font-family: monospace;">
+          ${bacangList.map(num => `<span style="padding: 1px 5px; background: #ffffff; color: #7e22ce; border: 1px solid #d8b4fe; border-radius: 3px; font-weight: bold;">${num}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  if (xienList.length > 0) {
+    html += `
+      <div style="background: #f0fdf4; padding: 6px 8px; border-radius: 6px; border: 1px solid #bbf7d0;">
+        <div style="font-weight: bold; color: #334155; margin-bottom: 4px; display: flex; justify-content: space-between; font-size: 11px;">
+          <span>🟢 Xiên loại trừ:</span>
+          <span style="color: #16a34a; font-weight: bold;">${xienList.length} con</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 11px; font-family: monospace;">
+          ${xienList.map(num => `<span style="padding: 1px 5px; background: #ffffff; color: #15803d; border: 1px solid #86efac; border-radius: 3px; font-weight: bold;">${num}</span>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  html += `</div>`;
+  displayEl.innerHTML = html;
+}
+
+function getCustomShortcutsMap() {
   const shortcutsInput = document.getElementById("shortcuts")?.value || "";
+  if (!shortcutsInput.trim()) return {};
   const shortcutsArray = shortcutsInput.split("\n");
   const customShortcuts = {};
   for (let i = 0; i < shortcutsArray.length; i++) {
@@ -1421,6 +1523,57 @@ function formatExcludeLineWithHighlights(line, currentCat) {
       });
     }
   }
+  return customShortcuts;
+}
+
+function isTokenRecognized(token, activeCategory, customShortcuts = {}) {
+  const trimmed = token.trim();
+  if (!trimmed) return true;
+
+  if (/^[\s.,;/\-\+=\*x:]+$/i.test(trimmed)) return true;
+  if (/^(mỗi\s*con\s*=?|moi\s*con\s*=?|mc\s*=|mc|=\s*mc|=|\+|\*|x)\s*\d+(?:\.\d+)?(?:\s*(?:d|đ|₫|k|n)(?=[\s.,;\-\d]|$))?$/i.test(trimmed)) return true;
+  if (/^\d+(?:\.\d+)?(?:d|đ|₫|k|n)$/i.test(trimmed)) return true;
+
+  const norm = normalizeBetLine(trimmed);
+  const normLower = trimmed.toLowerCase();
+
+  const categoryRegex = /^(xienquay|xq|xienq|quay|q|xquay|lo\s*xien|l\s*xien|de|lo|xien|x|x2|x3|x4|3cang|3c|d|l|c|bc|cang|3\s*cang)$/i;
+  if (categoryRegex.test(norm)) return true;
+
+  if (customShortcuts[normLower] || customShortcuts[norm]) return true;
+
+  const normShorthand = normalizeShorthandToken(trimmed);
+  if (shorthands[normShorthand] || shorthands[normLower] || shorthands[norm]) return true;
+
+  if (/^(dau|dit|daudit|cham|tong|t|d|d'|bo|he)\d{1,2}$/i.test(norm)) return true;
+  if (/^(daube|dauto|dauchan|daule|ditbe|ditto|ditchan|ditle|tobe|toto|tochan|tole|bebe|beto|bechan|bele|tongchan|tongle|chanchan|chanle|lechan|lele|kl|k)$/i.test(norm)) return true;
+
+  const resolved = resolveShorthands(trimmed);
+  const parsedNums = parseNumbersFromBetString(resolved, activeCategory || 'de');
+  if (parsedNums.length > 0) return true;
+
+  if (/^[\d.,\-\s]+$/.test(trimmed)) {
+    const digitsOnly = trimmed.split(/[^\d]+/).filter(Boolean);
+    if (digitsOnly.length > 0) return true;
+  }
+
+  return false;
+}
+
+function formatExcludeLineWithHighlights(line, currentCat) {
+  const tokens = line.match(/\s+|[^\s]+/g) || [];
+  let activeCat = currentCat;
+  let html = "";
+
+  const typeRegex = {
+    de: /^(de|d|đề|đê|đe|dê|dè|đè|Dè|Đè|dề|Dề)$/i,
+    lo: /^(lo|lô|l)$/i,
+    xienquay: /^(xienquay|xq|xienq|quay|q|xquay)$/i,
+    xien: /^(xien|xiên|x|x2|x3|x4)$/i,
+    bacang: /^(3cang|3c|c|bc|cang|3\s*cang)$/i
+  };
+
+  const customShortcuts = getCustomShortcutsMap();
 
   tokens.forEach(token => {
     const trimmed = token.trim();
@@ -2137,6 +2290,7 @@ function loadAppState() {
   }
   if (savedExclude !== null && excludeInput) {
     excludeInput.innerText = savedExclude;
+    updateExcludeDisplay();
   }
   if (autoFetchToggle) {
     const isChecked = savedAutoFetch === '1'; // defaults to false
@@ -3742,7 +3896,8 @@ function setupEventListeners() {
       const numbers = document.getElementById('numbers');
       const excludeInput = document.getElementById('excludeInput');
       if (numbers && !numbers.classList.contains('hidden')) {
-        numbers.value = "";
+        numbers.innerText = "";
+        numbers.innerHTML = "";
         localStorage.removeItem('z8_numbers');
         calculateSum();
         saveAppState();
@@ -3751,6 +3906,7 @@ function setupEventListeners() {
         excludeInput.innerHTML = "";
         calculateSum();
         saveAppState();
+        updateExcludeDisplay();
       }
     });
   }
@@ -3760,6 +3916,112 @@ function setupEventListeners() {
   const tabInputExclude = document.getElementById('tabInputExclude');
   const numbersTextarea = document.getElementById('numbers');
   const excludeInputDiv = document.getElementById('excludeInput');
+  const excludeContainer = document.getElementById('excludeContainer');
+
+  if (numbersTextarea && numbersTextarea.tagName.toLowerCase() !== 'textarea') {
+    Object.defineProperty(numbersTextarea, 'value', {
+      get: function() {
+        let txt = this.innerText || '';
+        txt = txt.replace(/\r\n$/, '\n').replace(/\n$/, '');
+        return txt;
+      },
+      set: function(val) {
+        this.innerText = val || '';
+        const event = new Event('input', { bubbles: true });
+        this.dispatchEvent(event);
+      },
+      configurable: true
+    });
+
+    numbersTextarea.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.execCommand('insertText', false, '\n');
+      }
+    });
+
+    numbersTextarea.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+      document.execCommand("insertText", false, text);
+    });
+
+    let numbersHighlightTimeout = null;
+    numbersTextarea.addEventListener('input', function() {
+      saveAppState();
+      if (numbersHighlightTimeout) clearTimeout(numbersHighlightTimeout);
+      numbersHighlightTimeout = setTimeout(() => {
+        const sel = window.getSelection();
+        let range = null;
+        let hasMarker = false;
+        let markerTextNode = null;
+        
+        if (sel && sel.rangeCount > 0 && document.activeElement === numbersTextarea) {
+          range = sel.getRangeAt(0);
+          if (numbersTextarea.contains(range.startContainer)) {
+            markerTextNode = document.createTextNode("__CARET_MARKER__");
+            try {
+              range.insertNode(markerTextNode);
+              hasMarker = true;
+            } catch (e) {
+              console.warn("Could not insert caret marker node", e);
+            }
+          }
+        }
+
+        const inputString = numbersTextarea.innerText;
+
+        if (hasMarker && markerTextNode && markerTextNode.parentNode) {
+          markerTextNode.parentNode.removeChild(markerTextNode);
+        }
+
+        const originalLines = inputString.split('\n');
+        let currentCat = '';
+        let editorHtml = originalLines.map(line => {
+          if (line.trim() === "") {
+            return "";
+          }
+          const res = formatLineWithHighlights(line, currentCat);
+          currentCat = res.newCategory;
+          return res.html;
+        }).join('<br>');
+
+        let editorHtmlWithMarker = editorHtml;
+        if (hasMarker) {
+          editorHtmlWithMarker = editorHtml.replace(/__CARET_MARKER__/g, '<span id="caret-marker"></span>');
+        }
+
+        const currentHtmlClean = numbersTextarea.innerHTML.replace(/<span id="caret-marker"><\/span>/g, '').replace(/__CARET_MARKER__/g, '');
+        const editorHtmlClean = editorHtml.replace(/__CARET_MARKER__/g, '');
+
+        if (currentHtmlClean !== editorHtmlClean) {
+          numbersTextarea.innerHTML = editorHtmlWithMarker;
+
+          if (hasMarker) {
+            const markerNode = document.getElementById('caret-marker');
+            if (markerNode) {
+              const newRange = document.createRange();
+              const textNode = document.createTextNode("");
+              markerNode.parentNode.replaceChild(textNode, markerNode);
+              newRange.setStart(textNode, 0);
+              newRange.collapse(true);
+              sel.removeAllRanges();
+              sel.addRange(newRange);
+            }
+          }
+        } else if (hasMarker) {
+          const markerNode = document.getElementById('caret-marker');
+          if (markerNode) {
+            markerNode.parentNode.removeChild(markerNode);
+          }
+        }
+      }, 50);
+    });
+
+    numbersTextarea.addEventListener('blur', function() {
+      saveAppState();
+    });
+  }
 
   if (tabInputMain && tabInputExclude) {
     tabInputMain.addEventListener('click', () => {
@@ -3768,7 +4030,12 @@ function setupEventListeners() {
       tabInputExclude.style.borderBottomColor = 'transparent';
       tabInputExclude.style.color = '#64748b';
       numbersTextarea.classList.remove('hidden');
-      excludeInputDiv.classList.add('hidden');
+      if (excludeContainer) {
+        excludeContainer.classList.add('hidden');
+        excludeContainer.style.display = 'none';
+      } else if (excludeInputDiv) {
+        excludeInputDiv.classList.add('hidden');
+      }
       if (btnClearBetInput) btnClearBetInput.textContent = "Xóa cược";
     });
 
@@ -3778,7 +4045,13 @@ function setupEventListeners() {
       tabInputMain.style.borderBottomColor = 'transparent';
       tabInputMain.style.color = '#64748b';
       numbersTextarea.classList.add('hidden');
-      excludeInputDiv.classList.remove('hidden');
+      if (excludeContainer) {
+        excludeContainer.classList.remove('hidden');
+        excludeContainer.style.display = 'flex';
+      } else if (excludeInputDiv) {
+        excludeInputDiv.classList.remove('hidden');
+      }
+      updateExcludeDisplay();
       if (btnClearBetInput) btnClearBetInput.textContent = "Xóa lọc";
     });
   }
@@ -3786,9 +4059,23 @@ function setupEventListeners() {
   // Highlight and Caret recovery for excludeInput
   let excludeHighlightTimeout = null;
   if (excludeInputDiv) {
+    excludeInputDiv.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        document.execCommand('insertText', false, '\n');
+      }
+    });
+
+    excludeInputDiv.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+      document.execCommand("insertText", false, text);
+    });
+
     excludeInputDiv.addEventListener('input', function() {
       calculateSum();
       saveAppState();
+      updateExcludeDisplay();
       if (excludeHighlightTimeout) clearTimeout(excludeHighlightTimeout);
       excludeHighlightTimeout = setTimeout(() => {
         const sel = window.getSelection();
@@ -3824,7 +4111,7 @@ function setupEventListeners() {
           const res = formatExcludeLineWithHighlights(line, currentCat);
           currentCat = res.newCategory;
           return res.html;
-        }).join('\n');
+        }).join('<br>');
 
         let editorHtmlWithMarker = editorHtml;
         if (hasMarker) {
