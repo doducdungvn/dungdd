@@ -439,13 +439,16 @@ td input[type="text"] {
               <span id="tabInputMain" style="font-weight: 600; font-size: 14px; cursor: pointer; border-bottom: 2px solid #007bff; color: #007bff; padding-bottom: 2px;">Nhập số</span>
               <span id="tabInputExclude" style="font-weight: 600; font-size: 14px; cursor: pointer; border-bottom: 2px solid transparent; color: #64748b; padding-bottom: 2px;">Loại trừ</span>
             </div>
-            <button id="btnClearBetInput" style="background-color: #dc3545; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Xóa trắng</button>
+            <button id="btnClearBetInput" style="background-color: #dc3545; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Xóa cược</button>
           </div>
           <div 
             id="numbers" 
             contenteditable="true" 
             style="width: 100%; min-height: 140px; max-height: 250px; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 8px; border: 1px solid #cbd5e1; background-color: #ffffff; border-radius: 4px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; outline: none;"
           ></div>
+          
+
+
           <div id="excludeContainer" class="hidden" style="display: flex; gap: 8px; width: 100%;">
             <div 
               id="excludeInput" 
@@ -565,6 +568,10 @@ td input[type="text"] {
               <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; display: flex; justify-content: space-between;">
                 <strong>Tổng:</strong> <span id="modifiedTotalSum" class="red-text" style="font-weight: bold;">0</span>
               </div>
+            </div>
+            <div id="transferStepsContainer" style="margin-bottom: 10px; display: none;">
+              <div id="transferStepsTabHeaders" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;"></div>
+              <div id="transferStepsTabContent" style="font-size: 11.5px; background-color: #f8fafc; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; height: 220px; overflow-y: auto; font-family: sans-serif; line-height: 1.4; box-sizing: border-box; user-select: text; -webkit-user-select: text; word-break: break-all;"></div>
             </div>
             <div id="wrapper-modifiedResult" style="flex: 1; overflow-y: auto;">
               <div id="modifiedResult" style="font-size: 13px;"></div>
@@ -2309,6 +2316,12 @@ function saveAppState() {
   const resultDateInput = document.getElementById('resultDateInput');
   const crawlerSource = document.getElementById('crawlerSource');
   const excludeInput = document.getElementById('excludeInput');
+  const retainDe = document.getElementById('retainDe');
+  const retainLo = document.getElementById('retainLo');
+  const retain3c = document.getElementById('retain3c');
+  const retainX = document.getElementById('retainX');
+  const retain3cL = document.getElementById('retain3cL');
+  const checkedRadio = document.querySelector('input[name="retainType"]:checked');
 
   if (numbers) localStorage.setItem('z8_combined_bet', getRawTextFromElement(numbers));
   if (twentySevenNumbers) localStorage.setItem('z8_all_prizes', twentySevenNumbers.value || '');
@@ -2317,6 +2330,17 @@ function saveAppState() {
   if (resultDateInput) localStorage.setItem('z8_result_date', resultDateInput.value || '');
   if (crawlerSource) localStorage.setItem('z8_crawler_source', crawlerSource.value || 'minhngoc');
   if (excludeInput) localStorage.setItem('z8_exclude_input', getRawTextFromElement(excludeInput));
+
+  if (retainDe) localStorage.setItem('z8_retain_de', retainDe.value || '0');
+  if (retainLo) localStorage.setItem('z8_retain_lo', retainLo.value || '0');
+  if (retain3c) localStorage.setItem('z8_retain_3c', retain3c.value || '0');
+  if (retainX) localStorage.setItem('z8_retain_x', retainX.value || '0');
+  if (retain3cL) localStorage.setItem('z8_retain_3cl', retain3cL.value || '0');
+  if (checkedRadio) localStorage.setItem('z8_retain_type', checkedRadio.value);
+
+  if (typeof balanceState !== 'undefined') {
+    localStorage.setItem('z8_balance_state_index2', JSON.stringify(balanceState));
+  }
 }
 
 function loadAppState() {
@@ -2327,6 +2351,11 @@ function loadAppState() {
   const resultDateInput = document.getElementById('resultDateInput');
   const crawlerSource = document.getElementById('crawlerSource');
   const excludeInput = document.getElementById('excludeInput');
+  const retainDe = document.getElementById('retainDe');
+  const retainLo = document.getElementById('retainLo');
+  const retain3c = document.getElementById('retain3c');
+  const retainX = document.getElementById('retainX');
+  const retain3cL = document.getElementById('retain3cL');
 
   const savedBet = localStorage.getItem('z8_combined_bet');
   const savedPrizes = localStorage.getItem('z8_all_prizes');
@@ -2335,6 +2364,13 @@ function loadAppState() {
   const savedDate = localStorage.getItem('z8_result_date');
   const savedSource = localStorage.getItem('z8_crawler_source');
   const savedExclude = localStorage.getItem('z8_exclude_input');
+  const savedRetainDe = localStorage.getItem('z8_retain_de');
+  const savedRetainLo = localStorage.getItem('z8_retain_lo');
+  const savedRetain3c = localStorage.getItem('z8_retain_3c');
+  const savedRetainX = localStorage.getItem('z8_retain_x');
+  const savedRetain3cL = localStorage.getItem('z8_retain_3cl');
+  const savedRetainType = localStorage.getItem('z8_retain_type');
+  const savedBalanceState = localStorage.getItem('z8_balance_state_index2');
 
   let hasData = false;
 
@@ -2376,10 +2412,33 @@ function loadAppState() {
     updateSourceButtonsUI("Minh Ngọc");
   }
 
+  if (savedRetainDe !== null && retainDe) retainDe.value = savedRetainDe;
+  if (savedRetainLo !== null && retainLo) retainLo.value = savedRetainLo;
+  if (savedRetain3c !== null && retain3c) retain3c.value = savedRetain3c;
+  if (savedRetainX !== null && retainX) retainX.value = savedRetainX;
+  if (savedRetain3cL !== null && retain3cL) retain3cL.value = savedRetain3cL;
+  if (savedRetainType !== null) {
+    const radio = document.querySelector(`input[name="retainType"][value="${savedRetainType}"]`);
+    if (radio) radio.checked = true;
+  }
+
+  if (savedBalanceState !== null) {
+    try {
+      const parsed = JSON.parse(savedBalanceState);
+      Object.assign(balanceState, parsed);
+      const counterLabel = document.getElementById('balanceCounterLabel');
+      if (counterLabel) counterLabel.textContent = `Số Lần Đã Cân Chuyển = ${balanceState.step}`;
+    } catch (e) {
+      console.error("Error parsing balanceState:", e);
+    }
+  }
+
   updateTwoDigitBoard();
 
   if (hasData) {
     calculateSum();
+  } else {
+    updateTransferStepsUI();
   }
 }
 
@@ -3118,6 +3177,8 @@ function calculateSum(isFromRunBalancing = false) {
     chuyen: chuyenData,
     giulai: giulaiData
   };
+  window.lastCalculatedTotalCost = totalVon;
+  window.lastCalculatedTotalCostChuyen = totalVonChuyen;
 
   const getBreakdownHtml = (de, lo, xien, bacang, wins = null) => {
     const formatWin = (winStr) => wins ? ` / <span style="color: #16a34a; font-weight: bold;">${winStr}</span>` : "";
@@ -3210,6 +3271,7 @@ function calculateSum(isFromRunBalancing = false) {
   // Đồng bộ với bảng ở cuối trang
   updateSummaryTable();
   updateCopyButtonLabel();
+  updateTransferStepsUI();
 }
 
 function updateSummaryTable() {
@@ -3380,6 +3442,32 @@ function updateCopyButtonLabel() {
   }
 }
 
+function calculatePortionCost(deMap, loMap, baCangMap, xienMap, baCangLoMap) {
+  const getRateVal = (type, key, def) => {
+    return window.priceConfigData[type]?.[key] !== undefined ? window.priceConfigData[type][key] : def;
+  };
+  const getLoCostFactor = (val) => {
+    return val > 1000 ? val / 1000 : val;
+  };
+
+  const deComm = getRateVal('chuyen', 'rateDeComm', 82);
+  const loCost = getRateVal('chuyen', 'rateLoCost', 2165);
+  const xienComm = getRateVal('chuyen', 'rateXienComm', 65);
+  const baCangComm = getRateVal('chuyen', 'rate3CComm', 75);
+  const baCangLoCost = getRateVal('chuyen', 'rate3CLoCost', 75);
+  const loCostFactor = getLoCostFactor(loCost);
+
+  let totalCost = 0;
+  Object.values(deMap).forEach(amt => { totalCost += amt * (deComm / 100); });
+  Object.values(loMap).forEach(amt => { totalCost += amt * loCostFactor; });
+  Object.values(baCangMap).forEach(amt => { totalCost += amt * (baCangComm / 100); });
+  Object.values(baCangLoMap).forEach(amt => { totalCost += amt * (baCangLoCost / 100); });
+  Object.entries(xienMap).forEach(([idx, amt]) => {
+    totalCost += amt * (xienComm / 100);
+  });
+  return totalCost;
+}
+
 function runBalancingStep(isPercent) {
   calculateSum(false);
 
@@ -3498,6 +3586,71 @@ function runBalancingStep(isPercent) {
     });
   };
 
+  // Calculate costs for history log
+  const stepCost = calculatePortionCost(stepDeTransfers, stepLoTransfers, stepBaCangTransfers, stepXienTransfers, stepBaCangLoTransfers);
+  const currentTotalVon = window.lastCalculatedTotalCost || 0;
+  let prevCumulativeTransferred = 0;
+  if (balanceState.history) {
+    balanceState.history.forEach(h => {
+      prevCumulativeTransferred += h.costTransferred || 0;
+    });
+  }
+  const newCumulativeTransferred = prevCumulativeTransferred + stepCost;
+  const costRetained = Math.max(0, currentTotalVon - newCumulativeTransferred);
+
+  // Reconstruct retained lists at this step before applying the step cumulative changes
+  const getStepRetainedMap = (originalSums, cumulativeTransfers, stepTransfers) => {
+    const map = {};
+    Object.entries(originalSums).forEach(([num, total]) => {
+      const prevTrans = cumulativeTransfers[num] || 0;
+      const stepTrans = stepTransfers[num] || 0;
+      const newTrans = prevTrans + stepTrans;
+      const kept = Math.round((total - newTrans) * 10) / 10;
+      if (kept >= 0.1) {
+        map[num] = kept;
+      }
+    });
+    return map;
+  };
+
+  const transferredXien = {};
+  Object.entries(stepXienTransfers).forEach(([idx, val]) => {
+    const bet = xienBets[idx];
+    if (bet) transferredXien[bet.numbers.join('-')] = val;
+  });
+
+  const retainedXien = {};
+  xienBets.forEach((bet, idx) => {
+    const prevTrans = balanceState.xienTransfers[idx] || 0;
+    const stepTrans = stepXienTransfers[idx] || 0;
+    const newTrans = prevTrans + stepTrans;
+    const kept = Math.round((bet.amount - newTrans) * 10) / 10;
+    if (kept >= 0.1) {
+      retainedXien[bet.numbers.join('-')] = kept;
+    }
+  });
+
+  const historyEntry = {
+    step: balanceState.step + 1,
+    costTransferred: stepCost,
+    costRetained: costRetained,
+    transferred: {
+      de: { ...stepDeTransfers },
+      lo: { ...stepLoTransfers },
+      bacang: { ...stepBaCangTransfers },
+      bacang_lo: { ...stepBaCangLoTransfers },
+      xien: transferredXien
+    },
+    retained: {
+      de: getStepRetainedMap(deSums, balanceState.deTransfers, stepDeTransfers),
+      lo: getStepRetainedMap(loSums, balanceState.loTransfers, stepLoTransfers),
+      bacang: getStepRetainedMap(baCangSums, balanceState.baCangTransfers, stepBaCangTransfers),
+      bacang_lo: getStepRetainedMap(baCangLoSums, balanceState.baCangLoTransfers, stepBaCangLoTransfers),
+      xien: retainedXien
+    }
+  };
+
+  // Apply cumulative transfers
   applyTransfers(stepDeTransfers, balanceState.lastDeTransfers, balanceState.deTransfers);
   applyTransfers(stepLoTransfers, balanceState.lastLoTransfers, balanceState.loTransfers);
   applyTransfers(stepBaCangTransfers, balanceState.lastBaCangTransfers, balanceState.baCangTransfers);
@@ -3509,13 +3662,20 @@ function runBalancingStep(isPercent) {
     balanceState.xienTransfers[idx] = (balanceState.xienTransfers[idx] || 0) + val;
   });
 
+  if (!balanceState.history) balanceState.history = [];
+  balanceState.history.push(historyEntry);
+
   balanceState.step++;
   balanceState.isPendingCalculated = false;
 
   const counterLabel = document.getElementById('balanceCounterLabel');
   if (counterLabel) counterLabel.textContent = `Số Lần Đã Cân Chuyển = ${balanceState.step}`;
 
+  // Switch to the latest step tab
+  window.activeStepTab = balanceState.step;
+
   calculateSum(true);
+  updateTransferStepsUI();
   return true;
 }
 
@@ -3537,11 +3697,50 @@ function resetBalancing() {
   balanceState.baCangSums = {};
   balanceState.baCangLoSums = {};
   balanceState.xienBets = [];
+  balanceState.history = [];
+
+  // Reset retain configs to default
+  const retainDe = document.getElementById('retainDe');
+  const retainLo = document.getElementById('retainLo');
+  const retain3c = document.getElementById('retain3c');
+  const retainX = document.getElementById('retainX');
+  const retain3cL = document.getElementById('retain3cL');
+  if (retainDe) retainDe.value = "20";
+  if (retainLo) retainLo.value = "0";
+  if (retain3c) retain3c.value = "0";
+  if (retainX) retainX.value = "0";
+  if (retain3cL) retain3cL.value = "0";
+
+  const radioMoney = document.querySelector('input[name="retainType"][value="money"]');
+  if (radioMoney) radioMoney.checked = true;
+
+  // Reset results inputs to default empty
+  const specialPrizeInput = document.getElementById('specialPrizeInput');
+  const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+  if (specialPrizeInput) specialPrizeInput.value = "";
+  if (twentySevenNumbers) twentySevenNumbers.value = "";
+
+  // Turn off auto-fetch
+  const autoFetchToggle = document.getElementById('autoFetchToggle');
+  if (autoFetchToggle) autoFetchToggle.checked = false;
+
+  // Remove saved localStorage keys
+  localStorage.removeItem('z8_special_prize');
+  localStorage.removeItem('z8_all_prizes');
+  localStorage.removeItem('z8_auto_fetch');
+  localStorage.removeItem('z8_balance_state_index2');
+  localStorage.removeItem('z8_retain_de');
+  localStorage.removeItem('z8_retain_lo');
+  localStorage.removeItem('z8_retain_3c');
+  localStorage.removeItem('z8_retain_x');
+  localStorage.removeItem('z8_retain_3cl');
+  localStorage.removeItem('z8_retain_type');
 
   const counterLabel = document.getElementById('balanceCounterLabel');
   if (counterLabel) counterLabel.textContent = 'Số Lần Đã Cân Chuyển = 0';
 
   calculateSum();
+  updateTransferStepsUI();
 }
 
 // Cấu hình giá
@@ -3955,18 +4154,23 @@ function setupEventListeners() {
     btnClearBetInput.addEventListener('click', () => {
       const numbers = document.getElementById('numbers');
       const excludeInput = document.getElementById('excludeInput');
-      if (numbers && !numbers.classList.contains('hidden')) {
-        numbers.innerText = "";
-        numbers.innerHTML = "";
-        localStorage.removeItem('z8_numbers');
-        calculateSum();
-        saveAppState();
-      } else if (excludeInput) {
-        excludeInput.innerText = "";
-        excludeInput.innerHTML = "";
-        calculateSum();
-        saveAppState();
-        updateExcludeDisplay();
+      const activeTab = (numbers && !numbers.classList.contains('hidden') ? 'main' : 'exclude');
+
+      if (activeTab === 'exclude') {
+        if (excludeInput) {
+          excludeInput.innerText = "";
+          excludeInput.innerHTML = "";
+          calculateSum();
+          saveAppState();
+          updateExcludeDisplay();
+        }
+      } else if (activeTab === 'main') {
+        if (numbers) {
+          numbers.innerText = "";
+          numbers.innerHTML = "";
+          localStorage.removeItem('z8_numbers');
+        }
+        resetBalancing();
       }
     });
   }
@@ -4085,36 +4289,46 @@ function setupEventListeners() {
   }
 
   if (tabInputMain && tabInputExclude) {
-    tabInputMain.addEventListener('click', () => {
-      tabInputMain.style.borderBottomColor = '#007bff';
-      tabInputMain.style.color = '#007bff';
-      tabInputExclude.style.borderBottomColor = 'transparent';
-      tabInputExclude.style.color = '#64748b';
-      numbersTextarea.classList.remove('hidden');
-      if (excludeContainer) {
-        excludeContainer.classList.add('hidden');
-        excludeContainer.style.display = 'none';
-      } else if (excludeInputDiv) {
-        excludeInputDiv.classList.add('hidden');
-      }
-      if (btnClearBetInput) btnClearBetInput.textContent = "Xóa cược";
-    });
+    const setTabActive = (activeTab) => {
+      // Styles for tab buttons
+      tabInputMain.style.borderBottomColor = activeTab === 'main' ? '#007bff' : 'transparent';
+      tabInputMain.style.color = activeTab === 'main' ? '#007bff' : '#64748b';
 
-    tabInputExclude.addEventListener('click', () => {
-      tabInputExclude.style.borderBottomColor = '#007bff';
-      tabInputExclude.style.color = '#007bff';
-      tabInputMain.style.borderBottomColor = 'transparent';
-      tabInputMain.style.color = '#64748b';
-      numbersTextarea.classList.add('hidden');
-      if (excludeContainer) {
-        excludeContainer.classList.remove('hidden');
-        excludeContainer.style.display = 'flex';
-      } else if (excludeInputDiv) {
-        excludeInputDiv.classList.remove('hidden');
+      tabInputExclude.style.borderBottomColor = activeTab === 'exclude' ? '#007bff' : 'transparent';
+      tabInputExclude.style.color = activeTab === 'exclude' ? '#007bff' : '#64748b';
+
+      // Visibility for containers
+      if (activeTab === 'main') {
+        numbersTextarea.classList.remove('hidden');
+        numbersTextarea.style.display = 'block';
+        if (excludeContainer) {
+          excludeContainer.classList.add('hidden');
+          excludeContainer.style.display = 'none';
+        }
+      } else if (activeTab === 'exclude') {
+        numbersTextarea.classList.add('hidden');
+        numbersTextarea.style.display = 'none';
+        if (excludeContainer) {
+          excludeContainer.classList.remove('hidden');
+          excludeContainer.style.display = 'flex';
+        }
+        updateExcludeDisplay();
       }
-      updateExcludeDisplay();
-      if (btnClearBetInput) btnClearBetInput.textContent = "Xóa lọc";
-    });
+
+      // Update clear button text
+      if (btnClearBetInput) {
+        if (activeTab === 'main') {
+          btnClearBetInput.textContent = "Xóa cược";
+          btnClearBetInput.style.display = 'inline-block';
+        } else if (activeTab === 'exclude') {
+          btnClearBetInput.textContent = "Xóa lọc";
+          btnClearBetInput.style.display = 'inline-block';
+        }
+      }
+    };
+
+    tabInputMain.addEventListener('click', () => setTabActive('main'));
+    tabInputExclude.addEventListener('click', () => setTabActive('exclude'));
   }
 
   // Highlight and Caret recovery for excludeInput
@@ -4349,6 +4563,161 @@ function setupEventListeners() {
     });
   }
 }
+
+function updateTransferStepsUI() {
+  const container = document.getElementById('transferStepsContainer');
+  const headers = document.getElementById('transferStepsTabHeaders');
+  const content = document.getElementById('transferStepsTabContent');
+  const wrapperModifiedResult = document.getElementById('wrapper-modifiedResult');
+  if (!container || !headers || !content) return;
+
+  if (!balanceState || balanceState.step === 0) {
+    container.style.display = 'none';
+    if (wrapperModifiedResult) wrapperModifiedResult.style.display = 'block';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  // Generate tab headers
+  let headerHtml = "";
+  for (let i = 1; i <= balanceState.step; i++) {
+    const isActive = i === window.activeStepTab;
+    const activeStyle = isActive
+      ? "background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; font-weight: bold; padding: 4px 10px; font-size: 11px; border: 1px solid; border-radius: 4px; cursor: pointer; transition: all 0.2s;"
+      : "background-color: #f8fafc; color: #4a5568; border-color: #cbd5e1; font-weight: bold; padding: 4px 10px; font-size: 11px; border: 1px solid; border-radius: 4px; cursor: pointer; transition: all 0.2s;";
+    headerHtml += `
+      <button type="button" 
+        onclick="window.toggleStepTab(${i});"
+        style="${activeStyle}">
+        ${i}
+      </button>
+    `;
+  }
+  headers.innerHTML = headerHtml;
+
+  // Show/hide content based on activeStepTab
+  if (!window.activeStepTab || window.activeStepTab > balanceState.step || window.activeStepTab < 1) {
+    content.style.display = 'none';
+    if (wrapperModifiedResult) wrapperModifiedResult.style.display = 'block';
+    return;
+  }
+
+  content.style.display = 'block';
+  if (wrapperModifiedResult) wrapperModifiedResult.style.display = 'none';
+
+  // Find active step data
+  const history = balanceState.history || [];
+  const stepData = history.find(h => h.step === window.activeStepTab);
+
+  if (!stepData) {
+    content.innerHTML = `<div style="color: #94a3b8; font-style: italic;">Không có dữ liệu cho Lần chuyển ${window.activeStepTab}</div>`;
+    return;
+  }
+
+  // Format horizontal list helper grouped by price
+  const formatHorizontalBetsList = (betsMap) => {
+    const categories = [
+      { key: 'de', name: 'Đề' },
+      { key: 'lo', name: 'Lô' },
+      { key: 'bacang', name: '3C' },
+      { key: 'bacang_lo', name: '3cLô' },
+      { key: 'xien', name: 'Xiên' }
+    ];
+    
+    const parts = [];
+    categories.forEach(cat => {
+      const map = betsMap[cat.key];
+      if (map && Object.keys(map).length > 0) {
+        // Group by amount
+        const amountGroups = {};
+        Object.entries(map).forEach(([num, val]) => {
+          const roundedVal = Math.round(val * 10) / 10;
+          if (!amountGroups[roundedVal]) {
+            amountGroups[roundedVal] = [];
+          }
+          amountGroups[roundedVal].push(num);
+        });
+
+        // Sort amounts ascending
+        const sortedAmounts = Object.keys(amountGroups)
+          .map(Number)
+          .sort((a, b) => a - b);
+
+        const groupStrings = sortedAmounts.map(amt => {
+          const nums = amountGroups[amt];
+          nums.sort((a, b) => a.localeCompare(b, undefined, {numeric: true}));
+          return `${nums.join('.')}${cat.key === 'xien' ? ' ' : ''}x${amt}`;
+        });
+
+        parts.push(`<strong>${cat.name}</strong> ${groupStrings.join(', ')}`);
+      }
+    });
+
+    if (parts.length === 0) return '<span style="color: #94a3b8; font-style: italic;">Không có</span>';
+    return parts.map(p => `<div>${p}</div>`).join('');
+  };
+
+  const formatMoneyK = (valK) => Math.round(valK).toLocaleString('vi-VN');
+
+  let costTransferred = stepData.costTransferred;
+  if (!costTransferred && stepData.transferred) {
+    costTransferred = calculatePortionCost(
+      stepData.transferred.de || {},
+      stepData.transferred.lo || {},
+      stepData.transferred.bacang || {},
+      stepData.transferred.xien || {},
+      stepData.transferred.bacang_lo || {}
+    );
+  }
+
+  let costRetained = stepData.costRetained;
+  if ((!costRetained || costRetained === window.lastCalculatedTotalCost) && stepData.retained) {
+    costRetained = calculatePortionCost(
+      stepData.retained.de || {},
+      stepData.retained.lo || {},
+      stepData.retained.bacang || {},
+      stepData.retained.xien || {},
+      stepData.retained.bacang_lo || {}
+    );
+  }
+
+  // If history was loaded from old style without transferred/retained maps
+  if (!stepData.transferred || !stepData.retained) {
+    content.innerHTML = `
+      <div style="margin-bottom: 8px;">
+        <strong>🛡️ Giữ lại ${window.activeStepTab}: ${formatMoneyK(costRetained)}</strong>
+      </div>
+      <div>
+        <strong>📤 Chuyển ${window.activeStepTab}: ${formatMoneyK(costTransferred)}</strong>
+      </div>
+    `;
+    content.scrollTop = 0;
+    return;
+  }
+
+  content.innerHTML = `
+    <div style="margin-bottom: 8px;">
+      <span style="font-weight: bold; color: #4a5568; display: block; margin-bottom: 2px;">🛡️ Giữ lại ${window.activeStepTab}: ${formatMoneyK(costRetained)}</span>
+      <div style="color: #4a5568; padding-left: 8px; display: flex; flex-direction: column; gap: 2px;">${formatHorizontalBetsList(stepData.retained)}</div>
+    </div>
+    <div>
+      <span style="font-weight: bold; color: #2b6cb0; display: block; margin-bottom: 2px;">📤 Chuyển ${window.activeStepTab}: ${formatMoneyK(costTransferred)}</span>
+      <div style="color: #2b6cb0; padding-left: 8px; display: flex; flex-direction: column; gap: 2px;">${formatHorizontalBetsList(stepData.transferred)}</div>
+    </div>
+  `;
+  content.scrollTop = 0;
+}
+window.updateTransferStepsUI = updateTransferStepsUI;
+
+window.toggleStepTab = function(stepNum) {
+  if (window.activeStepTab === stepNum) {
+    window.activeStepTab = null;
+  } else {
+    window.activeStepTab = stepNum;
+  }
+  updateTransferStepsUI();
+};
 
 function updateSourceButtonsUI(sourceName) {
   const btnSourceMinhNgoc = document.getElementById('btnSourceMinhNgoc');
