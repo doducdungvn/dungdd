@@ -4660,6 +4660,32 @@ function updateTransferStepsUI() {
 
   const formatMoneyK = (valK) => Math.round(valK).toLocaleString('vi-VN');
 
+  const getCategorySums = (betsMap) => {
+    if (!betsMap) return { de: 0, lo: 0, xien: 0, bacang: 0 };
+    const sumDe = Object.values(betsMap.de || {}).reduce((a, b) => a + b, 0);
+    const sumLo = Object.values(betsMap.lo || {}).reduce((a, b) => a + b, 0);
+    const sumXien = Object.values(betsMap.xien || {}).reduce((a, b) => a + b, 0);
+    const sumBaCang = Object.values(betsMap.bacang || {}).reduce((a, b) => a + b, 0) +
+                       Object.values(betsMap.bacang_lo || {}).reduce((a, b) => a + b, 0);
+    return { de: sumDe, lo: sumLo, xien: sumXien, bacang: sumBaCang };
+  };
+
+  const formatCategoryValue = (val) => {
+    return (Math.round(val * 10) / 10).toLocaleString('vi-VN');
+  };
+
+  const buildStepSummaryString = (typeLabel, stepNum, betsMap) => {
+    const emoji = typeLabel === "Giữ lại" ? "🛡️" : "📤";
+    const sums = getCategorySums(betsMap);
+    const parts = [];
+    if (sums.de > 0) parts.push(`Đ (${formatCategoryValue(sums.de)})`);
+    if (sums.lo > 0) parts.push(`L (${formatCategoryValue(sums.lo)})`);
+    if (sums.xien > 0) parts.push(`X (${formatCategoryValue(sums.xien)})`);
+    if (sums.bacang > 0) parts.push(`3c (${formatCategoryValue(sums.bacang)})`);
+    const partsStr = parts.length > 0 ? parts.join(" ") : "0";
+    return `${emoji} ${stepNum}${typeLabel}: ${partsStr}`;
+  };
+
   let costTransferred = stepData.costTransferred;
   if (!costTransferred && stepData.transferred) {
     costTransferred = calculatePortionCost(
@@ -4686,23 +4712,26 @@ function updateTransferStepsUI() {
   if (!stepData.transferred || !stepData.retained) {
     content.innerHTML = `
       <div style="margin-bottom: 8px;">
-        <strong>🛡️ Giữ lại ${window.activeStepTab}: ${formatMoneyK(costRetained)}</strong>
+        <strong>🛡️ ${window.activeStepTab}Giữ lại: ${formatMoneyK(costRetained)}</strong>
       </div>
       <div>
-        <strong>📤 Chuyển ${window.activeStepTab}: ${formatMoneyK(costTransferred)}</strong>
+        <strong>📤 ${window.activeStepTab}Chuyển: ${formatMoneyK(costTransferred)}</strong>
       </div>
     `;
     content.scrollTop = 0;
     return;
   }
 
+  const retainedStr = buildStepSummaryString("Giữ lại", window.activeStepTab, stepData.retained);
+  const transferredStr = buildStepSummaryString("Chuyển", window.activeStepTab, stepData.transferred);
+
   content.innerHTML = `
     <div style="margin-bottom: 8px;">
-      <span style="font-weight: bold; color: #4a5568; display: block; margin-bottom: 2px;">🛡️ Giữ lại ${window.activeStepTab}: ${formatMoneyK(costRetained)}</span>
+      <span style="font-weight: bold; color: #4a5568; display: block; margin-bottom: 2px;">${retainedStr}</span>
       <div style="color: #4a5568; padding-left: 8px; display: flex; flex-direction: column; gap: 2px;">${formatHorizontalBetsList(stepData.retained)}</div>
     </div>
     <div>
-      <span style="font-weight: bold; color: #2b6cb0; display: block; margin-bottom: 2px;">📤 Chuyển ${window.activeStepTab}: ${formatMoneyK(costTransferred)}</span>
+      <span style="font-weight: bold; color: #2b6cb0; display: block; margin-bottom: 2px;">${transferredStr}</span>
       <div style="color: #2b6cb0; padding-left: 8px; display: flex; flex-direction: column; gap: 2px;">${formatHorizontalBetsList(stepData.transferred)}</div>
     </div>
   `;
