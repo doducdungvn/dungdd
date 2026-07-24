@@ -604,21 +604,18 @@ td input[type="text"] {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
     <!-- Phần báo cáo ở dưới cùng -->
     <div class="bottom-layout">
       <div style="font-size: 14px; user-select: none; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 650px; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; align-items: center; gap: 6px;">
-          <span style="font-weight: bold;">Xem báo cáo:</span>
+
           <button id="tabThau" style="padding: 4px 12px; font-weight: bold; border-radius: 4px;">📊 Thầu</button>
           <button id="tabChuyen" style="padding: 4px 12px; border-radius: 4px;">🔄 Chuyển</button>
-          <button id="tabGiulai" class="hidden" style="padding: 4px 12px; border-radius: 4px;">🔒 Giữ lại</button>
+          <button id="tabGiulai" style="padding: 4px 12px; border-radius: 4px;">🔒 Giữ lại</button>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
           <button id="btnCopyTextReport" style="padding: 4px 12px; background-color: #28a745; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">📋 Copy báo cáo</button>
-          <button id="btnSummaryReport" style="padding: 4px 12px; background-color: #17a2b8; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">📊 Toggle Giữ lại</button>
+
           <button id="btnPriceConfig" style="padding: 4px 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer;">⚙️ Cấu hình giá</button>
         </div>
       </div>
@@ -674,15 +671,27 @@ td input[type="text"] {
   </table>
 
   <p>&nbsp;</p>
-  <p>
-    <label for="percentage1">Đ:</label>
-    <input type="text" id="percentage1" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)" oninput="calculateResult(1)" />
-    <label for="percentage2">L:</label>
-    <input type="text" id="percentage2" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(2)" />
-    <label for="percentage3">X:</label>
-    <input type="text" id="percentage3" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(3)" />
-    <label for="percentage4">C:</label>
-    <input type="text" id="percentage4" value="0" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(4)" />
+  <div style="display: flex; gap: 15px; align-items: center; justify-content: flex-start; margin-bottom: 10px;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <label for="percentage1" style="font-weight: bold;">Đ:</label>
+      <input type="text" id="percentage1" value="0" style="width: 60px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px;" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)" oninput="calculateResult(1)" />
+    </div>
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <label for="percentage2" style="font-weight: bold;">L:</label>
+      <input type="text" id="percentage2" value="0" style="width: 60px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px;" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(2)" />
+    </div>
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <label for="percentage3" style="font-weight: bold;">X:</label>
+      <input type="text" id="percentage3" value="0" style="width: 60px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px;" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(3)" />
+    </div>
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <label for="percentage4" style="font-weight: bold;">C:</label>
+      <input type="text" id="percentage4" value="0" style="width: 60px; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px;" onfocus="clearDefaultValue(this)" onblur="restoreDefaultValue(this)"  oninput="calculateResult(4)" />
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
   <!-- Modal Cấu hình giá -->
   <div id="modalPriceConfig" class="modal hidden">
     <div class="modal-content">
@@ -4328,6 +4337,25 @@ function setupEventListeners() {
     });
   }
 
+function updateReportTabUI() {
+  const tabThau = document.getElementById('tabThau');
+  const tabChuyen = document.getElementById('tabChuyen');
+  const tabGiulai = document.getElementById('tabGiulai');
+  
+  if (tabThau) {
+    tabThau.style.fontWeight = window.activeReportTab === 'thau' ? 'bold' : 'normal';
+    tabThau.style.opacity = window.activeReportTab === 'thau' ? '1' : '0.8';
+  }
+  if (tabChuyen) {
+    tabChuyen.style.fontWeight = window.activeReportTab === 'chuyen' ? 'bold' : 'normal';
+    tabChuyen.style.opacity = window.activeReportTab === 'chuyen' ? '1' : '0.8';
+  }
+  if (tabGiulai) {
+    tabGiulai.style.fontWeight = window.activeReportTab === 'giulai' ? 'bold' : 'normal';
+    tabGiulai.style.opacity = window.activeReportTab === 'giulai' ? '1' : '0.8';
+  }
+}
+
   // Sự kiện nhấp tab báo cáo ở cuối trang
   const tabThau = document.getElementById('tabThau');
   const tabChuyen = document.getElementById('tabChuyen');
@@ -4751,23 +4779,7 @@ function setupEventListeners() {
     });
   }
 
-  const btnSummaryReport = document.getElementById('btnSummaryReport');
-  if (btnSummaryReport && tabGiulai) {
-    btnSummaryReport.addEventListener('click', () => {
-      const isHidden = tabGiulai.classList.contains('hidden');
-      if (isHidden) {
-        tabGiulai.classList.remove('hidden');
-        window.activeReportTab = 'giulai';
-      } else {
-        tabGiulai.classList.add('hidden');
-        if (window.activeReportTab === 'giulai') {
-          window.activeReportTab = 'thau';
-        }
-      }
-      updateReportTabUI();
-      updateSummaryTable();
-    });
-  }
+
 }
 
 function updateTransferStepsUI() {
@@ -4985,14 +4997,22 @@ function toggleCardDetail(id) {
   const btn = document.getElementById('toggleBtn-' + id);
   if (!wrapper || !btn) return;
   
+  const card = wrapper.closest('.result-section');
+  
   if (wrapper.style.display === 'none' || wrapper.classList.contains('hidden')) {
     wrapper.style.display = 'block';
     wrapper.classList.remove('hidden');
     btn.textContent = 'Ẩn';
+    if (card) {
+      card.style.height = ''; // Let CSS class handle it (460px)
+    }
   } else {
     wrapper.style.display = 'none';
     wrapper.classList.add('hidden');
     btn.textContent = 'Hiện';
+    if (card) {
+      card.style.height = 'auto'; // Shrink to fit
+    }
   }
 }
 
