@@ -794,8 +794,22 @@ window.onerror = function(message, source, lineno, colno, error) {
   return false;
 };
 
+// Debounce utility
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
-
+// Debounced versions of heavy functions
+const debouncedCalculateSum = debounce(() => calculateSum(), 300);
+const debouncedSaveAppState = debounce(() => saveAppState(), 300);
 
 // Phân giải viết tắt mặc định từ thau_lode.html / index.html
 const shorthands = {
@@ -2327,10 +2341,11 @@ function getRawTextFromElement(el) {
   }
   let html = el.innerHTML || "";
   if (!html) return "";
+  html = html.replace(/<br\s*\/?>\s*$/i, '');
   let temp = document.createElement("div");
   temp.innerHTML = html.replace(/<br\s*\/?>/gi, "\n").replace(/<\/div>/gi, "\n").replace(/<\/p>/gi, "\n");
   let text = temp.textContent || temp.innerText || "";
-  return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  return text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").replace(/\u200B/g, "");
 }
 
 function setRawTextToContentEditable(el, text, isExclude = false) {
@@ -2348,7 +2363,7 @@ function setRawTextToContentEditable(el, text, isExclude = false) {
       : formatLineWithHighlights(line, currentCat);
     currentCat = res.newCategory;
     return res.html;
-  }).join('<br>');
+  }).join('<br>') + '<br>';
   el.innerHTML = editorHtml;
 }
 
@@ -4205,13 +4220,13 @@ function setupEventListeners() {
   const twentySevenNumbers = document.getElementById('twentySevenNumbers');
   if (twentySevenNumbers) {
     twentySevenNumbers.addEventListener('blur', normalizeTwentySevenNumbers);
-    twentySevenNumbers.addEventListener('input', saveAppState);
+    twentySevenNumbers.addEventListener('input', debouncedSaveAppState);
   }
 
   const specialPrizeInput = document.getElementById('specialPrizeInput');
   if (specialPrizeInput) {
     specialPrizeInput.addEventListener('input', updateTwoDigitBoard);
-    specialPrizeInput.addEventListener('input', saveAppState);
+    specialPrizeInput.addEventListener('input', debouncedSaveAppState);
   }
 
   const resultDateInput = document.getElementById('resultDateInput');
@@ -4268,7 +4283,7 @@ function setupEventListeners() {
           calculateSum();
         }
       });
-      input.addEventListener('input', () => calculateSum());
+      input.addEventListener('input', () => debouncedCalculateSum());
     }
   });
 
@@ -4431,7 +4446,7 @@ function updateReportTabUI() {
     numbersTextarea.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
-        document.execCommand('insertText', false, '\n');
+        document.execCommand('insertLineBreak');
       }
     });
 
@@ -4443,8 +4458,8 @@ function updateReportTabUI() {
 
     let numbersHighlightTimeout = null;
     numbersTextarea.addEventListener('input', function() {
-      saveAppState();
-      calculateSum();
+      debouncedSaveAppState();
+      debouncedCalculateSum();
       if (numbersHighlightTimeout) clearTimeout(numbersHighlightTimeout);
       numbersHighlightTimeout = setTimeout(() => {
         const sel = window.getSelection();
@@ -4480,7 +4495,7 @@ function updateReportTabUI() {
           const res = formatLineWithHighlights(line, currentCat);
           currentCat = res.newCategory;
           return res.html;
-        }).join('<br>');
+        }).join('<br>') + '<br>';
 
         let editorHtmlWithMarker = editorHtml;
         if (hasMarker) {
@@ -4571,7 +4586,7 @@ function updateReportTabUI() {
     excludeInputDiv.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
-        document.execCommand('insertText', false, '\n');
+        document.execCommand('insertLineBreak');
       }
     });
 
@@ -4582,8 +4597,8 @@ function updateReportTabUI() {
     });
 
     excludeInputDiv.addEventListener('input', function() {
-      calculateSum();
-      saveAppState();
+      debouncedCalculateSum();
+      debouncedSaveAppState();
       updateExcludeDisplay();
       if (excludeHighlightTimeout) clearTimeout(excludeHighlightTimeout);
       excludeHighlightTimeout = setTimeout(() => {
@@ -4620,7 +4635,7 @@ function updateReportTabUI() {
           const res = formatExcludeLineWithHighlights(line, currentCat);
           currentCat = res.newCategory;
           return res.html;
-        }).join('<br>');
+        }).join('<br>') + '<br>';
 
         let editorHtmlWithMarker = editorHtml;
         if (hasMarker) {
