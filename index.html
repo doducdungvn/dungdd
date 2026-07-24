@@ -190,7 +190,7 @@ button:hover {
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   padding: 15px;
-  min-height: 380px;
+  height: 460px;
   display: flex;
   flex-direction: column;
 }
@@ -478,11 +478,11 @@ td input[type="text"] {
           </div>
           <div class="control-row">
             <label style="font-weight: bold;">Giữ lại: </label>
-            <span>Đề <input type="text" id="retainDe" value="20"></span>
-            <span>Lô <input type="text" id="retainLo" value="0"></span>
-            <span>3c <input type="text" id="retain3c" value="0"></span>
-            <span>X <input type="text" id="retainX" value="0"></span>
-            <span class="hidden">3cL <input type="text" id="retain3cL" value="0"></span>
+            <span>Đề <input type="text" id="retainDe" value="20" inputmode="decimal"></span>
+            <span>Lô <input type="text" id="retainLo" value="0" inputmode="decimal"></span>
+            <span>3c <input type="text" id="retain3c" value="0" inputmode="decimal"></span>
+            <span>X <input type="text" id="retainX" value="0" inputmode="decimal"></span>
+            <span class="hidden">3cL <input type="text" id="retain3cL" value="0" inputmode="decimal"></span>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
               <label><input type="radio" name="retainType" id="retainTypeMoney" value="money" checked> Tiền</label>
               <label><input type="radio" name="retainType" id="retainTypePercentage" value="percentage"> %</label>
@@ -780,6 +780,12 @@ td input[type="text"] {
   </div>
 
   <script>
+window.onerror = function(message, source, lineno, colno, error) {
+  alert("LỖI JS: " + message + "\nTại: " + source + ":" + lineno + ":" + colno + "\nStack: " + (error ? error.stack : "N/A"));
+  return false;
+};
+
+
 
 
 // Phân giải viết tắt mặc định từ thau_lode.html / index.html
@@ -1399,22 +1405,39 @@ function parseExclusions(excludeString) {
       }
     }
 
-    if (!lineType) lineType = activeCategory;
-    if (!lineType) return;
+    const isGeneral = !lineType && !activeCategory;
 
     const resolved = resolveShorthands(trimmed);
     const segments = resolved.split(/[.,\-\s]+/).filter(s => s.length > 0);
     segments.forEach(seg => {
       if (!/^\d+$/.test(seg)) return;
-      const targetType = (lineType === 'xienquay' || lineType === 'xien') ? 'xien' : lineType;
-      const nums = parseNumbersFromBetString(seg, targetType);
-      nums.forEach(num => {
-        if (targetType === 'xien') {
-          excluded.xien.add(num);
-        } else {
-          excluded[targetType].add(num);
-        }
-      });
+      
+      if (isGeneral) {
+        const numsDeLo = parseNumbersFromBetString(seg, 'de');
+        numsDeLo.forEach(num => {
+          const ns = String(num).trim();
+          excluded.de.add(ns);
+          excluded.lo.add(ns);
+          excluded.xien.add(ns);
+        });
+        const nums3C = parseNumbersFromBetString(seg, 'bacang');
+        nums3C.forEach(num => {
+          const ns = String(num).trim();
+          excluded.bacang.add(ns);
+        });
+      } else {
+        const targetType = lineType || activeCategory;
+        const resolvedType = (targetType === 'xienquay' || targetType === 'xien') ? 'xien' : targetType;
+        const nums = parseNumbersFromBetString(seg, resolvedType);
+        nums.forEach(num => {
+          const ns = String(num).trim();
+          if (resolvedType === 'xien') {
+            excluded.xien.add(ns);
+          } else {
+            excluded[resolvedType].add(ns);
+          }
+        });
+      }
     });
   });
 
@@ -1424,7 +1447,7 @@ function parseExclusions(excludeString) {
 function getExclusions() {
   const excludeInput = document.getElementById('excludeInput');
   if (!excludeInput) return null;
-  const excludeString = excludeInput.innerText || '';
+  const excludeString = getRawTextFromElement(excludeInput);
   return parseExclusions(excludeString);
 }
 
@@ -1432,18 +1455,23 @@ function isExcluded(categoryKey, key, betNumbers = null) {
   const excl = getExclusions();
   if (!excl) return false;
 
+  const keyStr = String(key).trim();
+
   if (categoryKey === 'de') {
-    return excl.de.has(key);
+    return excl.de.has(keyStr);
   }
   if (categoryKey === 'lo') {
-    return excl.lo.has(key);
+    return excl.lo.has(keyStr);
   }
   if (categoryKey === 'bacang') {
-    return excl.bacang.has(key);
+    return excl.bacang.has(keyStr);
+  }
+  if (categoryKey === 'bacang_lo') {
+    return excl.bacang.has(keyStr) || excl.lo.has(keyStr);
   }
   if (categoryKey === 'xien') {
     if (betNumbers) {
-      return betNumbers.some(num => excl.xien.has(num) || excl.lo.has(num));
+      return betNumbers.some(num => excl.xien.has(String(num).trim()) || excl.lo.has(String(num).trim()));
     }
   }
   return false;
@@ -2047,6 +2075,7 @@ async function triggerAutoFetch() {
     if (allPrizesInput) allPrizesInput.value = data.prizes.join(', ');
 
     updateTwoDigitBoard();
+    saveAppState();
     calculateSum();
 
   } catch (error) {
@@ -2324,10 +2353,10 @@ function updateClearAndResetButtons() {
     let canClear = false;
     
     if (activeTab === 'main') {
-      canClear = numbers && numbers.innerText.trim() !== "";
+      canClear = numbers && getRawTextFromElement(numbers).trim() !== "";
     } else {
       const excludeInput = document.getElementById('excludeInput');
-      canClear = excludeInput && excludeInput.innerText.trim() !== "";
+      canClear = excludeInput && getRawTextFromElement(excludeInput).trim() !== "";
     }
     btnClearBetInput.disabled = !canClear;
   }
@@ -2841,12 +2870,12 @@ function calculateSum(isFromRunBalancing = false) {
     return `(${Math.round(von).toLocaleString('vi-VN')} / ${Math.round(trung).toLocaleString('vi-VN')})`;
   };
 
-  renderGroupResult(`🔴 Đề ${formatHeaderMoney(deVon, deTrung)}`, deSums);
-  renderGroupResult(`🔵 Lô(đ) ${formatHeaderMoney(loVon, loTrung)} [${Math.round(loBetSum)}đ]`, loSums);
+  renderGroupResult(`🔴 Đề ${formatHeaderMoney(deBetSum, deTrung)}`, deSums);
+  renderGroupResult(`🔵 Lô(đ) ${formatHeaderMoney(loBetSum * 23, loTrung)} [${Math.round(loBetSum)}đ]`, loSums);
 
   if (xienBets.length > 0 && resultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVon, xienTrung)}</strong>`;
+    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienBetSum, xienTrung)}</strong>`;
     header.style.marginTop = '8px';
     header.style.borderBottom = '1px solid #eee';
     header.style.paddingBottom = '3px';
@@ -2866,7 +2895,7 @@ function calculateSum(isFromRunBalancing = false) {
 
   if (Object.keys(baCangSums).length > 0 && resultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangVon, baCangTrung)}</strong>`;
+    header.innerHTML = `<strong>🟣 3C ${formatHeaderMoney(baCangDeBetSum, baCangTrung)}</strong>`;
     header.style.marginTop = '8px';
     header.style.borderBottom = '1px solid #eee';
     header.style.paddingBottom = '3px';
@@ -2889,7 +2918,7 @@ function calculateSum(isFromRunBalancing = false) {
   }
 
   if (Object.keys(baCangLoSums).length > 0 && resultDiv) {
-    renderGroupResult(`🟤 3cLô ${formatHeaderMoney(baCangLoVon, baCangLoTrung)}`, baCangLoSums);
+    renderGroupResult(`🟤 3cLô ${formatHeaderMoney(baCangLoBetSum, baCangLoTrung)}`, baCangLoSums);
   }
 
   // Tính chuyển (Layoff)
@@ -2925,25 +2954,7 @@ function calculateSum(isFromRunBalancing = false) {
   };
 
   const getCategoryTransferMap = (categoryKey) => {
-    if (balanceState.step === 0) {
-      const retainVal = getCategoryRetainValue(categoryKey);
-      const map = {};
-      const sumsMap = getCategorySumsMap(categoryKey);
-      Object.entries(sumsMap).forEach(([key, val]) => {
-        let excess;
-        const isExcl = isExcluded(categoryKey, key, categoryKey === 'xien' ? xienBets[key]?.numbers : null);
-        if (isExcl) {
-          excess = val;
-        } else {
-          excess = retainType === "money" ? val - retainVal : val - (val * (retainVal / 100));
-        }
-        excess = Math.max(0, Math.round(excess * 10) / 10);
-        if (excess >= 0.1) {
-          map[key] = excess;
-        }
-      });
-      return map;
-    } else {
+    if (!balanceState.isPendingCalculated && balanceState.step > 0) {
       if (categoryKey === 'de') return balanceState.lastDeTransfers || {};
       if (categoryKey === 'lo') return balanceState.lastLoTransfers || {};
       if (categoryKey === 'bacang') return balanceState.lastBaCangTransfers || {};
@@ -2951,6 +2962,76 @@ function calculateSum(isFromRunBalancing = false) {
       if (categoryKey === 'bacang_lo') return balanceState.lastBaCangLoTransfers || {};
       return {};
     }
+
+    const retainVal = getCategoryRetainValue(categoryKey);
+    const map = {};
+    const sumsMap = getCategorySumsMap(categoryKey);
+
+    let cumulativeMap = {};
+    if (categoryKey === 'de') cumulativeMap = balanceState.deTransfers || {};
+    else if (categoryKey === 'lo') cumulativeMap = balanceState.loTransfers || {};
+    else if (categoryKey === 'bacang') cumulativeMap = balanceState.baCangTransfers || {};
+    else if (categoryKey === 'xien') cumulativeMap = balanceState.xienTransfers || {};
+    else if (categoryKey === 'bacang_lo') cumulativeMap = balanceState.baCangLoTransfers || {};
+
+    Object.entries(sumsMap).forEach(([key, val]) => {
+      let isExcl = isExcluded(categoryKey, key, categoryKey === 'xien' ? xienBets[key]?.numbers : null);
+      let excess;
+      if (isExcl) {
+        excess = val;
+        excess = Math.max(0, Math.round(excess * 10) / 10);
+      } else {
+        if (retainType === "money") {
+          excess = val - retainVal;
+          excess = Math.max(0, Math.round(excess * 10) / 10);
+        } else {
+          excess = val - (val * (retainVal / 100));
+          excess = Math.max(0, Math.ceil(excess));
+        }
+      }
+
+      const alreadyTransferred = cumulativeMap[key] || 0;
+      const pendingTransfer = Math.max(0, Math.round((excess - alreadyTransferred) * 10) / 10);
+
+      if (pendingTransfer >= 0.1) {
+        map[key] = pendingTransfer;
+      }
+    });
+    return map;
+  };
+
+  const getCumulativeTransferMap = (categoryKey) => {
+    const map = {};
+    const cumulativeKey = categoryKey === 'bacang_lo' ? 'baCangLoTransfers' : (categoryKey === 'bacang' ? 'baCangTransfers' : categoryKey + 'Transfers');
+    const cumulative = balanceState[cumulativeKey] || {};
+    
+    // Start with cumulative of all completed steps
+    Object.entries(cumulative).forEach(([key, val]) => {
+      map[key] = val;
+    });
+    
+    // If there's a pending step or step is 0, add pending transfers
+    if (balanceState.isPendingCalculated || balanceState.step === 0) {
+      const pending = getCategoryTransferMap(categoryKey);
+      Object.entries(pending).forEach(([key, val]) => {
+        map[key] = (map[key] || 0) + val;
+      });
+    }
+    return map;
+  };
+
+  const getCumulativeLayoffValues = (sumsMap, getPayoutFn, categoryKey) => {
+    let costSum = 0;
+    let winSum = 0;
+    const transferMap = getCumulativeTransferMap(categoryKey);
+    Object.entries(sumsMap).forEach(([key, value]) => {
+      let modifiedSum = transferMap[key] || 0;
+      if (modifiedSum >= 0.1) {
+        costSum += modifiedSum;
+        winSum += getPayoutFn(key, modifiedSum);
+      }
+    });
+    return { costSum, winSum };
   };
 
   const getLayoffValues = (sumsMap, getPayoutFn, categoryKey) => {
@@ -3017,6 +3098,56 @@ function calculateSum(isFromRunBalancing = false) {
 
   const totalVonChuyen = deVonChuyen + loVonChuyen + xienVonChuyen + baCangVonChuyen + baCangLoVonChuyen;
   const totalTrungChuyen = deTrungChuyen + loTrungChuyen + xienTrungChuyen + baCangTrungChuyen + baCangLoTrungChuyen;
+
+  // Cumulative transfer calculations for report
+  const deLayoffCum = getCumulativeLayoffValues(deSums, (key, amt) => (key === specialPrizeLast2 ? amt * dePayout_chuyen : 0), 'de');
+  const deVonChuyenCum = deLayoffCum.costSum * (deComm_chuyen / 100);
+  const deTrungChuyenCum = deLayoffCum.winSum;
+
+  const loLayoffCum = getCumulativeLayoffValues(loSums, (key, amt) => {
+    const occurrences = allPrizesLast2.filter(p => p === key).length;
+    return occurrences * amt * loPayoutFactor_chuyen;
+  }, 'lo');
+  const loVonChuyenCum = loLayoffCum.costSum * loCostFactor_chuyen;
+  const loTrungChuyenCum = loLayoffCum.winSum;
+
+  let xienVonChuyenCum = 0;
+  let xienTrungChuyenCum = 0;
+  let xienXacChuyenCum = 0;
+  const xienTransferMapCum = getCumulativeTransferMap('xien');
+  xienBets.forEach((bet, idx) => {
+    let modifiedSum = xienTransferMapCum[idx] || 0;
+    if (modifiedSum >= 0.1) {
+      xienXacChuyenCum += modifiedSum;
+      xienVonChuyenCum += modifiedSum * (xienComm_chuyen / 100);
+      const allHit = bet.numbers.every(num => allPrizesLast2.includes(num));
+      if (allHit) {
+        const size = bet.numbers.length;
+        const winRate = size === 2 ? x2Payout_chuyen : (size === 3 ? x3Payout_chuyen : x4Payout_chuyen);
+        xienTrungChuyenCum += modifiedSum * winRate;
+      }
+    }
+  });
+
+  const baCangLayoffCum = getCumulativeLayoffValues(baCangSums, (key, amt) => {
+    const match3 = key === specialPrizeLast3;
+    const match2 = key.slice(-2) === specialPrizeLast2;
+    if (match3) return amt * baCangPayout_chuyen;
+    if (match2) return amt * baCangApMa_chuyen;
+    return 0;
+  }, 'bacang');
+  const baCangVonChuyenCum = baCangLayoffCum.costSum * (baCangComm_chuyen / 100);
+  const baCangTrungChuyenCum = baCangLayoffCum.winSum;
+
+  const baCangLoLayoffCum = getCumulativeLayoffValues(baCangLoSums, (key, amt) => {
+    const occurrences = allPrizesLast3.filter(p => p === key).length;
+    return occurrences * amt * baCangLoPayout_chuyen;
+  }, 'bacang_lo');
+  const baCangLoVonChuyenCum = baCangLoLayoffCum.costSum * (baCangLoCost_chuyen / 100);
+  const baCangLoTrungChuyenCum = baCangLoLayoffCum.winSum;
+
+  const totalVonChuyenCum = deVonChuyenCum + loVonChuyenCum + xienVonChuyenCum + baCangVonChuyenCum + baCangLoVonChuyenCum;
+  const totalTrungChuyenCum = deTrungChuyenCum + loTrungChuyenCum + xienTrungChuyenCum + baCangTrungChuyenCum + baCangLoTrungChuyenCum;
 
   const deTransferMap = getCategoryTransferMap('de');
   const deWinSumChuyen = deSums[specialPrizeLast2] ? deTransferMap[specialPrizeLast2] || 0 : 0;
@@ -3116,9 +3247,9 @@ function calculateSum(isFromRunBalancing = false) {
     }
   };
 
-  renderGroupLayoff(`🔴 Đề ${formatHeaderMoney(deVonChuyen, deTrungChuyen)}`, deSums, 'de');
-  renderGroupLayoff(`🔵 Lô(đ) ${formatHeaderMoney(loVonChuyen, loTrungChuyen)} [${Math.round(loLayoff.costSum)}đ]`, loSums, 'lo');
-  renderGroupLayoff(`🟤 3cLô ${formatHeaderMoney(baCangLoVonChuyen, baCangLoTrungChuyen)}`, baCangLoSums, 'bacang_lo');
+  renderGroupLayoff(`🔴 Đề ${formatHeaderMoney(deLayoff.costSum, deTrungChuyen)}`, deSums, 'de');
+  renderGroupLayoff(`🔵 Lô(đ) ${formatHeaderMoney(loLayoff.costSum * 23, loTrungChuyen)} [${Math.round(loLayoff.costSum)}đ]`, loSums, 'lo');
+  renderGroupLayoff(`🟤 3cLô ${formatHeaderMoney(baCangLoLayoff.costSum, baCangLoTrungChuyen)}`, baCangLoSums, 'bacang_lo');
 
   let xienLayoffHtml = "";
   xienBets.forEach((bet, idx) => {
@@ -3135,7 +3266,7 @@ function calculateSum(isFromRunBalancing = false) {
   });
   if (xienLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienVonChuyen, xienTrungChuyen)}</strong>`;
+    header.innerHTML = `<strong>🟢 Xiên ${formatHeaderMoney(xienXacChuyen, xienTrungChuyen)}</strong>`;
     header.style.marginTop = '8px';
     header.style.borderBottom = '1px solid #eee';
     header.style.paddingBottom = '3px';
@@ -3164,7 +3295,7 @@ function calculateSum(isFromRunBalancing = false) {
   });
   if (baCangLayoffHtml && modifiedResultDiv) {
     const header = document.createElement("div");
-    header.innerHTML = `<strong>🟣 Bc ${formatHeaderMoney(baCangVonChuyen, baCangTrungChuyen)}</strong>`;
+    header.innerHTML = `<strong>🟣 Bc ${formatHeaderMoney(baCangLayoff.costSum, baCangTrungChuyen)}</strong>`;
     header.style.marginTop = '8px';
     header.style.borderBottom = '1px solid #eee';
     header.style.paddingBottom = '3px';
@@ -3176,7 +3307,7 @@ function calculateSum(isFromRunBalancing = false) {
   }
 
   // Lưu trữ dữ liệu tính toán cho Thầu, Chuyển, Giữ lại vào biến toàn cục
-  const totalNetChuyen = totalVonChuyen - totalTrungChuyen;
+  const totalNetChuyenCum = totalVonChuyenCum - totalTrungChuyenCum;
   const thauData = {
     deXac: deBetSum, deVon, deTrung, deWinXac: deWinSum, deNet,
     loXac: loBetSum, loVon, loTrung, loWinXac: loWinSum, loNet,
@@ -3186,12 +3317,12 @@ function calculateSum(isFromRunBalancing = false) {
     totalVon, totalTrung, totalNet
   };
   const chuyenData = {
-    deXac: deLayoff.costSum, deVon: deVonChuyen, deTrung: deTrungChuyen, deNet: (deVonChuyen - deTrungChuyen),
-    loXac: loLayoff.costSum, loVon: loVonChuyen, loTrung: loTrungChuyen, loNet: (loVonChuyen - loTrungChuyen),
-    xienXac: xienXacChuyen, xienVon: xienVonChuyen, xienTrung: xienTrungChuyen, xienNet: (xienVonChuyen - xienTrungChuyen),
-    baCangXac: baCangLayoff.costSum, baCangVon: baCangVonChuyen, baCangTrung: baCangTrungChuyen, baCangNet: (baCangVonChuyen - baCangTrungChuyen),
-    baCangLoXac: baCangLoLayoff.costSum, baCangLoVon: baCangLoVonChuyen, baCangLoTrung: baCangLoTrungChuyen, baCangLoNet: (baCangLoVonChuyen - baCangLoTrungChuyen),
-    totalVon: totalVonChuyen, totalTrung: totalTrungChuyen, totalNet: totalNetChuyen
+    deXac: deLayoffCum.costSum, deVon: deVonChuyenCum, deTrung: deTrungChuyenCum, deNet: (deVonChuyenCum - deTrungChuyenCum),
+    loXac: loLayoffCum.costSum, loVon: loVonChuyenCum, loTrung: loTrungChuyenCum, loNet: (loVonChuyenCum - loTrungChuyenCum),
+    xienXac: xienXacChuyenCum, xienVon: xienVonChuyenCum, xienTrung: xienTrungChuyenCum, xienNet: (xienVonChuyenCum - xienTrungChuyenCum),
+    baCangXac: baCangLayoffCum.costSum, baCangVon: baCangVonChuyenCum, baCangTrung: baCangTrungChuyenCum, baCangNet: (baCangVonChuyenCum - baCangTrungChuyenCum),
+    baCangLoXac: baCangLoLayoffCum.costSum, baCangLoVon: baCangLoVonChuyenCum, baCangLoTrung: baCangLoTrungChuyenCum, baCangLoNet: (baCangLoVonChuyenCum - baCangLoTrungChuyenCum),
+    totalVon: totalVonChuyenCum, totalTrung: totalTrungChuyenCum, totalNet: totalNetChuyenCum
   };
   const giulaiData = {
     deXac: Math.max(0, thauData.deXac - chuyenData.deXac),
@@ -3230,7 +3361,7 @@ function calculateSum(isFromRunBalancing = false) {
     giulai: giulaiData
   };
   window.lastCalculatedTotalCost = totalVon;
-  window.lastCalculatedTotalCostChuyen = totalVonChuyen;
+  window.lastCalculatedTotalCostChuyen = totalVonChuyenCum;
 
   const getBreakdownHtml = (de, lo, xien, bacang, wins = null) => {
     const formatWin = (winStr) => wins ? ` / <span style="color: #16a34a; font-weight: bold;">${winStr}</span>` : "";
@@ -3267,15 +3398,15 @@ function calculateSum(isFromRunBalancing = false) {
   const resXienCount = xienBets.length;
   const res3CCount = Object.keys(baCangSums).length;
 
-  const deMap = getCategoryTransferMap('de');
-  const loMap = getCategoryTransferMap('lo');
-  const xienMap = getCategoryTransferMap('xien');
-  const baCangMap = getCategoryTransferMap('bacang');
+  const deMapCum = getCumulativeTransferMap('de');
+  const loMapCum = getCumulativeTransferMap('lo');
+  const xienMapCum = getCumulativeTransferMap('xien');
+  const baCangMapCum = getCumulativeTransferMap('bacang');
 
-  const layoffDeCount = Object.keys(deSums).filter(key => (deMap[key] || 0) >= 0.1).length;
-  const layoffLoCount = Object.keys(loSums).filter(key => (loMap[key] || 0) >= 0.1).length;
-  const layoffXienCount = xienBets.filter((bet, idx) => (xienMap[idx] || 0) >= 0.1).length;
-  const layoff3CCount = Object.keys(baCangSums).filter(key => (baCangMap[key] || 0) >= 0.1).length;
+  const layoffDeCount = Object.keys(deSums).filter(key => (deMapCum[key] || 0) >= 0.1).length;
+  const layoffLoCount = Object.keys(loSums).filter(key => (loMapCum[key] || 0) >= 0.1).length;
+  const layoffXienCount = xienBets.filter((bet, idx) => (xienMapCum[idx] || 0) >= 0.1).length;
+  const layoff3CCount = Object.keys(baCangSums).filter(key => (baCangMapCum[key] || 0) >= 0.1).length;
 
   const inpDeCount = parsedBets.de.length;
   const inpLoCount = parsedBets.lo.length;
@@ -3311,13 +3442,16 @@ function calculateSum(isFromRunBalancing = false) {
   const modifiedTotalSumLabel = document.getElementById("modifiedTotalSum");
   const inputTotalSumLabel = document.getElementById("inputTotalSum");
   if (totalSumLabel) {
-    totalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
+    const totalXac = deBetSum + loBetSum * 23 + xienBetSum + baCangDeBetSum + baCangLoBetSum;
+    totalSumLabel.textContent = `${Math.round(totalXac).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
   }
   if (modifiedTotalSumLabel) {
-    modifiedTotalSumLabel.textContent = `${Math.round(totalVonChuyen).toLocaleString("vi-VN")} / ${Math.round(totalTrungChuyen).toLocaleString("vi-VN")}`;
+    const totalXacChuyenCum = deLayoffCum.costSum + loLayoffCum.costSum * 23 + xienXacChuyenCum + baCangLayoffCum.costSum + baCangLoLayoffCum.costSum;
+    modifiedTotalSumLabel.textContent = `${Math.round(totalXacChuyenCum).toLocaleString("vi-VN")} / ${Math.round(totalTrungChuyenCum).toLocaleString("vi-VN")}`;
   }
   if (inputTotalSumLabel) {
-    inputTotalSumLabel.textContent = `${Math.round(totalVon).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
+    const totalXac = deBetSum + loBetSum * 23 + xienBetSum + baCangDeBetSum + baCangLoBetSum;
+    inputTotalSumLabel.textContent = `${Math.round(totalXac).toLocaleString("vi-VN")} / ${Math.round(totalTrung).toLocaleString("vi-VN")}`;
   }
 
   // Đồng bộ với bảng ở cuối trang
@@ -3576,10 +3710,17 @@ function runBalancingStep(isPercent) {
       let excess;
       if (isExcl) {
         excess = total - prevTransfer;
+        excess = Math.max(0, Math.round(excess * 10) / 10);
       } else {
-        excess = isPct ? (total * ((100 - limit) / 100)) - prevTransfer : total - prevTransfer - limit;
+        if (isPct) {
+          const targetTransfer = Math.ceil(total * ((100 - limit) / 100));
+          excess = targetTransfer - prevTransfer;
+          excess = Math.max(0, Math.round(excess * 10) / 10);
+        } else {
+          excess = total - prevTransfer - limit;
+          excess = Math.max(0, Math.round(excess * 10) / 10);
+        }
       }
-      excess = Math.round(excess * 10) / 10;
       if (excess >= 0.1) {
         stepTransfersMap[key] = excess;
       }
@@ -3597,10 +3738,17 @@ function runBalancingStep(isPercent) {
     let excess;
     if (isExcl) {
       excess = bet.amount - prevTransfer;
+      excess = Math.max(0, Math.round(excess * 10) / 10);
     } else {
-      excess = isPercent ? (bet.amount * ((100 - retainX) / 100)) - prevTransfer : bet.amount - prevTransfer - retainX;
+      if (isPercent) {
+        const targetTransfer = Math.ceil(bet.amount * ((100 - retainX) / 100));
+        excess = targetTransfer - prevTransfer;
+        excess = Math.max(0, Math.round(excess * 10) / 10);
+      } else {
+        excess = bet.amount - prevTransfer - retainX;
+        excess = Math.max(0, Math.round(excess * 10) / 10);
+      }
     }
-    excess = Math.round(excess * 10) / 10;
     if (excess >= 0.1) {
       stepXienTransfers[idx] = excess;
     }
@@ -4240,7 +4388,7 @@ function setupEventListeners() {
   if (numbersTextarea && numbersTextarea.tagName.toLowerCase() !== 'textarea') {
     Object.defineProperty(numbersTextarea, 'value', {
       get: function() {
-        let txt = this.innerText || '';
+        let txt = getRawTextFromElement(this);
         txt = txt.replace(/\r\n$/, '\n').replace(/\n$/, '');
         return txt;
       },
@@ -4289,7 +4437,7 @@ function setupEventListeners() {
           }
         }
 
-        const inputString = numbersTextarea.innerText;
+        const inputString = getRawTextFromElement(numbersTextarea);
 
         if (hasMarker && markerTextNode && markerTextNode.parentNode) {
           markerTextNode.parentNode.removeChild(markerTextNode);
@@ -4360,6 +4508,7 @@ function setupEventListeners() {
           excludeContainer.classList.add('hidden');
           excludeContainer.style.display = 'none';
         }
+        calculateSum();
       } else if (activeTab === 'exclude') {
         numbersTextarea.classList.add('hidden');
         numbersTextarea.style.display = 'none';
@@ -4367,6 +4516,7 @@ function setupEventListeners() {
           excludeContainer.classList.remove('hidden');
           excludeContainer.style.display = 'flex';
         }
+        calculateSum();
         updateExcludeDisplay();
       }
 
@@ -4427,7 +4577,7 @@ function setupEventListeners() {
           }
         }
 
-        const inputString = excludeInputDiv.innerText;
+        const inputString = getRawTextFromElement(excludeInputDiv);
 
         if (hasMarker && markerTextNode && markerTextNode.parentNode) {
           markerTextNode.parentNode.removeChild(markerTextNode);
