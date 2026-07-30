@@ -484,10 +484,19 @@ td input[type="text"] {
             <span>X <input type="text" id="retainX" value="0" inputmode="decimal"></span>
             <span class="hidden">3cL <input type="text" id="retain3cL" value="0" inputmode="decimal"></span>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+              <label style="padding: 2px 6px; cursor: pointer; font-weight: bold;"><input type="checkbox" id="retainUseBranch"> <span id="retainBranchCheckboxLabel">Nhánh</span></label>
               <label style="padding: 2px 6px; cursor: pointer;"><input type="radio" name="retainType" id="retainTypeMoney" value="money" checked> Tiền</label>
               <label style="padding: 2px 6px; cursor: pointer;"><input type="radio" name="retainType" id="retainTypePercentage" value="percentage"> %</label>
               <button id="btnResetBalance" style="padding: 2px 6px; font-size: 11px; background-color: #dc3545; color: white;">Từ đầu</button>
             </div>
+          </div>
+          <div class="control-row" id="retainBranchInputsContainer" style="display: none; border-top: 1px dashed #ccc; padding-top: 4px; margin-top: 4px;">
+            <label style="font-weight: bold; color: #b45309;">Nhánh: </label>
+            <span><span id="lblBranchDe">Nh.Đ</span> <input type="text" id="retainBranchDe" value="0" inputmode="decimal" style="width: 55px; text-align: center;"></span>
+            <span><span id="lblBranchLo">Nh.L</span> <input type="text" id="retainBranchLo" value="0" inputmode="decimal" style="width: 55px; text-align: center;"></span>
+            <span><span id="lblBranch3c">Nh.3c</span> <input type="text" id="retainBranch3c" value="0" inputmode="decimal" style="width: 55px; text-align: center;"></span>
+            <span><span id="lblBranchX">Nh.X</span> <input type="text" id="retainBranchX" value="0" inputmode="decimal" style="width: 55px; text-align: center;"></span>
+            <span class="hidden"><span id="lblBranch3cL">Nh.3cL</span> <input type="text" id="retainBranch3cL" value="0" inputmode="decimal" style="width: 55px; text-align: center;"></span>
           </div>
           <div style="margin-top: 4px; text-align: right;">
             <span id="balanceCounterLabel" style="font-size: 11px; font-weight: bold; color: #555;">Số Lần Đã Cân Chuyển = 0</span>
@@ -500,7 +509,7 @@ td input[type="text"] {
             <button id="normalizeButton" style="background-color: #6c757d; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Chuẩn hóa 27</button>
           </div>
           <textarea id="twentySevenNumbers" rows="3" placeholder="Kết quả 27 giải..."></textarea>
-          <div class="crawler-controls">
+          <div class="crawler-controls" style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             <label><input type="checkbox" id="autoFetchToggle"> Tự động tải KQ</label>
             <span style="color: #ccc;">|</span>
             <span>Ngày: <input type="date" id="resultDateInput"></span>
@@ -516,7 +525,8 @@ td input[type="text"] {
                 <option value="mketqua">mketqua.net</option>
               </select>
             </span>
-            <button id="btnFetchResults" style="padding: 2px 8px; font-size: 12px; margin-left: auto;">Tải KQ</button>
+            <button id="btnFetchResults" style="padding: 2px 8px; font-size: 12px; margin-left: auto; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Tải KQ</button>
+            <button type="button" id="btnClearResults" style="padding: 2px 8px; font-size: 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">Xóa KQ</button>
             <span id="autoResultStatus" style="font-size: 11px; font-weight: bold; display: none;"></span>
           </div>
           <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
@@ -2461,6 +2471,21 @@ function saveAppState() {
   if (retain3c) localStorage.setItem('z8_retain_3c', retain3c.value || '0');
   if (retainX) localStorage.setItem('z8_retain_x', retainX.value || '0');
   if (retain3cL) localStorage.setItem('z8_retain_3cl', retain3cL.value || '0');
+  
+  const retainUseBranch = document.getElementById('retainUseBranch');
+  const retainBranchDe = document.getElementById('retainBranchDe');
+  const retainBranchLo = document.getElementById('retainBranchLo');
+  const retainBranch3c = document.getElementById('retainBranch3c');
+  const retainBranchX = document.getElementById('retainBranchX');
+  const retainBranch3cL = document.getElementById('retainBranch3cL');
+  
+  if (retainUseBranch) localStorage.setItem('z8_retain_use_branch', retainUseBranch.checked ? '1' : '0');
+  if (retainBranchDe) localStorage.setItem('z8_retain_branch_de', retainBranchDe.value || '0');
+  if (retainBranchLo) localStorage.setItem('z8_retain_branch_lo', retainBranchLo.value || '0');
+  if (retainBranch3c) localStorage.setItem('z8_retain_branch_3c', retainBranch3c.value || '0');
+  if (retainBranchX) localStorage.setItem('z8_retain_branch_x', retainBranchX.value || '0');
+  if (retainBranch3cL) localStorage.setItem('z8_retain_branch_3cl', retainBranch3cL.value || '0');
+  
   if (checkedRadio) localStorage.setItem('z8_retain_type', checkedRadio.value);
 
   if (typeof balanceState !== 'undefined') {
@@ -2621,10 +2646,36 @@ function loadAppState() {
   if (savedRetain3c !== null && retain3c) retain3c.value = savedRetain3c;
   if (savedRetainX !== null && retainX) retainX.value = savedRetainX;
   if (savedRetain3cL !== null && retain3cL) retain3cL.value = savedRetain3cL;
+
+  const savedRetainUseBranch = localStorage.getItem('z8_retain_use_branch');
+  const savedRetainBranchDe = localStorage.getItem('z8_retain_branch_de');
+  const savedRetainBranchLo = localStorage.getItem('z8_retain_branch_lo');
+  const savedRetainBranch3c = localStorage.getItem('z8_retain_branch_3c');
+  const savedRetainBranchX = localStorage.getItem('z8_retain_branch_x');
+  const savedRetainBranch3cL = localStorage.getItem('z8_retain_branch_3cl');
+
+  const retainUseBranch = document.getElementById('retainUseBranch');
+  const retainBranchDe = document.getElementById('retainBranchDe');
+  const retainBranchLo = document.getElementById('retainBranchLo');
+  const retainBranch3c = document.getElementById('retainBranch3c');
+  const retainBranchX = document.getElementById('retainBranchX');
+  const retainBranch3cL = document.getElementById('retainBranch3cL');
+
+  if (savedRetainUseBranch !== null && retainUseBranch) {
+    retainUseBranch.checked = (savedRetainUseBranch === '1');
+  }
+  if (savedRetainBranchDe !== null && retainBranchDe) retainBranchDe.value = savedRetainBranchDe;
+  if (savedRetainBranchLo !== null && retainBranchLo) retainBranchLo.value = savedRetainBranchLo;
+  if (savedRetainBranch3c !== null && retainBranch3c) retainBranch3c.value = savedRetainBranch3c;
+  if (savedRetainBranchX !== null && retainBranchX) retainBranchX.value = savedRetainBranchX;
+  if (savedRetainBranch3cL !== null && retainBranch3cL) retainBranch3cL.value = savedRetainBranch3cL;
+
   if (savedRetainType !== null) {
     const radio = document.querySelector(`input[name="retainType"][value="${savedRetainType}"]`);
     if (radio) radio.checked = true;
   }
+
+  updateRetainBranchUI();
 
   if (savedBalanceState !== null) {
     try {
@@ -2652,6 +2703,38 @@ function loadAppState() {
       card.style.height = 'auto';
     });
   }
+}
+
+function updateRetainBranchUI() {
+  const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
+  const retainUseBranch = document.getElementById('retainUseBranch');
+  const isBranchChecked = retainUseBranch ? retainUseBranch.checked : false;
+  
+  const container = document.getElementById('retainBranchInputsContainer');
+  if (container) {
+    if (isBranchChecked) {
+      container.style.display = 'flex';
+    } else {
+      container.style.display = 'none';
+    }
+  }
+
+  const checkboxLabel = document.getElementById('retainBranchCheckboxLabel');
+  if (checkboxLabel) {
+    checkboxLabel.textContent = retainType === 'money' ? 'Nhánh' : 'Tối đa';
+  }
+
+  const deLabel = document.getElementById('lblBranchDe');
+  const loLabel = document.getElementById('lblBranchLo');
+  const bcLabel = document.getElementById('lblBranch3c');
+  const xLabel = document.getElementById('lblBranchX');
+  const bcLLabel = document.getElementById('lblBranch3cL');
+
+  if (deLabel) deLabel.textContent = retainType === 'money' ? 'Nh.Đ' : 'T.Đ';
+  if (loLabel) loLabel.textContent = retainType === 'money' ? 'Nh.L' : 'T.L';
+  if (bcLabel) bcLabel.textContent = retainType === 'money' ? 'Nh.3c' : 'T.3c';
+  if (xLabel) xLabel.textContent = retainType === 'money' ? 'Nh.X' : 'T.X';
+  if (bcLLabel) bcLLabel.textContent = retainType === 'money' ? 'Nh.3cL' : 'T.3cL';
 }
 
 function escapeHtml(text) {
@@ -3060,12 +3143,28 @@ function calculateSum(isFromRunBalancing = false) {
   const retain3cL = parseFloat(document.getElementById("retain3cL")?.value) || 0;
   const retainType = document.querySelector('input[name="retainType"]:checked')?.value || "money";
 
+  const retainUseBranch = document.getElementById("retainUseBranch")?.checked || false;
+  const retainBranchDe = parseFloat(document.getElementById("retainBranchDe")?.value) || 0;
+  const retainBranchLo = parseFloat(document.getElementById("retainBranchLo")?.value) || 0;
+  const retainBranch3c = parseFloat(document.getElementById("retainBranch3c")?.value) || 0;
+  const retainBranchX = parseFloat(document.getElementById("retainBranchX")?.value) || 0;
+  const retainBranch3cL = parseFloat(document.getElementById("retainBranch3cL")?.value) || 0;
+
   const getCategoryRetainValue = (categoryKey) => {
     if (categoryKey === 'de') return retainDe;
     if (categoryKey === 'lo') return retainLo;
     if (categoryKey === 'bacang') return retain3c;
     if (categoryKey === 'xien') return retainX;
     if (categoryKey === 'bacang_lo') return retain3cL;
+    return 0;
+  };
+
+  const getCategoryBranchLimit = (categoryKey) => {
+    if (categoryKey === 'de') return retainBranchDe;
+    if (categoryKey === 'lo') return retainBranchLo;
+    if (categoryKey === 'bacang') return retainBranch3c;
+    if (categoryKey === 'xien') return retainBranchX;
+    if (categoryKey === 'bacang_lo') return retainBranch3cL;
     return 0;
   };
 
@@ -3095,6 +3194,7 @@ function calculateSum(isFromRunBalancing = false) {
     }
 
     const retainVal = getCategoryRetainValue(categoryKey);
+    const branchLimit = getCategoryBranchLimit(categoryKey);
     const map = {};
     const sumsMap = getCategorySumsMap(categoryKey);
 
@@ -3110,19 +3210,32 @@ function calculateSum(isFromRunBalancing = false) {
       let excess;
       if (isExcl) {
         excess = val;
-        excess = Math.max(0, Math.round(excess * 10) / 10);
+        excess = Math.max(0, Math.ceil(excess));
       } else {
         if (retainType === "money") {
-          excess = val - retainVal;
-          excess = Math.max(0, Math.round(excess * 10) / 10);
+          if (retainUseBranch) {
+            if (val >= branchLimit) {
+              excess = Math.max(0, val - retainVal);
+            } else {
+              excess = val;
+            }
+          } else {
+            excess = val - retainVal;
+          }
+          excess = Math.max(0, Math.ceil(excess));
         } else {
-          excess = val - (val * (retainVal / 100));
+          if (retainUseBranch) {
+            const targetRetain = Math.min(val * (retainVal / 100), branchLimit);
+            excess = val - targetRetain;
+          } else {
+            excess = val - (val * (retainVal / 100));
+          }
           excess = Math.max(0, Math.ceil(excess));
         }
       }
 
       const alreadyTransferred = cumulativeMap[key] || 0;
-      const pendingTransfer = Math.max(0, Math.round((excess - alreadyTransferred) * 10) / 10);
+      const pendingTransfer = Math.max(0, Math.ceil(excess - alreadyTransferred));
 
       if (pendingTransfer >= 0.1) {
         map[key] = pendingTransfer;
@@ -3916,28 +4029,51 @@ function runBalancingStep(isPercent) {
   const retainX = parseFloat(document.getElementById("retainX")?.value) || 0;
   const retain3cL = parseFloat(document.getElementById("retain3cL")?.value) || 0;
 
+  const retainUseBranch = document.getElementById("retainUseBranch")?.checked || false;
+  const retainBranchDe = parseFloat(document.getElementById("retainBranchDe")?.value) || 0;
+  const retainBranchLo = parseFloat(document.getElementById("retainBranchLo")?.value) || 0;
+  const retainBranch3c = parseFloat(document.getElementById("retainBranch3c")?.value) || 0;
+  const retainBranchX = parseFloat(document.getElementById("retainBranchX")?.value) || 0;
+  const retainBranch3cL = parseFloat(document.getElementById("retainBranch3cL")?.value) || 0;
+
   const stepDeTransfers = {};
   const stepLoTransfers = {};
   const stepBaCangTransfers = {};
   const stepBaCangLoTransfers = {};
   const stepXienTransfers = {};
 
-  const processCategory = (totals, transfersMap, stepTransfersMap, limit, isPct, categoryKey) => {
+  const processCategory = (totals, transfersMap, stepTransfersMap, limit, branchLimit, isPct, categoryKey) => {
     Object.entries(totals).forEach(([key, total]) => {
       const isExcl = isExcluded(categoryKey, key);
       const prevTransfer = transfersMap[key] || 0;
       let excess;
       if (isExcl) {
         excess = total - prevTransfer;
-        excess = Math.max(0, Math.round(excess * 10) / 10);
+        excess = Math.max(0, Math.ceil(excess));
       } else {
         if (isPct) {
-          const targetTransfer = Math.ceil(total * ((100 - limit) / 100));
+          let targetTransfer;
+          if (retainUseBranch) {
+            const targetRetain = Math.min(total * (limit / 100), branchLimit);
+            targetTransfer = total - targetRetain;
+          } else {
+            targetTransfer = total * ((100 - limit) / 100);
+          }
           excess = targetTransfer - prevTransfer;
-          excess = Math.max(0, Math.round(excess * 10) / 10);
+          excess = Math.max(0, Math.ceil(excess));
         } else {
-          excess = total - prevTransfer - limit;
-          excess = Math.max(0, Math.round(excess * 10) / 10);
+          let targetTransfer;
+          if (retainUseBranch) {
+            if (total >= branchLimit) {
+              targetTransfer = total - limit;
+            } else {
+              targetTransfer = total;
+            }
+          } else {
+            targetTransfer = total - limit;
+          }
+          excess = targetTransfer - prevTransfer;
+          excess = Math.max(0, Math.ceil(excess));
         }
       }
       if (excess >= 0.1) {
@@ -3946,10 +4082,10 @@ function runBalancingStep(isPercent) {
     });
   };
 
-  processCategory(deSums, balanceState.deTransfers, stepDeTransfers, retainDe, isPercent, 'de');
-  processCategory(loSums, balanceState.loTransfers, stepLoTransfers, retainLo, isPercent, 'lo');
-  processCategory(baCangSums, balanceState.baCangTransfers, stepBaCangTransfers, retain3c, isPercent, 'bacang');
-  processCategory(baCangLoSums, balanceState.baCangLoTransfers, stepBaCangLoTransfers, retain3cL, isPercent, 'bacang_lo');
+  processCategory(deSums, balanceState.deTransfers, stepDeTransfers, retainDe, retainBranchDe, isPercent, 'de');
+  processCategory(loSums, balanceState.loTransfers, stepLoTransfers, retainLo, retainBranchLo, isPercent, 'lo');
+  processCategory(baCangSums, balanceState.baCangTransfers, stepBaCangTransfers, retain3c, retainBranch3c, isPercent, 'bacang');
+  processCategory(baCangLoSums, balanceState.baCangLoTransfers, stepBaCangLoTransfers, retain3cL, retainBranch3cL, isPercent, 'bacang_lo');
 
   xienBets.forEach((bet, idx) => {
     const isExcl = isExcluded('xien', idx, bet.numbers);
@@ -3957,15 +4093,31 @@ function runBalancingStep(isPercent) {
     let excess;
     if (isExcl) {
       excess = bet.amount - prevTransfer;
-      excess = Math.max(0, Math.round(excess * 10) / 10);
+      excess = Math.max(0, Math.ceil(excess));
     } else {
       if (isPercent) {
-        const targetTransfer = Math.ceil(bet.amount * ((100 - retainX) / 100));
+        let targetTransfer;
+        if (retainUseBranch) {
+          const targetRetain = Math.min(bet.amount * (retainX / 100), retainBranchX);
+          targetTransfer = bet.amount - targetRetain;
+        } else {
+          targetTransfer = bet.amount * ((100 - retainX) / 100);
+        }
         excess = targetTransfer - prevTransfer;
-        excess = Math.max(0, Math.round(excess * 10) / 10);
+        excess = Math.max(0, Math.ceil(excess));
       } else {
-        excess = bet.amount - prevTransfer - retainX;
-        excess = Math.max(0, Math.round(excess * 10) / 10);
+        let targetTransfer;
+        if (retainUseBranch) {
+          if (bet.amount >= retainBranchX) {
+            targetTransfer = bet.amount - retainX;
+          } else {
+            targetTransfer = bet.amount;
+          }
+        } else {
+          targetTransfer = bet.amount - retainX;
+        }
+        excess = targetTransfer - prevTransfer;
+        excess = Math.max(0, Math.ceil(excess));
       }
     }
     if (excess >= 0.1) {
@@ -4184,6 +4336,21 @@ function resetBalancing() {
   if (retainX) retainX.value = "";
   if (retain3cL) retain3cL.value = "";
 
+  const retainUseBranch = document.getElementById('retainUseBranch');
+  const retainBranchDe = document.getElementById('retainBranchDe');
+  const retainBranchLo = document.getElementById('retainBranchLo');
+  const retainBranch3c = document.getElementById('retainBranch3c');
+  const retainBranchX = document.getElementById('retainBranchX');
+  const retainBranch3cL = document.getElementById('retainBranch3cL');
+  if (retainUseBranch) retainUseBranch.checked = false;
+  if (retainBranchDe) retainBranchDe.value = "0";
+  if (retainBranchLo) retainBranchLo.value = "0";
+  if (retainBranch3c) retainBranch3c.value = "0";
+  if (retainBranchX) retainBranchX.value = "0";
+  if (retainBranch3cL) retainBranch3cL.value = "0";
+
+  updateRetainBranchUI();
+
   const radioMoney = document.querySelector('input[name="retainType"][value="money"]');
   if (radioMoney) radioMoney.checked = true;
 
@@ -4208,6 +4375,12 @@ function resetBalancing() {
   localStorage.removeItem('z8_retain_x');
   localStorage.removeItem('z8_retain_3cl');
   localStorage.removeItem('z8_retain_type');
+  localStorage.removeItem('z8_retain_use_branch');
+  localStorage.removeItem('z8_retain_branch_de');
+  localStorage.removeItem('z8_retain_branch_lo');
+  localStorage.removeItem('z8_retain_branch_3c');
+  localStorage.removeItem('z8_retain_branch_x');
+  localStorage.removeItem('z8_retain_branch_3cl');
 
   const counterLabel = document.getElementById('balanceCounterLabel');
   if (counterLabel) counterLabel.textContent = 'Số Lần Đã Cân Chuyển = 0';
@@ -4516,13 +4689,27 @@ function setupEventListeners() {
     btnFetchResults.addEventListener('click', () => triggerAutoFetch(false));
   }
 
+  const btnClearResults = document.getElementById('btnClearResults');
+  if (btnClearResults) {
+    btnClearResults.addEventListener('click', () => {
+      const specialPrizeInput = document.getElementById('specialPrizeInput');
+      const twentySevenNumbers = document.getElementById('twentySevenNumbers');
+      if (specialPrizeInput) specialPrizeInput.value = "";
+      if (twentySevenNumbers) twentySevenNumbers.value = "";
+      fetchedPrizesData = null;
+      updateTwoDigitBoard();
+      calculateSum();
+      saveAppState();
+    });
+  }
+
   const crawlerSource = document.getElementById('crawlerSource');
   if (crawlerSource) {
     crawlerSource.addEventListener('change', saveAppState);
   }
 
   // Các sự kiện thay đổi giới hạn giữ lại
-  const retainInputs = ['retainDe', 'retainLo', 'retain3c', 'retainX', 'retain3cL'];
+  const retainInputs = ['retainDe', 'retainLo', 'retain3c', 'retainX', 'retain3cL', 'retainBranchDe', 'retainBranchLo', 'retainBranch3c', 'retainBranchX', 'retainBranch3cL'];
   retainInputs.forEach(id => {
     const input = document.getElementById(id);
     if (input) {
@@ -4532,10 +4719,23 @@ function setupEventListeners() {
           input.value = "0";
           calculateSum();
         }
+        saveAppState();
       });
-      input.addEventListener('input', () => debouncedCalculateSum());
+      input.addEventListener('input', () => {
+        debouncedCalculateSum();
+        saveAppState();
+      });
     }
   });
+
+  const retainUseBranch = document.getElementById('retainUseBranch');
+  if (retainUseBranch) {
+    retainUseBranch.addEventListener('change', () => {
+      updateRetainBranchUI();
+      saveAppState();
+      calculateSum();
+    });
+  }
 
   const btnResetBalance = document.getElementById('btnResetBalance');
   if (btnResetBalance) {
@@ -4562,6 +4762,8 @@ function setupEventListeners() {
         if (retainX) retainX.value = '0';
         if (retain3cL) retain3cL.value = '0';
       }
+      updateRetainBranchUI();
+      saveAppState();
       calculateSum();
     });
   });
