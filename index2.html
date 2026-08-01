@@ -87,7 +87,7 @@ body {
 
 /* Mobile Tab buttons */
 .mobile-nav-tabs {
-  display: none;
+  display: none !important;
   background: var(--card-bg);
   border: var(--card-border);
   border-radius: 8px;
@@ -117,13 +117,16 @@ body {
 
 @media (max-width: 1023px) {
   .mobile-nav-tabs {
-    display: flex;
+    display: flex !important;
+  }
+  .mobile-nav-tabs.hidden {
+    display: none !important;
   }
   .main-layout {
     flex-direction: column;
     gap: 12px;
   }
-  .left-column.mobile-hidden, .right-column.mobile-hidden {
+  .mobile-hidden {
     display: none !important;
   }
   .left-column, .right-column {
@@ -670,7 +673,7 @@ td input[type="text"] {
           </div>
         </div>
 
-        <div class="input-section">
+        <div class="input-section" id="shortcutsPanel">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <label style="font-weight: 600; font-size: 14px;"><a href="nhaptat.html" style="color: inherit; text-decoration: none;">Nhập tắt:</a></label>
             <button id="btnToggleShortcuts" style="padding: 2px 8px; font-size: 11px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Hiện</button>
@@ -5819,7 +5822,11 @@ function initMobileTabs() {
   const tabBtnDetail = document.getElementById('mobileTabBtnDetail');
   const tabBtnReport = document.getElementById('mobileTabBtnReport');
   
+  const leftColumn = document.getElementById('leftColumn');
+  const rightColumn = document.getElementById('rightColumn');
+  
   const betInputContainer = document.getElementById('betInputContainer');
+  const shortcutsPanel = document.getElementById('shortcutsPanel');
   const lotteryResultsPanel = document.getElementById('lotteryResultsPanel');
   const cardsGrid = document.getElementById('cardsGrid');
   const baoCaoThauCard = document.getElementById('baoCaoThauCard');
@@ -5844,28 +5851,38 @@ function initMobileTabs() {
     });
     
     // Ẩn tất cả các phần tử trước
+    if (leftColumn) leftColumn.classList.add('mobile-hidden');
+    if (rightColumn) rightColumn.classList.add('mobile-hidden');
+    
     if (betInputContainer) betInputContainer.classList.add('mobile-hidden');
+    if (shortcutsPanel) shortcutsPanel.classList.add('mobile-hidden');
+    if (lotteryResultsPanel) lotteryResultsPanel.classList.add('mobile-hidden');
     if (cardsGrid) cardsGrid.classList.add('mobile-hidden');
     if (baoCaoThauCard) baoCaoThauCard.classList.add('mobile-hidden');
-    if (lotteryResultsPanel) lotteryResultsPanel.classList.add('mobile-hidden');
     
     if (tabName === 'input') {
       tabBtnInput.classList.add('active');
       
-      // Tab Nhập liệu: Hiện phần nhập cược
+      // Tab Nhập liệu: Hiện cột trái + phần nhập cược & shortcuts
+      if (leftColumn) leftColumn.classList.remove('mobile-hidden');
       if (betInputContainer) betInputContainer.classList.remove('mobile-hidden');
+      if (shortcutsPanel) shortcutsPanel.classList.remove('mobile-hidden');
       
     } else if (tabName === 'detail') {
       tabBtnDetail.classList.add('active');
       
-      // Tab Chi tiết con: Hiện 3 card cược
+      // Tab Chi tiết con: Hiện cột phải + 3 card cược
+      if (rightColumn) rightColumn.classList.remove('mobile-hidden');
       if (cardsGrid) cardsGrid.classList.remove('mobile-hidden');
       
     } else if (tabName === 'report') {
       tabBtnReport.classList.add('active');
       
-      // Tab Báo cáo: Hiện Kết quả xổ số + Báo cáo tổng hợp
+      // Tab Báo cáo: Hiện cột trái (chỉ hiện KQXS) + cột phải (chỉ hiện Báo cáo)
+      if (leftColumn) leftColumn.classList.remove('mobile-hidden');
       if (lotteryResultsPanel) lotteryResultsPanel.classList.remove('mobile-hidden');
+      
+      if (rightColumn) rightColumn.classList.remove('mobile-hidden');
       if (baoCaoThauCard) baoCaoThauCard.classList.remove('mobile-hidden');
     }
   }
@@ -5879,7 +5896,7 @@ function initMobileTabs() {
         toggleBtn.style.opacity = "1";
       }
       if (tabContainer) {
-        tabContainer.style.display = "flex";
+        tabContainer.classList.remove('hidden');
       }
       showTab(currentMobileTab);
     } else {
@@ -5890,10 +5907,13 @@ function initMobileTabs() {
         toggleBtn.style.opacity = "0.7";
       }
       if (tabContainer) {
-        tabContainer.style.display = "none";
+        tabContainer.classList.add('hidden');
       }
       // Hiện tất cả các phần tử (xóa mobile-hidden)
+      if (leftColumn) leftColumn.classList.remove('mobile-hidden');
+      if (rightColumn) rightColumn.classList.remove('mobile-hidden');
       if (betInputContainer) betInputContainer.classList.remove('mobile-hidden');
+      if (shortcutsPanel) shortcutsPanel.classList.remove('mobile-hidden');
       if (cardsGrid) cardsGrid.classList.remove('mobile-hidden');
       if (baoCaoThauCard) baoCaoThauCard.classList.remove('mobile-hidden');
       if (lotteryResultsPanel) lotteryResultsPanel.classList.remove('mobile-hidden');
