@@ -545,20 +545,30 @@ td input[type="text"] {
 </head>
 
 <body>
+  <header style="background-color: var(--primary-color); color: white; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 13px; box-shadow: var(--shadow);">
+    <span style="font-weight: bold; font-size: 15px;">Z8™</span>
+    <button id="mobileTabToggle" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 4px 8px; font-size: 11px; border-radius: 4px; cursor: pointer; transition: background 0.2s;" title="Bật/Tắt chế độ Tab trên điện thoại">
+      <span id="mobileTabToggleText">📱 Tab: BẬT</span>
+    </button>
+  </header>
   <div class="app-container">
     <!-- Mobile Tab Navigation (Only visible on screens < 1024px) -->
-    <div class="mobile-nav-tabs">
+    <div class="mobile-nav-tabs" id="mobileTabContainer">
       <button type="button" id="mobileTabBtnInput" class="mobile-tab-btn active">
-        📝 Nhập liệu & KQXS
+        📝 Nhập liệu
+      </button>
+      <button type="button" id="mobileTabBtnDetail" class="mobile-tab-btn">
+        🔍 Chi tiết con
       </button>
       <button type="button" id="mobileTabBtnReport" class="mobile-tab-btn">
-        📊 Kết quả & Báo cáo
+        📊 Báo cáo
       </button>
     </div>
 
     <div class="main-layout">
       <!-- Cột bên trái: Nhập liệu và cấu hình -->
       <div class="left-column" id="leftColumn">
+        <div id="betInputContainer" style="display: flex; flex-direction: column; gap: 15px;">
         <div class="input-section">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; select-none;">
             <div style="display: flex; gap: 10px;">
@@ -622,8 +632,9 @@ td input[type="text"] {
             <span id="balanceCounterLabel" style="font-size: 11px; font-weight: bold; color: #555;">Số Lần Đã Cân Chuyển = 0</span>
           </div>
         </div>
+        </div>
         
-        <div class="input-section">
+        <div class="input-section" id="lotteryResultsPanel">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <label for="twentySevenNumbers" style="font-weight: 600; font-size: 14px;">27 giải:</label>
             <button id="normalizeButton" style="background-color: #6c757d; color: white; padding: 2px 8px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; transition: background 0.2s;">Chuẩn hóa 27</button>
@@ -671,7 +682,7 @@ td input[type="text"] {
 
       <!-- Cột bên phải: Hiển thị kết quả tính toán -->
       <div class="right-column" id="rightColumn">
-        <div class="results-grid">
+        <div class="results-grid" id="cardsGrid">
           <!-- Kết quả Card -->
           <div class="result-section">
             <h3 onclick="toggleCardDetail('result')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
@@ -735,7 +746,7 @@ td input[type="text"] {
           </div>
         </div>
     <!-- Phần báo cáo ở dưới cùng -->
-    <div class="bottom-layout">
+    <div class="bottom-layout" id="baoCaoThauCard">
       <div style="font-size: 14px; user-select: none; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 650px; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
         <div style="display: flex; align-items: center; gap: 6px;">
 
@@ -5796,38 +5807,113 @@ function calculateFinalResult() {
   if (fEl) fEl.textContent = total - bonusTotal;
 }
 
+let useMobileTabs = true;
+let currentMobileTab = 'input'; // 'input' hoặc 'report'
+
 function initMobileTabs() {
+  const toggleBtn = document.getElementById('mobileTabToggle');
+  const toggleText = document.getElementById('mobileTabToggleText');
+  const tabContainer = document.getElementById('mobileTabContainer');
+  
   const tabBtnInput = document.getElementById('mobileTabBtnInput');
+  const tabBtnDetail = document.getElementById('mobileTabBtnDetail');
   const tabBtnReport = document.getElementById('mobileTabBtnReport');
   
-  const leftColumn = document.getElementById('leftColumn');
-  const rightColumn = document.getElementById('rightColumn');
+  const betInputContainer = document.getElementById('betInputContainer');
+  const lotteryResultsPanel = document.getElementById('lotteryResultsPanel');
+  const cardsGrid = document.getElementById('cardsGrid');
+  const baoCaoThauCard = document.getElementById('baoCaoThauCard');
   
-  if (!tabBtnInput || !tabBtnReport) return;
+  if (!tabBtnInput || !tabBtnDetail || !tabBtnReport) return;
+  
+  // Khôi phục trạng thái bật/tắt Tab từ localStorage
+  const savedUseTabs = localStorage.getItem('z8_use_mobile_tabs');
+  if (savedUseTabs !== null) {
+    useMobileTabs = (savedUseTabs === '1');
+  } else {
+    useMobileTabs = true; // Mặc định là bật
+  }
   
   function showTab(tabName) {
-    // Reset active classes
-    tabBtnInput.classList.remove('active');
-    tabBtnReport.classList.remove('active');
+    currentMobileTab = tabName;
+    if (!useMobileTabs) return;
     
-    // Hide columns
-    if (leftColumn) leftColumn.classList.add('mobile-hidden');
-    if (rightColumn) rightColumn.classList.add('mobile-hidden');
+    // Reset active classes
+    [tabBtnInput, tabBtnDetail, tabBtnReport].forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    // Ẩn tất cả các phần tử trước
+    if (betInputContainer) betInputContainer.classList.add('mobile-hidden');
+    if (cardsGrid) cardsGrid.classList.add('mobile-hidden');
+    if (baoCaoThauCard) baoCaoThauCard.classList.add('mobile-hidden');
+    if (lotteryResultsPanel) lotteryResultsPanel.classList.add('mobile-hidden');
     
     if (tabName === 'input') {
       tabBtnInput.classList.add('active');
-      if (leftColumn) leftColumn.classList.remove('mobile-hidden');
+      
+      // Tab Nhập liệu: Hiện phần nhập cược
+      if (betInputContainer) betInputContainer.classList.remove('mobile-hidden');
+      
+    } else if (tabName === 'detail') {
+      tabBtnDetail.classList.add('active');
+      
+      // Tab Chi tiết con: Hiện 3 card cược
+      if (cardsGrid) cardsGrid.classList.remove('mobile-hidden');
+      
     } else if (tabName === 'report') {
       tabBtnReport.classList.add('active');
-      if (rightColumn) rightColumn.classList.remove('mobile-hidden');
+      
+      // Tab Báo cáo: Hiện Kết quả xổ số + Báo cáo tổng hợp
+      if (lotteryResultsPanel) lotteryResultsPanel.classList.remove('mobile-hidden');
+      if (baoCaoThauCard) baoCaoThauCard.classList.remove('mobile-hidden');
+    }
+  }
+  
+  function applyMobileTabsMode() {
+    if (useMobileTabs) {
+      if (toggleText) toggleText.textContent = "📱 Tab: BẬT";
+      if (toggleBtn) {
+        toggleBtn.style.backgroundColor = "var(--primary-color)";
+        toggleBtn.style.borderColor = "transparent";
+        toggleBtn.style.opacity = "1";
+      }
+      if (tabContainer) {
+        tabContainer.style.display = "flex";
+      }
+      showTab(currentMobileTab);
+    } else {
+      if (toggleText) toggleText.textContent = "📱 Tab: TẮT";
+      if (toggleBtn) {
+        toggleBtn.style.backgroundColor = "transparent";
+        toggleBtn.style.borderColor = "rgba(255,255,255,0.4)";
+        toggleBtn.style.opacity = "0.7";
+      }
+      if (tabContainer) {
+        tabContainer.style.display = "none";
+      }
+      // Hiện tất cả các phần tử (xóa mobile-hidden)
+      if (betInputContainer) betInputContainer.classList.remove('mobile-hidden');
+      if (cardsGrid) cardsGrid.classList.remove('mobile-hidden');
+      if (baoCaoThauCard) baoCaoThauCard.classList.remove('mobile-hidden');
+      if (lotteryResultsPanel) lotteryResultsPanel.classList.remove('mobile-hidden');
     }
   }
   
   tabBtnInput.addEventListener('click', () => showTab('input'));
+  tabBtnDetail.addEventListener('click', () => showTab('detail'));
   tabBtnReport.addEventListener('click', () => showTab('report'));
   
-  // Initialize default view
-  showTab('input');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      useMobileTabs = !useMobileTabs;
+      localStorage.setItem('z8_use_mobile_tabs', useMobileTabs ? '1' : '0');
+      applyMobileTabsMode();
+    });
+  }
+  
+  // Khởi tạo hiển thị lần đầu
+  applyMobileTabsMode();
 }
 
 // DOM loaded hooks
