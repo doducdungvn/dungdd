@@ -123,7 +123,7 @@ body {
     flex-direction: column;
     gap: 12px;
   }
-  .left-column.hidden, .right-column.hidden {
+  .left-column.mobile-hidden, .right-column.mobile-hidden {
     display: none !important;
   }
   .left-column, .right-column {
@@ -5811,15 +5811,15 @@ function initMobileTabs() {
     tabBtnReport.classList.remove('active');
     
     // Hide columns
-    if (leftColumn) leftColumn.classList.add('hidden');
-    if (rightColumn) rightColumn.classList.add('hidden');
+    if (leftColumn) leftColumn.classList.add('mobile-hidden');
+    if (rightColumn) rightColumn.classList.add('mobile-hidden');
     
     if (tabName === 'input') {
       tabBtnInput.classList.add('active');
-      if (leftColumn) leftColumn.classList.remove('hidden');
+      if (leftColumn) leftColumn.classList.remove('mobile-hidden');
     } else if (tabName === 'report') {
       tabBtnReport.classList.add('active');
-      if (rightColumn) rightColumn.classList.remove('hidden');
+      if (rightColumn) rightColumn.classList.remove('mobile-hidden');
     }
   }
   
