@@ -115,6 +115,10 @@ body {
   background-color: rgba(16, 124, 65, 0.05);
 }
 
+.mobile-sub-tabs {
+  display: none !important;
+}
+
 @media (max-width: 1023px) {
   .mobile-nav-tabs {
     display: flex !important;
@@ -136,6 +140,39 @@ body {
   }
   .results-grid {
     grid-template-columns: 1fr !important;
+  }
+  .mobile-sub-tabs {
+    display: flex;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    padding: 2px;
+    gap: 2px;
+  }
+  .sub-tab-btn {
+    flex: 1;
+    padding: 8px 5px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sub-tab-btn.active {
+    background: var(--primary-color);
+    color: white;
+  }
+  .dark .sub-tab-btn {
+    color: #94a3b8;
+  }
+  .dark .sub-tab-btn.active {
+    color: white;
   }
 }
 @media (min-width: 1024px) {
@@ -561,7 +598,7 @@ td input[type="text"] {
         📝 Nhập liệu
       </button>
       <button type="button" id="mobileTabBtnDetail" class="mobile-tab-btn">
-        🔍 Chi tiết con
+        🔍 Chi tiết
       </button>
       <button type="button" id="mobileTabBtnReport" class="mobile-tab-btn">
         📊 Báo cáo
@@ -632,7 +669,7 @@ td input[type="text"] {
             <span class="hidden"><span id="lblBranch3cL">Nh.3cL</span> <input type="text" id="retainBranch3cL" value="0" inputmode="decimal" style="width: 55px; text-align: center;"></span>
           </div>
           <div style="margin-top: 4px; text-align: right;">
-            <span id="balanceCounterLabel" style="font-size: 11px; font-weight: bold; color: #555;">Số Lần Đã Cân Chuyển = 0</span>
+            <span id="balanceCounterLabel" style="font-size: 11px; font-weight: bold; color: #555;">Số Lần Cân = 0</span>
           </div>
         </div>
         </div>
@@ -685,12 +722,18 @@ td input[type="text"] {
 
       <!-- Cột bên phải: Hiển thị kết quả tính toán -->
       <div class="right-column" id="rightColumn">
+        <!-- Thanh Tab phụ cho 3 card cược trên Mobile -->
+        <div id="mobileSubTabContainer" class="mobile-sub-tabs">
+          <button type="button" id="subTabBtnResult" class="sub-tab-btn active" onclick="showSubTab('result')">Kết quả</button>
+          <button type="button" id="subTabBtnTransfer" class="sub-tab-btn" onclick="showSubTab('transfer')">Chuyển đi</button>
+          <button type="button" id="subTabBtnDetail" class="sub-tab-btn" onclick="showSubTab('detail')">Chi tiết</button>
+        </div>
+
         <div class="results-grid" id="cardsGrid">
           <!-- Kết quả Card -->
-          <div class="result-section">
-            <h3 onclick="toggleCardDetail('result')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
+          <div class="result-section" id="cardResult">
+            <h3 style="display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
               <span>Kết quả:</span>
-              <button id="toggleBtn-result" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
             </h3>
             <div style="font-size: 12px; margin-bottom: 8px;">
               <div id="numResults" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-bottom: 4px;">
@@ -706,10 +749,9 @@ td input[type="text"] {
           </div>
           
           <!-- Chuyển Card -->
-          <div class="result-section">
-            <h3 onclick="toggleCardDetail('modifiedResult')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
-              <span id="transferHeaderTitle">Chuyển 1:</span>
-              <button id="toggleBtn-modifiedResult" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
+          <div class="result-section" id="cardTransfer">
+            <h3 style="display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
+              <span id="transferHeaderTitle">Chuyển đi:</span>
             </h3>
             <div style="font-size: 12px; margin-bottom: 8px;">
               <div id="modifiedNumResults" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-bottom: 4px;">
@@ -730,10 +772,9 @@ td input[type="text"] {
           </div>
 
           <!-- Chi tiết Card -->
-          <div class="result-section">
-            <h3 onclick="toggleCardDetail('inputList')" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; user-select: none;">
+          <div class="result-section" id="cardDetail">
+            <h3 style="display: flex; align-items: center; justify-content: space-between; margin-top: 0; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
               <span>Chi tiết:</span>
-              <button id="toggleBtn-inputList" style="padding: 2px 6px; font-size: 11px; background: #6c757d; border: none; border-radius: 3px; color: white;">Ẩn</button>
             </h3>
             <div style="font-size: 12px; margin-bottom: 8px;">
               <div id="inputListCount" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-bottom: 4px;">
@@ -2816,7 +2857,7 @@ function loadAppState() {
       const parsed = JSON.parse(savedBalanceState);
       Object.assign(balanceState, parsed);
       const counterLabel = document.getElementById('balanceCounterLabel');
-      if (counterLabel) counterLabel.textContent = `Số Lần Đã Cân Chuyển = ${balanceState.step}`;
+      if (counterLabel) counterLabel.textContent = `Số Lần Cân = ${balanceState.step}`;
     } catch (e) {
       console.error("Error parsing balanceState:", e);
     }
@@ -4437,13 +4478,23 @@ function runBalancingStep(isPercent) {
   balanceState.isPendingCalculated = false;
 
   const counterLabel = document.getElementById('balanceCounterLabel');
-  if (counterLabel) counterLabel.textContent = `Số Lần Đã Cân Chuyển = ${balanceState.step}`;
+  if (counterLabel) counterLabel.textContent = `Số Lần Cân = ${balanceState.step}`;
 
   // Switch to the latest step tab
   window.activeStepTab = balanceState.step;
 
   calculateSum(true);
   updateTransferStepsUI();
+  
+  const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+  if (isMobile) {
+    if (typeof window.showMobileTab === 'function') {
+      window.showMobileTab('detail');
+    }
+    if (typeof window.showSubTab === 'function') {
+      window.showSubTab('transfer');
+    }
+  }
   return true;
 }
 
@@ -4526,7 +4577,7 @@ function resetBalancing() {
   localStorage.removeItem('z8_retain_branch_3cl');
 
   const counterLabel = document.getElementById('balanceCounterLabel');
-  if (counterLabel) counterLabel.textContent = 'Số Lần Đã Cân Chuyển = 0';
+  if (counterLabel) counterLabel.textContent = 'Số Lần Cân = 0';
 
   updateTwoDigitBoard();
   calculateSum();
@@ -5810,6 +5861,52 @@ function calculateFinalResult() {
   if (fEl) fEl.textContent = total - bonusTotal;
 }
 
+let currentSubTab = 'result'; // 'result', 'transfer', 'detail'
+
+function showSubTab(subTabName) {
+  currentSubTab = subTabName;
+  
+  const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+  if (!isMobile) {
+    // Restore all on PC
+    ['cardResult', 'cardTransfer', 'cardDetail'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('mobile-hidden');
+    });
+    return;
+  }
+  
+  const btnResult = document.getElementById('subTabBtnResult');
+  const btnTransfer = document.getElementById('subTabBtnTransfer');
+  const btnDetail = document.getElementById('subTabBtnDetail');
+  
+  const cardResult = document.getElementById('cardResult');
+  const cardTransfer = document.getElementById('cardTransfer');
+  const cardDetail = document.getElementById('cardDetail');
+  
+  // Reset active buttons
+  [btnResult, btnTransfer, btnDetail].forEach(btn => {
+    if (btn) btn.classList.remove('active');
+  });
+  
+  // Hide all cards
+  [cardResult, cardTransfer, cardDetail].forEach(card => {
+    if (card) card.classList.add('mobile-hidden');
+  });
+  
+  // Show selected card and active button
+  if (subTabName === 'result') {
+    if (btnResult) btnResult.classList.add('active');
+    if (cardResult) cardResult.classList.remove('mobile-hidden');
+  } else if (subTabName === 'transfer') {
+    if (btnTransfer) btnTransfer.classList.add('active');
+    if (cardTransfer) cardTransfer.classList.remove('mobile-hidden');
+  } else if (subTabName === 'detail') {
+    if (btnDetail) btnDetail.classList.add('active');
+    if (cardDetail) cardDetail.classList.remove('mobile-hidden');
+  }
+}
+
 let useMobileTabs = true;
 let currentMobileTab = 'input'; // 'input' hoặc 'report'
 
@@ -5843,6 +5940,15 @@ function initMobileTabs() {
   
   function showTab(tabName) {
     currentMobileTab = tabName;
+    
+    // Luôn ẩn/hiện subTabContainer dựa trên tab hiện tại
+    const subTabContainer = document.getElementById('mobileSubTabContainer');
+    if (subTabContainer) {
+      if (useMobileTabs && tabName !== 'detail') {
+        subTabContainer.classList.add('mobile-hidden');
+      }
+    }
+    
     if (!useMobileTabs) return;
     
     // Reset active classes
@@ -5871,9 +5977,11 @@ function initMobileTabs() {
     } else if (tabName === 'detail') {
       tabBtnDetail.classList.add('active');
       
-      // Tab Chi tiết con: Hiện cột phải + 3 card cược
+      // Tab Chi tiết: Hiện cột phải + 3 card cược (theo dạng sub tabs)
       if (rightColumn) rightColumn.classList.remove('mobile-hidden');
       if (cardsGrid) cardsGrid.classList.remove('mobile-hidden');
+      if (subTabContainer) subTabContainer.classList.remove('mobile-hidden');
+      showSubTab(currentSubTab);
       
     } else if (tabName === 'report') {
       tabBtnReport.classList.add('active');
@@ -5886,8 +5994,10 @@ function initMobileTabs() {
       if (baoCaoThauCard) baoCaoThauCard.classList.remove('mobile-hidden');
     }
   }
+  window.showMobileTab = showTab;
   
   function applyMobileTabsMode() {
+    const subTabContainer = document.getElementById('mobileSubTabContainer');
     if (useMobileTabs) {
       if (toggleText) toggleText.textContent = "📱 Tab: BẬT";
       if (toggleBtn) {
@@ -5917,6 +6027,10 @@ function initMobileTabs() {
       if (cardsGrid) cardsGrid.classList.remove('mobile-hidden');
       if (baoCaoThauCard) baoCaoThauCard.classList.remove('mobile-hidden');
       if (lotteryResultsPanel) lotteryResultsPanel.classList.remove('mobile-hidden');
+      
+      // Hiện thanh tab phụ khi tắt tab lớn
+      if (subTabContainer) subTabContainer.classList.remove('mobile-hidden');
+      showSubTab(currentSubTab);
     }
   }
   
@@ -5931,6 +6045,27 @@ function initMobileTabs() {
       applyMobileTabsMode();
     });
   }
+  
+  // Lắng nghe thay đổi kích thước cửa sổ để tự động khôi phục các card cược khi về PC
+  window.addEventListener('resize', () => {
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+    const subTabContainer = document.getElementById('mobileSubTabContainer');
+    if (!isMobile) {
+      // Khôi phục tất cả card trên PC
+      ['cardResult', 'cardTransfer', 'cardDetail'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('mobile-hidden');
+      });
+    } else {
+      // Áp dụng lại hiển thị tab phụ trên mobile
+      if (!useMobileTabs || currentMobileTab === 'detail') {
+        if (subTabContainer) subTabContainer.classList.remove('mobile-hidden');
+        showSubTab(currentSubTab);
+      } else {
+        if (subTabContainer) subTabContainer.classList.add('mobile-hidden');
+      }
+    }
+  });
   
   // Khởi tạo hiển thị lần đầu
   applyMobileTabsMode();
